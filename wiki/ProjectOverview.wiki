@@ -6,6 +6,6 @@ OpenSudoku is a simple sudoku game for Android mobile OS. Project is in very ear
 
 Here is prototype's screenshot:
 
-http://code.google.com/p/opensudoku-android/source/browse/trunk/OpenSudoku/wiki/opensudoku.png
+http://opensudoku-android.googlecode.com/svn/trunk/OpenSudoku/wiki/opensudoku.png
 
 I'm planning to release first working version by the end of March 2009.
