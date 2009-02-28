@@ -1,0 +1,19 @@
+#summary Project overview.
+
+= Introduction =
+
+OpenSudoku is a simple sudoku game for Android mobile OS. Project is in very early stage and no external contributions to the code are accepted at this time.
+
+Here is prototype's screenshot:
+
+
+
+I'm planning to release first working version by the end of March 2009.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
