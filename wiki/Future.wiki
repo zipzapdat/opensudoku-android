@@ -1,0 +1,1 @@
+[http://opensudoku-android.googlecode.com/svn/trunk/OpenSudoku/wiki/board_with_pencil.png]
