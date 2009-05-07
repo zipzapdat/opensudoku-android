@@ -1,0 +1,6 @@
+#summary Project's roadmap.
+
+*0.7.0*
+ * ETA: July 2009
+ * Show hints using common solving techniques.
+ * Add puzzle generator. 
