@@ -125,7 +125,8 @@ public class SudokuPlayActivity extends Activity{
 		SharedPreferences gameSettings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mSudokuGame.setHighlightWrongVals(gameSettings.getBoolean("highlight_wrong_values", true));
 
-		if (mSudokuGame.getState() == SudokuGame.GAME_STATE_PLAYING) {
+        mShowTime = gameSettings.getBoolean("show_time", true);
+        if (mSudokuGame.getState() == SudokuGame.GAME_STATE_PLAYING) {
 			mSudokuGame.resume();
 			
 			if (mShowTime) {
@@ -133,7 +134,6 @@ public class SudokuPlayActivity extends Activity{
 			}
 		}
 
-        mShowTime = gameSettings.getBoolean("show_time", true);
         
         mIMPopup.enabled = gameSettings.getBoolean("im_popup", true);
         mIMSingleNumber.enabled = gameSettings.getBoolean("im_single_number", true);
