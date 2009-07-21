@@ -9,7 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import cz.romario.opensudoku.game.FolderInfo;
-import cz.romario.opensudoku.game.SudokuCellCollection;
+import cz.romario.opensudoku.game.CellCollection;
 import cz.romario.opensudoku.game.SudokuGame;
 
 /**
@@ -219,7 +219,7 @@ public class SudokuDatabase {
             	s = new SudokuGame();
             	s.setId(id);
             	s.setCreated(created);
-            	s.setCells(SudokuCellCollection.deserialize(data));
+            	s.setCells(CellCollection.fromString(data));
             	s.setLastPlayed(lastPlayed);
             	s.setState(state);
             	s.setTime(time);
@@ -244,7 +244,7 @@ public class SudokuDatabase {
      */
     public long insertSudoku(long folderID, SudokuGame sudoku) {
         ContentValues values = new ContentValues();
-        values.put(SudokuColumns.DATA, sudoku.getCells().serialize());
+        values.put(SudokuColumns.DATA, sudoku.getCells().toString());
         values.put(SudokuColumns.CREATED, sudoku.getCreated().getTime());
         values.put(SudokuColumns.LAST_PLAYED, sudoku.getLastPlayed().getTime());
         values.put(SudokuColumns.STATE, sudoku.getState());
@@ -273,7 +273,7 @@ public class SudokuDatabase {
      */
     public void updateSudoku(SudokuGame sudoku) {
         ContentValues values = new ContentValues();
-        values.put(SudokuColumns.DATA, sudoku.getCells().serialize());
+        values.put(SudokuColumns.DATA, sudoku.getCells().toString());
         values.put(SudokuColumns.LAST_PLAYED, sudoku.getLastPlayed().getTime());
         values.put(SudokuColumns.STATE, sudoku.getState());
         values.put(SudokuColumns.TIME, sudoku.getTime());
@@ -309,7 +309,7 @@ public class SudokuDatabase {
     		long folderID = insertFolder("debug" + f);
     		for (int p=0; p<puzzlesPerFolder; p++) {
     			SudokuGame game = new SudokuGame();
-    			game.setCells(SudokuCellCollection.createDebugGame());
+    			game.setCells(CellCollection.createDebugGame());
     			insertSudoku(folderID, game);
     		}
     	}
