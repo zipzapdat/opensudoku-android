@@ -84,11 +84,11 @@ public class SudokuXml {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+		SudokuGame sudoku = new SudokuGame();
 		//store to db
 		long folderID=sudokuDB.insertFolder(name);
 		for(int i=0;i<games.size();i++){
-			SudokuGame sudoku = SudokuGame.parseString(games.get(i));
+			sudoku.parseString(games.get(i));
 			sudokuDB.insertSudoku(folderID, sudoku);	
 		}
 		

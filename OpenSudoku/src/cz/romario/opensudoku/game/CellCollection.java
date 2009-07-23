@@ -66,43 +66,6 @@ public class CellCollection  implements Parcelable {
 		return debugGame;
 	}
 	
-	/**
-	 * Parse game from string.
-	 * for example 
-	 * 016400000200009000400000062070230100100000003003087040960000005000800007000006820
-	 * or
-	 * 016400000
-	 * 200009000
-	 * 400000062
-	 * 070230100
-	 * 100000003
-	 * 003087040
-	 * 960000005
-	 * 000800007
-	 * 000006820
-	 * 
-	 * @return
-	 */
-	public static CellCollection parseString(String data) {
-		Cell[][] cells = new Cell[SUDOKU_SIZE][SUDOKU_SIZE];
-		int pos = 0;
-		for (int r=0; r<SUDOKU_SIZE; r++)
-		{
-			
-			for (int c=0; c<SUDOKU_SIZE; c++)
-			{
-    			while(pos<data.length()){
-    				pos++;
-    				if(data.charAt(pos-1)>='0' && data.charAt(pos-1)<='9'){
-    					cells[r][c] = new Cell(Integer.parseInt(data.substring(pos-1, pos)));
-    				}
-    			}
-			}
-		}
-		
-		return new CellCollection(cells);
-	}
-	
 	public Cell[][] getCells() {
 		return mCells;
 	}
@@ -113,6 +76,7 @@ public class CellCollection  implements Parcelable {
 	 */
 	private CellCollection(Cell[][] cells)
 	{
+		
 		mCells = cells;
 		initCollection();
 	}
@@ -240,7 +204,7 @@ public class CellCollection  implements Parcelable {
 		}
 	}
 
-	// TODO: Parcelable pujde pryc
+	// TODO: remove parcelable and use my serialization?
 	
 	/**
 	 * Contructor because of Parcelable support.
