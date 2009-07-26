@@ -15,7 +15,7 @@
 	<string name="clear">Clear</string>
 	<string name="save">Save</string>
 	
-	<string name="add_folder_hint">Press menu if you want to add new folder.</string>
+	<string name="get_more_puzzles_online">Get more puzzles online</string>
 
 	<string name="name">Name:</string>
 	<string name="note">Note:</string>
@@ -50,6 +50,7 @@
 	<string name="add_sudoku">Add sudoku</string>
 	<string name="filter">Filter</string>
 	<string name="filter_by_gamestate">Filter by game state</string>
+	<string name="folders">Folders</string>
 	<string name="delete_puzzle_confirm">Are you sure you want to delete selected puzzle?</string>
 	<string name="reset_puzzle_confirm">Are you sure you want to reset selected puzzle?</string>
 	<string name="play_puzzle">Play this puzzle</string>
@@ -106,6 +107,9 @@
 	
 	<string name="puzzle_inserted">New puzzle has been saved.</string>
 	<string name="puzzle_updated">Puzzle has been updated.</string>
+	
+	<string name="importing">Importing folder with puzzles...</string>
+	<string name="puzzles_saved">Puzzles have been saved into \'%s\' folder.</string>
 	
 	<string name="credits">Credits:\nRoman Mašek (creator)\nMartin Sobola (UI design)</string>
 	
