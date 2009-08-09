@@ -1,5 +1,3 @@
-#summary More puzzles to download.
-
 === More puzzles ===
 
 Just click the link below and folder will be downloaded and imported directly into the OpenSudoku.
