@@ -20,7 +20,7 @@ import cz.romario.opensudoku.gui.SudokuListFilter;
  */
 public class SudokuDatabase {
 	public static final String DATABASE_NAME = "opensudoku";
-    public static final int DATABASE_VERSION = 7;
+    
     
     public static final String SUDOKU_TABLE_NAME = "sudoku";
     public static final String FOLDER_TABLE_NAME = "folder";
@@ -126,7 +126,7 @@ public class SudokuDatabase {
 	        } else {
 	        	ldb = mOpenHelper.getWritableDatabase();
 	        }
-	        rowId = db.insert(FOLDER_TABLE_NAME, FolderColumns._ID, values);
+	        rowId = ldb.insert(FOLDER_TABLE_NAME, FolderColumns._ID, values);
         } finally {
         	if (db == null && ldb != null) ldb.close();
         }
@@ -285,7 +285,7 @@ public class SudokuDatabase {
 	        values.put(SudokuColumns.PUZZLE_NOTE, sudoku.getNote());
 	        values.put(SudokuColumns.FOLDER_ID, folderID);
 	        
-	        long rowId = db.insert(SUDOKU_TABLE_NAME, FolderColumns.NAME, values);
+	        long rowId = ldb.insert(SUDOKU_TABLE_NAME, FolderColumns.NAME, values);
 	        if (rowId > 0) {
 	            return rowId;
 	        }
