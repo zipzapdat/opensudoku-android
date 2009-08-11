@@ -552,6 +552,7 @@ public class SudokuListActivity extends ListActivity {
 		case MENU_ITEM_FOLDERS: {
 			Intent i = new Intent(this, FolderListActivity.class);
 			startActivity(i);
+			finish();
 			return true;
 		}
 		}
