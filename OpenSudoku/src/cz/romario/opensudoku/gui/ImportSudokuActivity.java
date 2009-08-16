@@ -18,6 +18,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import cz.romario.opensudoku.R;
 import cz.romario.opensudoku.db.SudokuDatabase;
+import cz.romario.opensudoku.db.SudokuInvalidFormatException;
 import cz.romario.opensudoku.game.FolderInfo;
 import cz.romario.opensudoku.game.SudokuGame;
 import android.app.Activity;
@@ -100,49 +101,41 @@ public class ImportSudokuActivity extends Activity {
 				return false;
 			}
 			
-			SudokuGame sudoku = new SudokuGame();
-			
 			publishProgress(0, mGames.size());
 
 			SudokuDatabase sudokuDB = new SudokuDatabase(getApplicationContext());
 			SQLiteDatabase db = sudokuDB.getWritableDatabase();
 			
+			// TODO: quick & dirty version
 			long start = System.currentTimeMillis();
-			long firstFolderID = -1;
 			long folderID = -1;
 			int updateStatusEveryNItems = mGames.size() / NUM_OF_PROGRESS_UPDATES;
 			try {
-				for(int j=0;j<=(mGames.size()-1)/MAX_FOLDER_SIZE;j++){
-					db.beginTransaction();
+				sudokuDB.beginSudokuImport(db);
+				
+				db.beginTransaction();
+				
+				folderID = sudokuDB.insertFolder(mFolderInfo.name, db);
+				for(int i = 0; i < mGames.size(); i++){
 					try {
-						// store to db
-						if(j==0){
-							folderID = sudokuDB.insertFolder(mFolderInfo.name, db);
-							firstFolderID=folderID;
-						}else{
-							folderID = sudokuDB.insertFolder(mFolderInfo.name+" ("+j+")", db);
-						}
-						
-						for (int i = j*MAX_FOLDER_SIZE; i < mGames.size(); i++) {
-							if(i>=(j+1)*MAX_FOLDER_SIZE){
-								break;
-							}
-							sudoku.parseString(mGames.get(i));
-							sudokuDB.insertSudoku(folderID, sudoku, db);
-							if (i % updateStatusEveryNItems == 0) {
-								publishProgress(i);
-							}
-						}
-						db.setTransactionSuccessful();
-					} finally {
-						db.endTransaction();
+						sudokuDB.insertSudokuImport(folderID, mGames.get(i), db);
+					} catch (SudokuInvalidFormatException e) {
+						setError(getString(R.string.invalid_format));
+						return false;
+					}
+					
+					if (i % updateStatusEveryNItems == 0) {
+						publishProgress(i);
 					}
 				}
+				db.setTransactionSuccessful();
 			} finally {
+				db.endTransaction();
+				sudokuDB.finishSudokuImport();
 				db.close();
 			}
-			mFolderInfo.id = firstFolderID;
-			
+			mFolderInfo.id = folderID;
+
 			long end = System.currentTimeMillis();
 			
 			Log.i(TAG, String.format("Imported in %f seconds.", (end - start) / 1000f));
@@ -175,7 +168,6 @@ public class ImportSudokuActivity extends Activity {
 						.getSchemeSpecificPart(), uri.getFragment());
 				InputStreamReader isr = new InputStreamReader(juri.toURL()
 						.openStream());
-				FolderInfo newFolderInfo;
 				try {
 					return importXml(isr);
 				} finally {
@@ -203,7 +195,7 @@ public class ImportSudokuActivity extends Activity {
 			XmlPullParser xpp;
 			try {
 				factory = XmlPullParserFactory.newInstance();
-				factory.setNamespaceAware(true);
+				factory.setNamespaceAware(false);
 				xpp = factory.newPullParser();
 				xpp.setInput(inBR);
 				int eventType = xpp.getEventType();
@@ -211,13 +203,14 @@ public class ImportSudokuActivity extends Activity {
 				while (eventType != XmlPullParser.END_DOCUMENT) {
 					if (eventType == XmlPullParser.START_TAG) {
 						lastTag = xpp.getName();
+						if (lastTag.equals("game")) {
+							importGame(xpp.getAttributeValue(null, "data"));
+						}
 					} else if (eventType == XmlPullParser.END_TAG) {
 						lastTag = "";
 					} else if (eventType == XmlPullParser.TEXT) {
 						if (lastTag.equals("name")) {
 							folderName = xpp.getText();
-						} else if (lastTag.equals("game")) {
-							importGame(xpp.getText());
 						} else if (lastTag.equals("parse-page")) {
 							//download page and find sudoku strings
 							URL url=new URL(xpp.getText());
