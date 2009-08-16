@@ -307,28 +307,29 @@ public class SudokuCellCollection  implements Parcelable {
             throw new IllegalArgumentException("Cannot deserialize Sudoku, data corrupted.");
         }
         
-        if (!lines[0].equals("version: 1")) {
-            throw new IllegalArgumentException(String.format("Unknown version of data: %s", lines[0]));
-        }
-        
-        StringTokenizer tokenizer = new StringTokenizer(lines[1], "|");
-        int r = 0, c = 0;
-        while (tokenizer.hasMoreTokens() && r < 9) {
-            SudokuCell cell = new SudokuCell();
-            cell.setValue(Integer.parseInt(tokenizer.nextToken()));
-            String note = tokenizer.nextToken(); 
-            if (!note.equals("-")) {
-            	cell.setNote(note);
-            }
-            cell.setEditable(tokenizer.nextToken().equals("1"));
-            
-            cells[r][c] = cell;
-            c++;
-            
-            if (c == 9) {
-            	r++;
-            	c = 0;
-            }
+        if (lines[0].equals("version: 1")) {
+	        StringTokenizer tokenizer = new StringTokenizer(lines[1], "|");
+	        int r = 0, c = 0;
+	        while (tokenizer.hasMoreTokens() && r < 9) {
+	            SudokuCell cell = new SudokuCell();
+	            cell.setValue(Integer.parseInt(tokenizer.nextToken()));
+	            String note = tokenizer.nextToken(); 
+	            if (!note.equals("-")) {
+	            	cell.setNote(note);
+	            }
+	            cell.setEditable(tokenizer.nextToken().equals("1"));
+	            
+	            cells[r][c] = cell;
+	            c++;
+	            
+	            if (c == 9) {
+	            	r++;
+	            	c = 0;
+	            }
+	        }
+        } else {
+        	// TODO: chtelo by to ty zpusoby vytvareni kolekce nejak sladit
+        	return SudokuCellCollection.fromString(data);
         }
 
         return new SudokuCellCollection(cells);
@@ -360,4 +361,32 @@ public class SudokuCellCollection  implements Parcelable {
         
         return sb.toString();
 	}
+	
+	public static SudokuCellCollection fromString(String data) {
+		SudokuCellCollection cells = SudokuCellCollection.createEmpty();
+
+		int pos = 0;
+		for (int r = 0; r < SudokuCellCollection.SUDOKU_SIZE; r++) {
+			for (int c = 0; c < SudokuCellCollection.SUDOKU_SIZE; c++) {
+				int value = 0;
+				while (pos < data.length()) {
+					pos++;
+					if (data.charAt(pos - 1) >= '0'
+							&& data.charAt(pos - 1) <= '9') {
+						// value=Integer.parseInt(data.substring(pos-1, pos));
+						value = data.charAt(pos - 1) - '0';
+						break;
+					}
+				}
+				SudokuCell cell = cells.getCell(r, c);
+				cell.setValue(value);
+				cell.setEditable(value == 0);
+			}
+		}
+		
+		cells.initCollection();
+
+		return cells;
+	}
+	
 }
