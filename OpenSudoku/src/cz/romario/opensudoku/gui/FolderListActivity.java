@@ -68,8 +68,8 @@ public class FolderListActivity extends ListActivity {
 		getMorePuzzles.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://draculik.eu/opensudoku/"));
-				intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://opensudoku.eu/puzzles"));
+				//intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 				startActivity(intent);
 			}
 		});

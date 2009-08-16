@@ -6,7 +6,7 @@ import android.content.Context;
 /**
  * Some information about folder, used in FolderListActivity.
  * 
- * @author EXT91365
+ * @author romario
  *
  */
 public class FolderInfo {
@@ -35,6 +35,10 @@ public class FolderInfo {
 	 * Count of puzzles in "playing" state in the folder.
 	 */
 	public int playingCount;
+	
+	public FolderInfo() {
+		
+	}
 	
 	public FolderInfo(long id, String name) {
 		this.id = id;
