@@ -3,3 +3,7 @@
 *0.7.0*
  * ETA: September 2009
  * Show hints using common solving techniques.
+
+*1.0.0*
+ * ETA: ???
+ * Add some multi-player features - create some simple web application where people can compete (competition based on the time needed to solve the puzzle).
