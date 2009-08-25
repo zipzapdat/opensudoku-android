@@ -21,7 +21,9 @@
 package cz.romario.opensudoku.gui.inputmethod;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import cz.romario.opensudoku.R;
 import cz.romario.opensudoku.game.SudokuCell;
@@ -31,9 +33,12 @@ import cz.romario.opensudoku.gui.SudokuBoardView;
 import cz.romario.opensudoku.gui.SudokuBoardView.OnCellSelectedListener;
 import cz.romario.opensudoku.gui.SudokuBoardView.OnCellTappedListener;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -193,6 +198,10 @@ public class IMControlPanel extends LinearLayout {
 		return mActiveMethodIndex;
 	}
 	
+	public List<InputMethod> getInputMethods() {
+		return Collections.unmodifiableList(mInputMethods);
+	}
+	
 	public void showHelpForActiveMethod() {
 		if (mActiveMethodIndex != -1) {
 			InputMethod activeMethod = mInputMethods.get(mActiveMethodIndex);
@@ -265,7 +274,7 @@ public class IMControlPanel extends LinearLayout {
 	}
 	
     /**
-     * Used to save / restore state of time picker
+     * Used to save / restore state of IMControlPanel.
      */
     private static class SavedState extends BaseSavedState {
     	private final int mActiveMethodIndex;
@@ -319,5 +328,35 @@ public class IMControlPanel extends LinearLayout {
     	
     }
     
+	/**
+	 * Class responsible for persisting the state of input method control panel
+	 * and all input methods within it.
+	 * 
+	 * @author romario
+	 * 
+	 */
+//	private static class InputMethodStatePersister {
+//		private static final String PREFIX = IMControlPanel.class.getName() + ".";
+//		private SharedPreferences settings;
+//
+//		public InputMethodStatePersister(Context context) {
+//			settings = PreferenceManager.getDefaultSharedPreferences(context);
+//		}
+//
+//		public void saveState(IMControlPanel controlPanel) {
+//			// TODO: dokoncit
+//			Editor edit = settings.edit();
+//			edit.putInt(PREFIX + "activeMethodIndex", controlPanel.getActiveMethodIndex());
+//			
+//			for (InputMethod im : controlPanel.getInputMethods()) {
+//				im.onSaveState(outState)
+//			}
+//
+//		}
+//
+//		public void restoreState(IMControlPanel controlPanel) {
+//
+//		}
+//	}    
 
 }

@@ -20,6 +20,8 @@
 
 package cz.romario.opensudoku.gui.inputmethod;
 
+import java.util.Map;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.LightingColorFilter;
@@ -149,6 +151,15 @@ public abstract class InputMethod {
 		
 	}
 	
+	protected void onSaveState(Map<String, Object> outState) {
+		
+	}
+	
+	protected void onRestoreState(Map<String, Object> savedInstanceState) {
+		
+	}
+	
+	// TODO: remove
 	protected void onSaveInstanceState(Bundle outState) {
 		
 	}
