@@ -30,6 +30,7 @@
 	<string name="rename_folder_title">重命名 %s</string>
 	<string name="delete_folder_title">删除 %s</string>
 	<string name="delete_folder_confirm">确定要删除此文件吗？</string>
+	<string name="loading">Loading...</string>
 	
 	<string name="no_puzzles">无谜团</string>
 	<string name="one_puzzle">一个谜团</string>
