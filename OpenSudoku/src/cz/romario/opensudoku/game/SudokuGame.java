@@ -273,7 +273,7 @@ public class SudokuGame implements Parcelable {
 		executeCommand(new FillInNotesCommand(mCells));
 	}
 	
-	private void validate() {
+	public void validate() {
 		mCells.validate();
 	}
 	
