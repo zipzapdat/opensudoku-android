@@ -32,6 +32,7 @@
 	<string name="rename_folder_title">Renommer %s</string>
 	<string name="delete_folder_title">Effacer %s</string>
 	<string name="delete_folder_confirm">Êtes-vous sûr de vouloir supprimer ce dossier?</string>
+	<string name="loading">Loading...</string>
 
 	
 	<string name="no_puzzles">Pas de puzzle</string>
