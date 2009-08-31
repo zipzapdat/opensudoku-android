@@ -124,6 +124,43 @@ public class SudokuDatabase {
         return folder;
     }
     
+    /**
+     * Find folder by name. If no folder is found, null is returned
+     * 
+     * @param folderName
+     * @param db
+     * @return
+     */
+    public FolderInfo findFolder(String folderName, SQLiteDatabase db) {
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+
+        qb.setTables(FOLDER_TABLE_NAME);
+        qb.appendWhere(FolderColumns.NAME + " = ?");
+
+        Cursor c = null;
+        
+        try {
+            db = mOpenHelper.getReadableDatabase();
+            c = qb.query(db, null, null, new String[] {folderName}, null, null, null);
+        	
+        	if (c.moveToFirst()) {
+        		// TODO: id as int, really?
+        		long id = c.getLong(c.getColumnIndex(FolderColumns._ID));
+        		String name = c.getString(c.getColumnIndex(FolderColumns.NAME));
+            	
+        		FolderInfo folderInfo = new FolderInfo();
+        		folderInfo.id = id;
+            	folderInfo.name = name;
+            	
+            	return folderInfo;
+        	} else {
+        		return null;
+        	}
+        } finally {
+        	if (c != null) c.close();
+        }
+    }
+    
     public long insertFolder(String name) {
     	return insertFolder(name, null);
     }
@@ -251,7 +288,7 @@ public class SudokuDatabase {
             c = qb.query(db, null, null, null, null, null, null);
         	
         	if (c.moveToFirst()) {
-            	int id = c.getInt(c.getColumnIndex(SudokuColumns._ID));
+            	long id = c.getLong(c.getColumnIndex(SudokuColumns._ID));
             	Date created = new Date(c.getLong(c.getColumnIndex(SudokuColumns.CREATED)));
             	String data = c.getString(c.getColumnIndex(SudokuColumns.DATA));
             	Date lastPlayed = new Date(c.getLong(c.getColumnIndex(SudokuColumns.LAST_PLAYED)));

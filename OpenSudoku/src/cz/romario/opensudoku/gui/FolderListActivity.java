@@ -32,6 +32,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -89,7 +90,7 @@ public class FolderListActivity extends ListActivity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://code.google.com/p/opensudoku-android/wiki/Puzzles"));
-				//intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				startActivity(intent);
 			}
 		});
@@ -404,8 +405,12 @@ public class FolderListActivity extends ListActivity {
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
+		showFolder(id);
+	}
+	
+	private void showFolder(long folderId) {
 		Intent i = new Intent(this, SudokuListActivity.class);
-		i.putExtra(SudokuListActivity.EXTRAS_FOLDER_ID, id);
+		i.putExtra(SudokuListActivity.EXTRAS_FOLDER_ID, folderId);
 		startActivity(i);
 	}
 }
