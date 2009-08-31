@@ -27,6 +27,7 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.MappedByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -44,6 +45,7 @@ import cz.romario.opensudoku.game.SudokuGame;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.BitmapFactory.Options;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -54,36 +56,101 @@ import android.widget.Toast;
 
 public class ImportSudokuActivity extends Activity {
 
+	/**
+	 * Name of folder to which games should be imported.
+	 */
 	public static final String EXTRA_FOLDER_NAME = "FOLDER_NAME";
+	/**
+	 * Indicates whether games should be appended to the existing folder if such
+	 * folder exists.
+	 */
+	public static final String EXTRA_APPEND_TO_FOLDER = "APPEND_TO_FOLDER";
+	/**
+	 * Games (puzzles) to import. String should be in this format:
+	 * 120001232...0041\n 456000213...1100\n
+	 */
 	public static final String EXTRA_GAMES = "GAMES";
-	
+
 	private static final String TAG = "ImportSudokuActivity";
 	static final Pattern SUDOKU_PATT = Pattern.compile(".*\\D([\\d]{81})\\D.*");
 	private ProgressBar mProgress;
-	
-	private abstract class AbstractImportTask extends AsyncTask<Uri, Integer, Boolean> {
-		static final int MAX_FOLDER_SIZE = 250;
+
+	private static class ImportOptions {
+		private Uri mUri;
+		private String mFolderName;
+		private boolean mAppendToFolder;
+		
+		public ImportOptions() {
+			
+		}
+		
+		/**
+		 * Copy constructor.
+		 * 
+		 * @param options
+		 */
+		public ImportOptions(ImportOptions options) {
+			mUri = options.getUri();
+			mFolderName = options.getFolderName();
+			mAppendToFolder = options.isAppendToFolder();
+		}
+		
+		public Uri getUri() {
+			return mUri;
+		}
+
+		public ImportOptions setUri(Uri uri) {
+			mUri = uri;
+			return this;
+		}
+
+		public String getFolderName() {
+			return mFolderName;
+		}
+
+		public ImportOptions setFolderName(String folderName) {
+			mFolderName = folderName;
+			return this;
+		}
+
+		public boolean isAppendToFolder() {
+			return mAppendToFolder;
+		}
+
+		public ImportOptions setAppendToFolder(boolean appendToFolder) {
+			mAppendToFolder = appendToFolder;
+			return this;
+		}
+	}
+
+	private abstract class AbstractImportTask extends
+			AsyncTask<ImportOptions, Integer, Boolean> {
 		static final int NUM_OF_PROGRESS_UPDATES = 20;
+
+		private ImportOptions mOptions;
 		
-		
-		private FolderInfo mFolderInfo = new FolderInfo();
+		private FolderInfo mFolderInfo;
 		private List<String> mGames = new ArrayList<String>();
 		private String mImportError;
 
 		@Override
-		protected Boolean doInBackground(Uri... params) {
+		protected Boolean doInBackground(ImportOptions... params) {
 
-			if (params != null && params.length != 1) {
-				throw new IllegalArgumentException("Only one URI expected.");
+			if (params == null) {
+				throw new IllegalArgumentException("Import options expected.");
+			}
+
+			if (params.length != 1) {
+				throw new IllegalArgumentException("Only one param expected.");
 			}
 
 			try {
-				return importUri(params != null ? params[0] : null);
+				return processImport(params[0]);
 			} catch (Exception e) {
 				Log.e(TAG, "Exception occurred during import.", e);
 				setError(getString(R.string.unknown_import_error));
 			}
-			
+
 			return false;
 		}
 
@@ -94,62 +161,78 @@ public class ImportSudokuActivity extends Activity {
 			}
 			mProgress.setProgress(values[0]);
 		}
-		
+
 		@Override
 		protected void onPostExecute(Boolean result) {
-			
+
 			if (result) {
-				Toast.makeText(ImportSudokuActivity.this, getString(
-						R.string.puzzles_saved, mFolderInfo.name), Toast.LENGTH_LONG).show();
-			
-				Intent i = new Intent(ImportSudokuActivity.this, SudokuListActivity.class);
+				Toast.makeText(ImportSudokuActivity.this,
+						getString(R.string.puzzles_saved, mFolderInfo.name),
+						Toast.LENGTH_LONG).show();
+
+				Intent i = new Intent(ImportSudokuActivity.this,
+						SudokuListActivity.class);
 				i.putExtra(SudokuListActivity.EXTRAS_FOLDER_ID, mFolderInfo.id);
 				startActivity(i);
 			} else {
-				Toast.makeText(ImportSudokuActivity.this, mImportError, Toast.LENGTH_LONG).show();
+				Toast.makeText(ImportSudokuActivity.this, mImportError,
+						Toast.LENGTH_LONG).show();
 			}
-			
+
 			// call finish, so this activity won't be part of history
 			finish();
 		}
-		
-		
-		private Boolean importUri(Uri uri) {
+
+		private Boolean processImport(ImportOptions options) {
+			mOptions = new ImportOptions(options);
 			
-			// let subclass handle the URI
-			processUri(uri);
-			
+
+			// let subclass handle the import
+			processImport();
+
 			if (mGames.size() == 0) {
 				setError(getString(R.string.no_puzzles_found));
 				return false;
 			}
-			
+
 			publishProgress(0, mGames.size());
 
-			SudokuDatabase sudokuDB = new SudokuDatabase(getApplicationContext());
+			SudokuDatabase sudokuDB = new SudokuDatabase(
+					getApplicationContext());
 			SQLiteDatabase db = sudokuDB.getWritableDatabase();
-			
+
 			// TODO: quick & dirty version
 			long start = System.currentTimeMillis();
-			long folderID = -1;
 			int updateStatusEveryNItems = 1;
 			if (mGames.size() > NUM_OF_PROGRESS_UPDATES) {
-				updateStatusEveryNItems = mGames.size() / NUM_OF_PROGRESS_UPDATES;
+				updateStatusEveryNItems = mGames.size()
+						/ NUM_OF_PROGRESS_UPDATES;
 			}
 			try {
 				sudokuDB.beginSudokuImport(db);
-				
+
 				db.beginTransaction();
 				
-				folderID = sudokuDB.insertFolder(mFolderInfo.name, db);
-				for(int i = 0; i < mGames.size(); i++){
+				if (mOptions.isAppendToFolder()) {
+					mFolderInfo = sudokuDB.findFolder(mOptions.getFolderName(), db);
+				}
+				
+				if (mFolderInfo == null) {
+					mFolderInfo = new FolderInfo();
+					mFolderInfo.name = mOptions.getFolderName();
+					mFolderInfo.id = sudokuDB.insertFolder(mFolderInfo.name, db); 
+				}
+				
+
+				for (int i = 0; i < mGames.size(); i++) {
 					try {
-						sudokuDB.insertSudokuImport(folderID, mGames.get(i), db);
+						sudokuDB
+								.insertSudokuImport(mFolderInfo.id, mGames.get(i), db);
 					} catch (SudokuInvalidFormatException e) {
 						setError(getString(R.string.invalid_format));
 						return false;
 					}
-					
+
 					if (i % updateStatusEveryNItems == 0) {
 						publishProgress(i);
 					}
@@ -160,34 +243,47 @@ public class ImportSudokuActivity extends Activity {
 				sudokuDB.finishSudokuImport();
 				db.close();
 			}
-			mFolderInfo.id = folderID;
 
 			long end = System.currentTimeMillis();
-			
-			Log.i(TAG, String.format("Imported in %f seconds.", (end - start) / 1000f));
-			
+
+			Log.i(TAG, String.format("Imported in %f seconds.",
+					(end - start) / 1000f));
+
 			return true;
 		}
-		
-		protected abstract Boolean processUri(Uri uri);
-		
-		protected void setFolderName(String name) {
-			mFolderInfo.name = name;
+
+		/**
+		 * Subclasses should do all import work in this method.
+		 * 
+		 * @return
+		 */
+		protected abstract Boolean processImport();
+
+		/**
+		 * Gets import options. Note that subclasses can and will modify
+		 * contents of options object.
+		 * 
+		 * @return
+		 */
+		protected ImportOptions getOptions() {
+			return mOptions;
 		}
+		
 		
 		protected void importGame(String game) {
 			mGames.add(game);
 		}
-		
+
 		protected void setError(String error) {
 			mImportError = error;
 		}
 	}
-	
+
 	private class ImportOpenSudokuTask extends AbstractImportTask {
 
 		@Override
-		protected Boolean processUri(Uri uri) {
+		protected Boolean processImport() {
+			Uri uri = getOptions().getUri();
 			try {
 				java.net.URI juri;
 				juri = new java.net.URI(uri.getScheme(), uri
@@ -207,15 +303,15 @@ public class ImportSudokuActivity extends Activity {
 				throw new RuntimeException(e);
 			}
 		}
-		
+
 		private boolean importXml(Reader in) {
 			String folderName = "import";
-			
+
 			BufferedReader inBR = new BufferedReader(in);
 			/*
 			 * while((s=in.readLine())!=null){ Log.i(tag, "radek: "+s); }
 			 */
-			
+
 			// parse xml
 			XmlPullParserFactory factory;
 			XmlPullParser xpp;
@@ -238,14 +334,15 @@ public class ImportSudokuActivity extends Activity {
 						if (lastTag.equals("name")) {
 							folderName = xpp.getText();
 						} else if (lastTag.equals("parse-page")) {
-							//download page and find sudoku strings
-							URL url=new URL(xpp.getText());
-							InputStreamReader isr = new InputStreamReader(url.openStream());
-							BufferedReader br=new BufferedReader(isr);
+							// download page and find sudoku strings
+							URL url = new URL(xpp.getText());
+							InputStreamReader isr = new InputStreamReader(url
+									.openStream());
+							BufferedReader br = new BufferedReader(isr);
 							String s;
-							while ((s=br.readLine())!=null) {
-								Matcher m=SUDOKU_PATT.matcher(s);
-								if(m.find()){
+							while ((s = br.readLine()) != null) {
+								Matcher m = SUDOKU_PATT.matcher(s);
+								if (m.find()) {
 									importGame(m.group(1));
 								}
 							}
@@ -254,9 +351,9 @@ public class ImportSudokuActivity extends Activity {
 					}
 					eventType = xpp.next();
 				}
-				
-				setFolderName(folderName);
-				
+
+				getOptions().setFolderName(folderName);
+
 				return true;
 			} catch (XmlPullParserException e) {
 				throw new RuntimeException(e);
@@ -266,12 +363,13 @@ public class ImportSudokuActivity extends Activity {
 		}
 
 	}
-	
+
 	private class SdmImportTask extends AbstractImportTask {
 
 		@Override
-		protected Boolean processUri(Uri uri) {
-			setFolderName(uri.getLastPathSegment());
+		protected Boolean processImport() {
+			Uri uri = getOptions().getUri();
+			getOptions().setFolderName(uri.getLastPathSegment());
 
 			try {
 				URL url = new URL(uri.toString());
@@ -283,7 +381,7 @@ public class ImportSudokuActivity extends Activity {
 						importGame(s);
 					}
 				}
-				
+
 				return true;
 			} catch (MalformedURLException e) {
 				throw new RuntimeException(e);
@@ -291,33 +389,27 @@ public class ImportSudokuActivity extends Activity {
 				throw new RuntimeException(e);
 			}
 		}
-		
+
 	}
-	
+
 	private class StringImportTask extends AbstractImportTask {
 
-		private String mFolderName;
 		private String mGames;
-		
-		public StringImportTask(String folderName, String games) {
-			mFolderName = folderName;
+
+		public StringImportTask(String games) {
 			mGames = games;
 		}
-		
+
 		@Override
-		protected Boolean processUri(Uri uri) {
-			setFolderName(mFolderName);
-			
+		protected Boolean processImport() {
 			for (String game : mGames.split("\n")) {
 				importGame(game);
 			}
-			
+
 			return true;
 		}
-		
+
 	}
-		
-	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -329,26 +421,37 @@ public class ImportSudokuActivity extends Activity {
 				R.drawable.opensudoku);
 
 		mProgress = (ProgressBar) findViewById(R.id.progress);
-		
-		
-		
+
 		Intent intent = getIntent();
 		Uri dataUri = intent.getData();
-		
+
 		if (dataUri != null) {
-			if (intent.getType() == "application/x-opensudoku" || dataUri.toString().endsWith(".opensudoku")) {
-				new ImportOpenSudokuTask().execute(dataUri);
+			if (intent.getType() == "application/x-opensudoku"
+					|| dataUri.toString().endsWith(".opensudoku")) {
+				new ImportOpenSudokuTask().execute(new ImportOptions()
+						.setUri(dataUri));
 			} else if (dataUri.toString().endsWith(".sdm")) {
-				new SdmImportTask().execute(dataUri);
+				new SdmImportTask()
+						.execute(new ImportOptions().setUri(dataUri));
 			} else {
-				Log.e(TAG, String.format("Unknown type of data provided (mime-type=%s; uri=%s), exiting.", intent.getType(), dataUri));
+				Log
+						.e(
+								TAG,
+								String
+										.format(
+												"Unknown type of data provided (mime-type=%s; uri=%s), exiting.",
+												intent.getType(), dataUri));
 				finish();
 				return;
 			}
 		} else if (intent.getStringExtra(EXTRA_FOLDER_NAME) != null) {
 			String folderName = intent.getStringExtra(EXTRA_FOLDER_NAME);
 			String games = intent.getStringExtra(EXTRA_GAMES);
-			new StringImportTask(folderName, games).execute(null);
+			boolean appendToFolder = intent.getBooleanExtra(
+					EXTRA_APPEND_TO_FOLDER, false);
+			new StringImportTask(games).execute(new ImportOptions()
+					.setFolderName(folderName)
+					.setAppendToFolder(appendToFolder));
 		} else {
 			Log.e(TAG, "No data provided, exiting.");
 			finish();

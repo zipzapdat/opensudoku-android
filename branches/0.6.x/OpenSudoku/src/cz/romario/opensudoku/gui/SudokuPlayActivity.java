@@ -144,7 +144,7 @@ public class SudokuPlayActivity extends Activity{
 		
         // read game settings
 		SharedPreferences gameSettings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        mSudokuGame.setHighlightWrongVals(gameSettings.getBoolean("highlight_wrong_values", true));
+        mSudokuBoard.setHighlightWrongVals(gameSettings.getBoolean("highlight_wrong_values", true));
 
         mShowTime = gameSettings.getBoolean("show_time", true);
         if (mSudokuGame.getState() == SudokuGame.GAME_STATE_PLAYING) {
