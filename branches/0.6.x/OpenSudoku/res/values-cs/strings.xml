@@ -29,7 +29,7 @@
 	<string name="delete_folder">Smazat složku</string>
 	<string name="rename_folder_title">Přejmenovat %s</string>
 	<string name="delete_folder_title">Smazat %s</string>
-	<string name="delete_folder_confirm">Jste si jisti, že chcete smazat tuto složku?</string>
+	<string name="delete_folder_confirm">Opravdu chcete smazat tuto složku?</string>
 	
 	<string name="no_puzzles">Žádné sudoku</string>
 	<string name="one_puzzle">1 sudoku</string>
