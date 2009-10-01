@@ -128,5 +128,8 @@
 	<string name="screen_border_size_summary">Some displays do not react to touches on screen edges. This could help in such case.</string>
 	<string name="highlight_touched_cell">Highlight cell on touch</string>
 	<string name="highlight_touched_cell_summary">Highlights row and column of touched cell.</string>
+	<string name="share_folder">Share folder</string>
+	<string name="share_folders">Share folders</string>
+	<string name="folders_created">%s folders have been created.</string>
 	
 </resources>

@@ -6,38 +6,33 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import android.content.Context;
 import android.net.Uri;
-import android.widget.ProgressBar;
+import cz.romario.opensudoku.R;
+import cz.romario.opensudoku.db.SudokuInvalidFormatException;
 
 public class OpenSudokuImportTask extends AbstractImportTask {
 
-	// TODO: coze? tohle bych mel provadet v AbstractImportTask
-	private static final Pattern SUDOKU_PATT = Pattern.compile(".*\\D([\\d]{81})\\D.*");
-	
-	public OpenSudokuImportTask(Context context, ProgressBar progressBar) {
-		super(context, progressBar);
+	private Uri mUri;
+
+	public OpenSudokuImportTask(Uri uri) {
+		mUri = uri;
 	}
-	
+
 	@Override
-	protected Boolean processImport() {
-		Uri uri = getOptions().getUri();
+	protected void processImport() throws SudokuInvalidFormatException {
 		try {
 			java.net.URI juri;
-			juri = new java.net.URI(uri.getScheme(), uri
-					.getSchemeSpecificPart(), uri.getFragment());
+			juri = new java.net.URI(mUri.getScheme(), mUri
+					.getSchemeSpecificPart(), mUri.getFragment());
 			InputStreamReader isr = new InputStreamReader(juri.toURL()
 					.openStream());
 			try {
-				return importXml(isr);
+				importXml(isr);
 			} finally {
 				isr.close();
 			}
@@ -50,12 +45,10 @@ public class OpenSudokuImportTask extends AbstractImportTask {
 		}
 	}
 
-	private boolean importXml(Reader in) {
-		String folderName = "import";
-
+	private void importXml(Reader in) throws SudokuInvalidFormatException {
 		BufferedReader inBR = new BufferedReader(in);
 		/*
-		 * while((s=in.readLine())!=null){ Log.i(tag, "radek: "+s); }
+		 * while((s=in.readLine())!=null){ Log.i(tag, "line: "+s); }
 		 */
 
 		// parse xml
@@ -67,51 +60,62 @@ public class OpenSudokuImportTask extends AbstractImportTask {
 			xpp = factory.newPullParser();
 			xpp.setInput(inBR);
 			int eventType = xpp.getEventType();
-			String lastTag = "";
+			String rootTag = "";
 			while (eventType != XmlPullParser.END_DOCUMENT) {
 				if (eventType == XmlPullParser.START_TAG) {
-					lastTag = xpp.getName();
-					if (lastTag.equals("game")) {
-						importGame(xpp.getAttributeValue(null, "data"));
-					}
-				} else if (eventType == XmlPullParser.END_TAG) {
-					lastTag = "";
-				} else if (eventType == XmlPullParser.TEXT) {
-					if (lastTag.equals("name")) {
-						folderName = xpp.getText();
-					} else if (lastTag.equals("parse-page")) {
-						// download page and find sudoku strings
-						URL url = new URL(xpp.getText());
-						InputStreamReader isr = new InputStreamReader(url
-								.openStream());
-						BufferedReader br = null;
-						try {
-							br = new BufferedReader(isr);
-							
-							String s;
-							while ((s = br.readLine()) != null) {
-								Matcher m = SUDOKU_PATT.matcher(s);
-								if (m.find()) {
-									importGame(m.group(1));
-								}
+					rootTag = xpp.getName();
+					if (rootTag.equals("opensudoku")) {
+						String version = xpp.getAttributeValue(null, "version");
+						if (version == null) {
+							// no version provided, assume that it's version 1
+							importV1(xpp);
+						} else if (version.equals("2")) {
+							importV2(xpp);
+						} else {
+							setError("Unknown version of data.");
 						}
-						} finally {
-							if (br != null) br.close();
-						}
+					} else {
+						setError(mContext.getString(R.string.invalid_format));
+						return;
 					}
-
 				}
 				eventType = xpp.next();
 			}
-
-			getOptions().setFolderName(folderName);
-
-			return true;
 		} catch (XmlPullParserException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private void importV2(XmlPullParser parser)
+		throws XmlPullParserException, IOException {
+		// TODO: version 2 parsing
+	}
+
+	private void importV1(XmlPullParser parser)
+			throws XmlPullParserException, IOException, SudokuInvalidFormatException {
+		int eventType = parser.getEventType();
+		String lastTag = "";
+
+		while (eventType != XmlPullParser.END_DOCUMENT) {
+			if (eventType == XmlPullParser.START_TAG) {
+				lastTag = parser.getName();
+				if (lastTag.equals("game")) {
+					importGame(parser.getAttributeValue(null, "data"));
+				}
+			} else if (eventType == XmlPullParser.END_TAG) {
+				lastTag = "";
+			} else if (eventType == XmlPullParser.TEXT) {
+				if (lastTag.equals("name")) {
+					importFolder(parser.getText(), false);
+				}
+
+			}
+			eventType = parser.next();
+		}
+
+		
 	}
 
 }
