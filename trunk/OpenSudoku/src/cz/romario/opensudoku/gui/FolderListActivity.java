@@ -62,6 +62,8 @@ public class FolderListActivity extends ListActivity {
     public static final int MENU_ITEM_RENAME = Menu.FIRST + 1;
     public static final int MENU_ITEM_DELETE = Menu.FIRST + 2;
     public static final int MENU_ITEM_ABOUT = Menu.FIRST + 3;
+    public static final int MENU_ITEM_EXPORT = Menu.FIRST + 4;
+    public static final int MENU_ITEM_EXPORT_ALL = Menu.FIRST + 5;
 	
 	private static final int DIALOG_ABOUT = 0;
     private static final int DIALOG_ADD_FOLDER = 1;
@@ -151,7 +153,10 @@ public class FolderListActivity extends ListActivity {
 		menu.add(0, MENU_ITEM_ADD, 0, R.string.add_folder)
                 .setShortcut('3', 'a')
                 .setIcon(android.R.drawable.ic_menu_add);
-        menu.add(0, MENU_ITEM_ABOUT, 1, R.string.about)
+        menu.add(0, MENU_ITEM_EXPORT_ALL, 1, R.string.share_folders)
+        .setShortcut('7', 'e')
+        .setIcon(android.R.drawable.ic_menu_share);
+        menu.add(0, MENU_ITEM_ABOUT, 2, R.string.about)
         .setShortcut('1', 'h')
         .setIcon(android.R.drawable.ic_menu_info_details);
 
@@ -186,8 +191,9 @@ public class FolderListActivity extends ListActivity {
         menu.setHeaderTitle(cursor.getString(cursor.getColumnIndex(FolderColumns.NAME)));
 
         // Add a menu item to delete the note
-        menu.add(0, MENU_ITEM_RENAME, 0, R.string.rename_folder);
-        menu.add(0, MENU_ITEM_DELETE, 1, R.string.delete_folder);
+        menu.add(0, MENU_ITEM_EXPORT, 0, R.string.share_folder);
+        menu.add(0, MENU_ITEM_RENAME, 1, R.string.rename_folder);
+        menu.add(0, MENU_ITEM_DELETE, 2, R.string.delete_folder);
     }
 
     @Override
@@ -301,6 +307,12 @@ public class FolderListActivity extends ListActivity {
         
 
         switch (item.getItemId()) {
+        case MENU_ITEM_EXPORT:
+        	Intent intent = new Intent();
+        	intent.setClass(this, SudokuExportActivity.class);
+        	intent.putExtra(SudokuExportActivity.EXTRA_FOLDER_ID, info.id);
+        	startActivity(intent);
+        	return true;
         case MENU_ITEM_RENAME:
         	mRenameFolderID = info.id;
         	showDialog(DIALOG_RENAME_FOLDER);
@@ -319,6 +331,12 @@ public class FolderListActivity extends ListActivity {
         case MENU_ITEM_ADD:
         	showDialog(DIALOG_ADD_FOLDER);
             return true;
+        case MENU_ITEM_EXPORT_ALL:
+        	Intent intent = new Intent();
+        	intent.setClass(this, SudokuExportActivity.class);
+        	intent.putExtra(SudokuExportActivity.EXTRA_FOLDER_ID, SudokuExportActivity.ALL_FOLDERS);
+        	startActivity(intent);
+        	return true;
         case MENU_ITEM_ABOUT:
         	showDialog(DIALOG_ABOUT);
         	return true;

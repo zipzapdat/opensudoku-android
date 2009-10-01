@@ -30,9 +30,8 @@ import android.widget.ProgressBar;
 import cz.romario.opensudoku.R;
 import cz.romario.opensudoku.gui.importing.AbstractImportTask;
 import cz.romario.opensudoku.gui.importing.OpenSudokuImportTask;
-import cz.romario.opensudoku.gui.importing.ImportOptions;
 import cz.romario.opensudoku.gui.importing.SdmImportTask;
-import cz.romario.opensudoku.gui.importing.StringImportTask;
+import cz.romario.opensudoku.gui.importing.ExtrasImportTask;
 import cz.romario.opensudoku.gui.importing.AbstractImportTask.OnImportFinishedListener;
 
 /**
@@ -73,20 +72,17 @@ public class ImportSudokuActivity extends Activity {
 		ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 
 		AbstractImportTask importTask;
-		ImportOptions importOptions = new ImportOptions();
 		Intent intent = getIntent();
 		Uri dataUri = intent.getData();
 		if (dataUri != null) {
 			if (intent.getType() == "application/x-opensudoku"
 					|| dataUri.toString().endsWith(".opensudoku")) {
 				
-				importTask = new OpenSudokuImportTask(this, progressBar);
-				importOptions.setUri(dataUri);
+				importTask = new OpenSudokuImportTask(dataUri);
 			
 			} else if (dataUri.toString().endsWith(".sdm")) {
 
-				importTask = new SdmImportTask(this, progressBar);
-				importOptions.setUri(dataUri);
+				importTask = new SdmImportTask(dataUri);
 			
 			} else {
 				
@@ -105,9 +101,7 @@ public class ImportSudokuActivity extends Activity {
 			String games = intent.getStringExtra(EXTRA_GAMES);
 			boolean appendToFolder = intent.getBooleanExtra(
 					EXTRA_APPEND_TO_FOLDER, false);
-			importTask = new StringImportTask(this, progressBar, games);
-			importOptions.setFolderName(folderName);
-			importOptions.setAppendToFolder(appendToFolder);
+			importTask = new ExtrasImportTask(folderName, games, appendToFolder);
 
 		} else {
 			Log.e(TAG, "No data provided, exiting.");
@@ -115,8 +109,10 @@ public class ImportSudokuActivity extends Activity {
 			return;
 		}
 
+		importTask.initialize(this, progressBar);
 		importTask.setOnImportFinishedListener(mOnImportFinishedListener);
-		importTask.execute(importOptions);
+		
+		importTask.execute();
 	}
 	
 	private OnImportFinishedListener mOnImportFinishedListener = new OnImportFinishedListener() {
