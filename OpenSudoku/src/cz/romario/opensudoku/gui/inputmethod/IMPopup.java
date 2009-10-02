@@ -23,6 +23,8 @@ package cz.romario.opensudoku.gui.inputmethod;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import cz.romario.opensudoku.R;
@@ -38,7 +40,7 @@ public class IMPopup extends InputMethod {
 	
 	private IMPopupDialog mEditCellDialog;
 	private Cell mSelectedCell;
-	
+
 	public boolean getDisableCompletedValues() {
 		return mDisableCompletedValues;
 	}
@@ -57,8 +59,9 @@ public class IMPopup extends InputMethod {
 	private void ensureEditCellDialog() {
 		if (mEditCellDialog == null) {
 			mEditCellDialog = new IMPopupDialog(mContext);
-	        mEditCellDialog.setOnNumberEditListener(onNumberEditListener);
-	        mEditCellDialog.setOnNoteEditListener(onNoteEditListener);
+	        mEditCellDialog.setOnNumberEditListener(mOnNumberEditListener);
+	        mEditCellDialog.setOnNoteEditListener(mOnNoteEditListener);
+	        mEditCellDialog.setOnDismissListener(mOnPopupDismissedListener);
 		}
 		
 	}
@@ -126,12 +129,11 @@ public class IMPopup extends InputMethod {
 	/**
 	 * Occurs when user selects number in EditCellDialog.
 	 */
-    private OnNumberEditListener onNumberEditListener = new OnNumberEditListener() {
+    private OnNumberEditListener mOnNumberEditListener = new OnNumberEditListener() {
 		@Override
 		public boolean onNumberEdit(int number) {
     		if (number != -1 && mSelectedCell != null) {
     			mGame.setCellValue(mSelectedCell, number);
-    			mBoard.hideTouchedCellHint();
     		}
 			return true;
 		}
@@ -140,14 +142,25 @@ public class IMPopup extends InputMethod {
 	/**
 	 * Occurs when user edits note in EditCellDialog
 	 */
-	private OnNoteEditListener onNoteEditListener = new OnNoteEditListener() {
+	private OnNoteEditListener mOnNoteEditListener = new OnNoteEditListener() {
 		@Override
 		public boolean onNoteEdit(Integer[] numbers) {
 			if (mSelectedCell != null) {
 				mGame.setCellNote(mSelectedCell, CellNote.fromIntArray(numbers));
-				mBoard.hideTouchedCellHint();
 			}
 			return true;
 		}
 	};
+	
+	/**
+	 * Occurs when popup dialog is closed.
+	 */
+	private OnDismissListener mOnPopupDismissedListener = new OnDismissListener() {
+		
+		@Override
+		public void onDismiss(DialogInterface dialog) {
+			mBoard.hideTouchedCellHint();
+		}
+	};
+
 }
