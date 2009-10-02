@@ -9,8 +9,25 @@ import cz.romario.opensudoku.R;
 import cz.romario.opensudoku.db.SudokuDatabase;
 import cz.romario.opensudoku.db.SudokuInvalidFormatException;
 import cz.romario.opensudoku.game.FolderInfo;
+import cz.romario.opensudoku.gui.ImportSudokuActivity;
 import cz.romario.opensudoku.utils.Const;
 
+/**
+ * To add support for new import source, do following:
+ * 
+ * 1) Subclass this class. Any input parameters specific for your import should be put
+ * in constructor of your class.
+ * 2) In {@link #processImport()} method process your data source (parse file or maybe download
+ * data from some other source) and save puzzles by calling
+ * {@link #importFolder(String, boolean)} and {@link #importGame(String)} methods. Note
+ * that <code>importFolder</code> must be called first, otherwise <code>importGame</code>
+ * doesn't know where to put puzzles.
+ * 3) Add code to {@link ImportSudokuActivity} which creates instance of your new class and
+ * passes it input parameters.
+ * 
+ * @author romario
+ *
+ */
 public abstract class AbstractImportTask extends
 		AsyncTask<Void, Integer, Boolean> {
 	static final int NUM_OF_PROGRESS_UPDATES = 20;
