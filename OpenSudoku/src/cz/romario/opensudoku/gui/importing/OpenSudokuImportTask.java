@@ -15,6 +15,12 @@ import android.net.Uri;
 import cz.romario.opensudoku.R;
 import cz.romario.opensudoku.db.SudokuInvalidFormatException;
 
+/**
+ * Handles import of application/x-opensudoku or .opensudoku files.
+ * 
+ * @author romario
+ *
+ */
 public class OpenSudokuImportTask extends AbstractImportTask {
 
 	private Uri mUri;

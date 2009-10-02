@@ -2,6 +2,12 @@ package cz.romario.opensudoku.gui.importing;
 
 import cz.romario.opensudoku.db.SudokuInvalidFormatException;
 
+/**
+ * Handles import of puzzles via intent's extras.
+ * 
+ * @author romario
+ *
+ */
 public class ExtrasImportTask extends AbstractImportTask {
 
 	private String mFolderName;

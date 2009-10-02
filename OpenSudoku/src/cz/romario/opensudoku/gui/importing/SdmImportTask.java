@@ -9,6 +9,12 @@ import java.net.URL;
 import android.net.Uri;
 import cz.romario.opensudoku.db.SudokuInvalidFormatException;
 
+/**
+ * Handles import of .sdm files (see http://sudocue.net/download.php).
+ * 
+ * @author romario
+ *
+ */
 public class SdmImportTask extends AbstractImportTask {
 
 	private Uri mUri;
