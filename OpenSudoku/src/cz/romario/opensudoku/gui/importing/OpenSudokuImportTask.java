@@ -11,6 +11,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import cz.romario.opensudoku.R;
 import cz.romario.opensudoku.db.SudokuImportParams;
@@ -34,18 +35,17 @@ public class OpenSudokuImportTask extends AbstractImportTask {
 	@Override
 	protected void processImport() throws SudokuInvalidFormatException {
 		try {
-			java.net.URI juri;
-			juri = new java.net.URI(mUri.getScheme(), mUri
-					.getSchemeSpecificPart(), mUri.getFragment());
-			InputStreamReader isr = new InputStreamReader(juri.toURL()
-					.openStream());
+//			java.net.URI juri;
+//			juri = new java.net.URI(mUri.getScheme(), mUri
+//					.getSchemeSpecificPart(), mUri.getFragment());
+			
+			ContentResolver contentResolver = mContext.getContentResolver();
+			InputStreamReader isr = new InputStreamReader(contentResolver.openInputStream(mUri));
 			try {
 				importXml(isr);
 			} finally {
 				isr.close();
 			}
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {

@@ -36,7 +36,7 @@ import android.os.Bundle;
  * @author romario
  *
  */
-public class ImportFileActivity extends Activity {
+public class FileImportActivity extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

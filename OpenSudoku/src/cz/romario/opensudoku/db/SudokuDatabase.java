@@ -162,8 +162,24 @@ public class SudokuDatabase {
         return folder;
     }
     
+    private static final String INBOX_FOLDER_NAME = "Inbox";
+    
     /**
-     * Find folder by name. If no folder is found, null is returned
+     * Returns folder which acts as a holder for puzzles imported without folder.
+     * If this folder does not exists, it is created.
+     * 
+     * @return
+     */
+    public FolderInfo getInboxFolder() {
+    	FolderInfo inbox = findFolder(INBOX_FOLDER_NAME);
+    	if (inbox != null) {
+    		inbox = insertFolder(INBOX_FOLDER_NAME, System.currentTimeMillis());
+    	}
+    	return inbox;
+    }
+    
+    /**
+     * Find folder by name. If no folder is found, null is returned.
      * 
      * @param folderName
      * @param db
@@ -204,7 +220,7 @@ public class SudokuDatabase {
      * @param created Time of folder creation.
      * @return
      */
-    public long insertFolder(String name, Long created) {
+    public FolderInfo insertFolder(String name, Long created) {
         ContentValues values = new ContentValues();
         values.put(FolderColumns.CREATED, created);
         values.put(FolderColumns.NAME, name);
@@ -214,7 +230,10 @@ public class SudokuDatabase {
         rowId = db.insert(FOLDER_TABLE_NAME, FolderColumns._ID, values);
 
         if (rowId > 0) {
-            return rowId;
+            FolderInfo fi = new FolderInfo();
+            fi.id = rowId;
+            fi.name = name;
+        	return fi;
         }
 
         throw new SQLException(String.format("Failed to insert folder '%s'.", name));
@@ -393,16 +412,28 @@ public class SudokuDatabase {
     /**
      * Returns List of sudokus to export.
      * 
-     * @param folderID Id of folder to export, -1 if all folders should be exported.
+     * @param folderID Id of folder to export, -1 if all folders will be exported.
      * @return
      */
-    public Cursor exportSudoku(long folderID) {
+    public Cursor exportFolder(long folderID) {
     	String query = "select f._id as folder_id, f.name as folder_name, f.created as folder_created, s.created, s.state, s.time, s.last_played, s.data, s.puzzle_note from folder f left outer join sudoku s on f._id = s.folder_id";
     	SQLiteDatabase db = mOpenHelper.getReadableDatabase();
     	if (folderID != -1) {
-    		query += " where f.folder_id = ?";
+    		query += " where f._id = ?";
     	}
     	return db.rawQuery(query, folderID != -1 ? new String[] {String.valueOf(folderID)} : null);
+    }
+    
+    /**
+     * Returns one concrete sudoku to export. Folder context is not exported in this case.
+     * 
+     * @param sudokuID
+     * @return
+     */
+    public Cursor exportSudoku(long sudokuID) {
+    	String query = "select f._id as folder_id, f.name as folder_name, f.created as folder_created, s.created, s.state, s.time, s.last_played, s.data, s.puzzle_note from sudoku s inner join folder f on s.folder_id = f._id where s._id = ?";
+    	SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+    	return db.rawQuery(query, new String[] {String.valueOf(sudokuID)});
     }
 	
     /**

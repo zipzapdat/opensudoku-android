@@ -1,6 +1,7 @@
 package cz.romario.opensudoku.gui;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -11,10 +12,19 @@ import org.xmlpull.v1.XmlSerializer;
 import cz.romario.opensudoku.R;
 import cz.romario.opensudoku.db.SudokuColumns;
 import cz.romario.opensudoku.db.SudokuDatabase;
+import cz.romario.opensudoku.gui.exporting.FileExportTask;
+import cz.romario.opensudoku.gui.exporting.FileExportTaskParams;
+import cz.romario.opensudoku.gui.exporting.FileExportTaskResult;
+import cz.romario.opensudoku.gui.exporting.FileExportTask.OnExportFinishedListener;
 import cz.romario.opensudoku.utils.Const;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Xml;
@@ -23,152 +33,164 @@ import android.widget.Toast;
 public class SudokuExportActivity extends Activity {
 	
 	/**
-	 * Id of exported folder. -1 if all folders should be exported.
+	 * Id of folder to export. If -1, all folders will be exported.
 	 */
 	public static final String EXTRA_FOLDER_ID = "FOLDER_ID";
+	/**
+	 * Id of sudoku to export. 
+	 */
+	public static final String EXTRA_SUDOKU_ID = "SUDOKU_ID";
 	
 	public static final long ALL_FOLDERS = -1;
 	
+	private static final int DIALOG_SELECT_EXPORT_METHOD = 1;
+	
 	private static final String TAG = SudokuExportActivity.class.getSimpleName();
+	
+	private FileExportTask mFileExportTask;
+	private FileExportTaskParams mExportParams;
+	private ProgressDialog mProgressDialog;
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.export_sudoku);
+		// TODO: vymazat layout, jestli nebude treba
+		//setContentView(R.layout.export_sudoku);
 		
-		long folderID;
+
+		mFileExportTask = new FileExportTask(this);
+		mExportParams = new FileExportTaskParams();
+		mProgressDialog = new ProgressDialog(this);
+		mProgressDialog.setIndeterminate(true);
+
 		Intent intent = getIntent();
 		if (intent.hasExtra(EXTRA_FOLDER_ID)) {
-			folderID = intent.getLongExtra(EXTRA_FOLDER_ID, ALL_FOLDERS);
+			mExportParams.folderID = intent.getLongExtra(EXTRA_FOLDER_ID, ALL_FOLDERS);
+		} else if (intent.hasExtra(EXTRA_SUDOKU_ID)) {
+			mExportParams.sudokuID = intent.getLongExtra(EXTRA_SUDOKU_ID, 0);
 		} else {
 			Log.d(TAG, "No 'FOLDER_ID' extra provided, exiting.");
 			finish();
 			return;
 		}
 
-		try {
-			// TODO: multiple export methods (file, mail)
-			// TODO: integration with OI file manager
-			// TODO: asynctask
-			saveToSdCard(folderID, "/sdcard/all_folders.opensudoku");
-			
-		// TODO: better exception handling
-		} catch (Exception e) {
-			Toast.makeText(this, R.string.unknown_export_error, Toast.LENGTH_LONG).show();
-		}
-		
-		finish();
+		showDialog(DIALOG_SELECT_EXPORT_METHOD);
 	}
 	
-	private void saveToSdCard(long folderID, String fileName) {
-		long start = System.currentTimeMillis();
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case DIALOG_SELECT_EXPORT_METHOD:
+	        
+			final int EXPORT_METHOD_FILE = 0;
+			final int EXPORT_METHOD_SDCARD = 1;
+			CharSequence[] exportMethods = new CharSequence[] {
+					getString(R.string.save_to_sdcard),
+					getString(R.string.send_by_mail)
+			};
+			
+			return new AlertDialog.Builder(this)
+	        .setTitle(R.string.share)
+	        .setItems(exportMethods, 
+	        		new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int which) {
+	            	
+	            	switch (which) {
+	            	case EXPORT_METHOD_FILE:
+	            		exportToFile();
+	            		break;
+	            	case EXPORT_METHOD_SDCARD:
+	            		exportToMail();
+	            		break;
+	            	}
+	            }
+	        })
+	        .create();
+		}
+		
+		return null;
+	}
+	
+	private void exportToFile() {
+		mFileExportTask.setOnExportFinishedListener(new OnExportFinishedListener() {
+			
+			@Override
+			public void onExportFinished(FileExportTaskResult result) {
+				// TODO: asi by melo byt na GUI threadu
+				mProgressDialog.dismiss();
+				
+				if (result.successful) {
+		            Toast.makeText(SudokuExportActivity.this, "TODO: successfully exported", Toast.LENGTH_SHORT).show();
+				} else {
+					// TODO: what to do?
+					Toast.makeText(SudokuExportActivity.this, "TODO: not successful, maybe I should not show myself?.", Toast.LENGTH_LONG).show();
+				}
+				finish();
+			}
+		});
+		
+		// TODO: pridat timestamp, moznost vyberu adresare a jmena souboru
+		mExportParams.fileName = "/sdcard/all-folders.opensudoku";
+		
+		mProgressDialog.show();
+		mFileExportTask.execute(mExportParams);
+	}
+	
+	private void exportToMail() {
+		
+		mFileExportTask.setOnExportFinishedListener(new OnExportFinishedListener() {
+			
+			@Override
+			public void onExportFinished(FileExportTaskResult result) {
+				mProgressDialog.dismiss();
 
-		SudokuDatabase database = null;
-		Cursor cursor = null;
-		Writer writer = null;
-		try {
-			database = new SudokuDatabase(getApplicationContext());
-			
-			cursor = database.exportSudoku(folderID);
-			
-			XmlSerializer serializer = Xml.newSerializer();
-			writer = new BufferedWriter(new FileWriter(fileName, false));
-			serializer.setOutput(writer);
-			serializer.startDocument("UTF-8", true);
-			serializer.startTag("", "opensudoku");
-			serializer.attribute("", "version", "2");
-			
-			long currentFolderId = -1;
-			while (cursor.moveToNext()) {
-				if (currentFolderId != cursor.getLong(cursor.getColumnIndex("folder_id"))) {
-					// next folder
-					if (currentFolderId != -1) {
-						serializer.endTag("", "folder");
-					}
-					currentFolderId = cursor.getLong(cursor.getColumnIndex("folder_id"));
-					serializer.startTag("", "folder");
-					attribute(serializer, "name", cursor, "folder_name");
-					attribute(serializer, "created", cursor, "folder_created");
+				if (result.successful) {
+					Intent intent = new Intent(Intent.ACTION_SEND);
+					intent.setType(Const.MIME_TYPE_OPENSUDOKU);
+					intent.putExtra(Intent.EXTRA_TEXT, "Puzzles attached.");
+					intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(result.file));
+					
+			        try { 
+			            startActivity(intent);
+			        } catch (android.content.ActivityNotFoundException ex) {
+			            Toast.makeText(SudokuExportActivity.this, "TODO: no way to share folder", Toast.LENGTH_SHORT).show();
+			        }
+				} else {
+					// TODO: what to do?
+					Toast.makeText(SudokuExportActivity.this, "TODO: not successful, maybe I should not show myself?.", Toast.LENGTH_LONG).show();
 				}
 				
-				String data = cursor.getString(cursor.getColumnIndex(SudokuColumns.DATA));
-				if (data != null) {
-					serializer.startTag("", "game");
-					attribute(serializer, "created", cursor, SudokuColumns.CREATED);
-					attribute(serializer, "state", cursor, SudokuColumns.STATE);
-					attribute(serializer, "time", cursor, SudokuColumns.TIME);
-					attribute(serializer, "last_played", cursor, SudokuColumns.LAST_PLAYED);
-					attribute(serializer, "data", cursor, SudokuColumns.DATA);
-					attribute(serializer, "note", cursor, SudokuColumns.PUZZLE_NOTE);
-					serializer.endTag("", "game");
-				}
+				finish();
 			}
-			if (currentFolderId != -1) {
-				serializer.endTag("", "folder");
-			}
-			
-			serializer.endTag("", "opensudoku");
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		} finally {
-			if (cursor != null) cursor.close();
-			if (database != null) database.close();
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-					throw new RuntimeException(e);
-				}
-			}
-			
-		}
+		});
 		
-		long end = System.currentTimeMillis();
+		// TODO: tady by bylo hezky, aby bylo videt, ze po nem chci vygenerovat temp soubor
 		
-		Toast.makeText(this, getString(R.string.puzzles_exported_to_file, fileName), Toast.LENGTH_LONG).show();
-
-		Log.i(Const.TAG, String.format("Exported in %f seconds.",
-				(end - start) / 1000f));
-		
+		mProgressDialog.show();
+		mFileExportTask.execute(mExportParams);
 	}
 	
-	private void attribute(XmlSerializer serializer, String attributeName, Cursor cursor, String columnName) throws IllegalArgumentException, IllegalStateException, IOException {
-		String value = cursor.getString(cursor.getColumnIndex(columnName));
-		if (value != null) {
-			serializer.attribute("", attributeName, value);
-		}
-	}
 	
 	
 	
 	private void sendByMailPrototype() {
 		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT, getTestData());
-        try {
+		intent.setType(Const.MIME_TYPE_OPENSUDOKU);
+		//intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_TEXT, "Puzzles attached.");
+		File f = new File("/sdcard/all_folders.opensudoku");
+		//File.createTempFile(prefix, suffix)
+		
+		intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(f));
+		
+        try { 
             startActivity(Intent.createChooser(intent, "TODO: vyber kam"));
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(this, "TODO: no way to share folder", Toast.LENGTH_SHORT).show();
+            
         } 
 	}
-	
-	private String getTestData() {
-		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+
-		"<opensudoku>"+
-		"  <name>Gnome-Sudoku Easy</name>"+
-		"  <author>romario333</author>"+
-		"  <description></description>"+
-		"  <comment></comment>"+
-		"  <created>2009-09-16</created>"+
-		"  <source>gnome-sudoku</source>"+
-		"  <level>easy</level>"+
-		"  <sourceURL>http://opensudoku.eu/puzzles</sourceURL>"+
-		"  <game data=\"379000014060010070080009005435007000090040020000800436900700080040080050850000249\" />"+
-		"</opensudoku>";
-
-	}
-
 }
