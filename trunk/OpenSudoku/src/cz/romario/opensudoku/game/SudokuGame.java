@@ -34,8 +34,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
 
-// TODO: try static code analysis (checkstyle, findbugs etc.)
-
 public class SudokuGame implements Parcelable {
 	
 	public static final int GAME_STATE_PLAYING = 0;
@@ -43,10 +41,10 @@ public class SudokuGame implements Parcelable {
 	public static final int GAME_STATE_COMPLETED = 2;
 	
 	private long mId;
-	private Date mCreated;
+	private long mCreated;
 	private int mState;
 	private long mTime;
-	private Date mLastPlayed;
+	private long mLastPlayed;
 	private String mNote;
 	private CellCollection mCells;
 	
@@ -64,8 +62,8 @@ public class SudokuGame implements Parcelable {
 
 	public SudokuGame() {
 		mTime = 0;
-		mLastPlayed = new Date(0);
-		mCreated = new Date(0);
+		mLastPlayed = 0;
+		mCreated = 0;
 		
 		mState = GAME_STATE_NOT_STARTED;
 	}
@@ -83,11 +81,11 @@ public class SudokuGame implements Parcelable {
 		return mNote;
 	}
 
-	public void setCreated(Date created) {
+	public void setCreated(long created) {
 		mCreated = created;
 	}
 
-	public Date getCreated() {
+	public long getCreated() {
 		return mCreated;
 	}
 
@@ -119,11 +117,11 @@ public class SudokuGame implements Parcelable {
 		}
 	}
 
-	public void setLastPlayed(Date lastPlayed) {
+	public void setLastPlayed(long lastPlayed) {
 		mLastPlayed = lastPlayed;
 	}
 
-	public Date getLastPlayed() {
+	public long getLastPlayed() {
 		return mLastPlayed;
 	}
 
@@ -234,7 +232,7 @@ public class SudokuGame implements Parcelable {
 		mTime += SystemClock.uptimeMillis() - mActiveFromTime;
 		mActiveFromTime = -1;
 		
-		setLastPlayed(new Date(System.currentTimeMillis()));
+		setLastPlayed(System.currentTimeMillis());
 	}
 	
 	/**
@@ -260,7 +258,7 @@ public class SudokuGame implements Parcelable {
 		}
 		validate();
 		setTime(0);
-		setLastPlayed(new Date(0));
+		setLastPlayed(0);
 		mState = GAME_STATE_NOT_STARTED;
 	}
 	
@@ -292,10 +290,10 @@ public class SudokuGame implements Parcelable {
 	private SudokuGame(Parcel in) {
 		mId = in.readLong();
 		mNote = in.readString();
-		mCreated = new Date(in.readLong());
+		mCreated = in.readLong();
 		mState = in.readInt();
 		mTime = in.readLong();
-		mLastPlayed = new Date(in.readLong());
+		mLastPlayed = in.readLong();
 		
 		mCells = (CellCollection) in.readParcelable(CellCollection.class.getClassLoader());
 	}
@@ -319,10 +317,10 @@ public class SudokuGame implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeLong(mId);
 		dest.writeString(mNote);
-		dest.writeLong(mCreated.getTime());
+		dest.writeLong(mCreated);
 		dest.writeInt(mState);
 		dest.writeLong(mTime);
-		dest.writeLong(mLastPlayed.getTime());
+		dest.writeLong(mLastPlayed);
 		dest.writeParcelable(mCells, flags);
 	}
 

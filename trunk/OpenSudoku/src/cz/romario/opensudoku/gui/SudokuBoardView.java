@@ -188,17 +188,20 @@ public class SudokuBoardView extends View {
 
 	public void setCells(CellCollection cells) {
 		mCells = cells;
-		if (!mReadonly) {
-			mSelectedCell = mCells.getCell(0, 0); // first cell will be selected by default
-			onCellSelected(mSelectedCell);
-		}
 		
-		mCells.addOnChangeListener(new OnChangeListener() {
-			@Override
-			public void onChange() {
-				postInvalidate();
+		if (mCells != null) {
+			if (!mReadonly) {
+				mSelectedCell = mCells.getCell(0, 0); // first cell will be selected by default
+				onCellSelected(mSelectedCell);
 			}
-		});
+			
+			mCells.addOnChangeListener(new OnChangeListener() {
+				@Override
+				public void onChange() {
+					postInvalidate();
+				}
+			});
+		}
 		
 		postInvalidate();
 	}

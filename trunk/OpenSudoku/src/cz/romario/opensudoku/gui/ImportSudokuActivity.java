@@ -116,14 +116,22 @@ public class ImportSudokuActivity extends Activity {
 	}
 	
 	private OnImportFinishedListener mOnImportFinishedListener = new OnImportFinishedListener() {
-		
+
 		@Override
 		public void onImportFinished(boolean importSuccessful, long folderId) {
-			if (importSuccessful) { 
-				Intent i = new Intent(ImportSudokuActivity.this,
-						 SudokuListActivity.class);
-						 i.putExtra(SudokuListActivity.EXTRA_FOLDER_ID, folderId);
-						 startActivity(i);
+			if (importSuccessful) {
+				if (folderId == -1) {
+					// multiple folders were imported, go to folder list
+					Intent i = new Intent(ImportSudokuActivity.this,
+							FolderListActivity.class);
+					startActivity(i);
+				} else {
+					// one folder was imported, go to this folder
+					Intent i = new Intent(ImportSudokuActivity.this,
+							SudokuListActivity.class);
+					i.putExtra(SudokuListActivity.EXTRA_FOLDER_ID, folderId);
+					startActivity(i);
+				}
 			}
 			// call finish, so this activity won't be part of history
 			finish();
