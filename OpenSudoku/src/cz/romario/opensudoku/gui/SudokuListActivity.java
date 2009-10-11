@@ -479,7 +479,14 @@ public class SudokuListActivity extends ListActivity {
 			case R.id.sudoku_board:
 				String data = c.getString(columnIndex);
 				// TODO: still can be faster, I don't have to call initCollection and read notes
-				CellCollection cells = CellCollection.deserialize(data);
+				CellCollection cells = null;;
+				try {
+					cells = CellCollection.deserialize(data);
+				// TODO: InvalidSudokuFormatException
+				} catch (Exception e) {
+					long id = c.getLong(c.getColumnIndex(SudokuColumns._ID));
+					Log.e(TAG, String.format("Exception occurred when deserializing puzzle with id %s.", id, e));
+				}
 				SudokuBoardView board = (SudokuBoardView) view;
 				board.setReadOnly(true);
 				board.setFocusable(false);

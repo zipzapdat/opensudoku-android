@@ -201,11 +201,10 @@ public class SudokuDatabase {
     /**
      * Inserts new puzzle folder into the database. 
      * @param name Name of the folder.
+     * @param created Time of folder creation.
      * @return
      */
-    public long insertFolder(String name) {
-        Long created = Long.valueOf(System.currentTimeMillis());
-
+    public long insertFolder(String name, Long created) {
         ContentValues values = new ContentValues();
         values.put(FolderColumns.CREATED, created);
         values.put(FolderColumns.NAME, name);
@@ -303,9 +302,9 @@ public class SudokuDatabase {
         	
         	if (c.moveToFirst()) {
             	long id = c.getLong(c.getColumnIndex(SudokuColumns._ID));
-            	Date created = new Date(c.getLong(c.getColumnIndex(SudokuColumns.CREATED)));
+            	long created = c.getLong(c.getColumnIndex(SudokuColumns.CREATED));
             	String data = c.getString(c.getColumnIndex(SudokuColumns.DATA));
-            	Date lastPlayed = new Date(c.getLong(c.getColumnIndex(SudokuColumns.LAST_PLAYED)));
+            	long lastPlayed = c.getLong(c.getColumnIndex(SudokuColumns.LAST_PLAYED));
             	int state = c.getInt(c.getColumnIndex(SudokuColumns.STATE));
             	long time = c.getLong(c.getColumnIndex(SudokuColumns.TIME));
             	String note = c.getString(c.getColumnIndex(SudokuColumns.PUZZLE_NOTE));
@@ -339,8 +338,8 @@ public class SudokuDatabase {
     	SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SudokuColumns.DATA, sudoku.getCells().serialize());
-        values.put(SudokuColumns.CREATED, sudoku.getCreated().getTime());
-        values.put(SudokuColumns.LAST_PLAYED, sudoku.getLastPlayed().getTime());
+        values.put(SudokuColumns.CREATED, sudoku.getCreated());
+        values.put(SudokuColumns.LAST_PLAYED, sudoku.getLastPlayed());
         values.put(SudokuColumns.STATE, sudoku.getState());
         values.put(SudokuColumns.TIME, sudoku.getTime());
         values.put(SudokuColumns.PUZZLE_NOTE, sudoku.getNote());
@@ -354,22 +353,34 @@ public class SudokuDatabase {
         throw new SQLException("Failed to insert sudoku.");
     }
     
-    private static Pattern mSudokuPattern = Pattern.compile("^\\d{81}$");
     private SQLiteStatement mInsertSudokuStatement;
-    public long insertSudokuImport(long folderID, String sudoku) throws SudokuInvalidFormatException {
-		if (sudoku == null || !mSudokuPattern.matcher(sudoku).matches()) {
-			throw new SudokuInvalidFormatException(sudoku);
+    public long importSudoku(long folderID, SudokuImportParams pars) throws SudokuInvalidFormatException {
+    	if (pars.data == null) {
+			throw new SudokuInvalidFormatException(pars.data);
 		}
+    	
+    	if (!CellCollection.isValid(pars.data, CellCollection.DATA_VERSION_PLAIN)) {
+    		if (!CellCollection.isValid(pars.data, CellCollection.DATA_VERSION_1)) {
+    			throw new SudokuInvalidFormatException(pars.data);
+    		}
+    	}
 		
 		if (mInsertSudokuStatement == null) {
 			SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 	    	mInsertSudokuStatement = db.compileStatement(
-					"insert into sudoku (folder_id, created, state, time, last_played, data) values (?, 0, " + SudokuGame.GAME_STATE_NOT_STARTED + ", 0, 0, ?)"
+					"insert into sudoku (folder_id, created, state, time, last_played, data, puzzle_note) values (?, ?, ?, ?, ?, ?, ?)"
 			); 
 		}
 		
 		mInsertSudokuStatement.bindLong(1, folderID);
-		mInsertSudokuStatement.bindString(2, sudoku);
+		mInsertSudokuStatement.bindLong(2, pars.created);
+		mInsertSudokuStatement.bindLong(3, pars.state);
+		mInsertSudokuStatement.bindLong(4, pars.time);
+		mInsertSudokuStatement.bindLong(5, pars.lastPlayed);
+		mInsertSudokuStatement.bindString(6, pars.data);
+		if (pars.note != null) {
+			mInsertSudokuStatement.bindString(7, pars.note);
+		}
 		
 		long rowId = mInsertSudokuStatement.executeInsert();
 		if (rowId > 0) {
@@ -378,6 +389,21 @@ public class SudokuDatabase {
 
 		throw new SQLException("Failed to insert sudoku.");
 	}
+    
+    /**
+     * Returns List of sudokus to export.
+     * 
+     * @param folderID Id of folder to export, -1 if all folders should be exported.
+     * @return
+     */
+    public Cursor exportSudoku(long folderID) {
+    	String query = "select f._id as folder_id, f.name as folder_name, f.created as folder_created, s.created, s.state, s.time, s.last_played, s.data, s.puzzle_note from folder f left outer join sudoku s on f._id = s.folder_id";
+    	SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+    	if (folderID != -1) {
+    		query += " where f.folder_id = ?";
+    	}
+    	return db.rawQuery(query, folderID != -1 ? new String[] {String.valueOf(folderID)} : null);
+    }
 	
     /**
      * Updates sudoku game in the database.
@@ -387,7 +413,7 @@ public class SudokuDatabase {
     public void updateSudoku(SudokuGame sudoku) {
         ContentValues values = new ContentValues();
         values.put(SudokuColumns.DATA, sudoku.getCells().serialize());
-        values.put(SudokuColumns.LAST_PLAYED, sudoku.getLastPlayed().getTime());
+        values.put(SudokuColumns.LAST_PLAYED, sudoku.getLastPlayed());
         values.put(SudokuColumns.STATE, sudoku.getState());
         values.put(SudokuColumns.TIME, sudoku.getTime());
         values.put(SudokuColumns.PUZZLE_NOTE, sudoku.getNote());
@@ -405,18 +431,6 @@ public class SudokuDatabase {
     public void deleteSudoku(long sudokuID) {
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         db.delete(SUDOKU_TABLE_NAME, SudokuColumns._ID + "=" + sudokuID, null);
-    }
-    
-    // TODO: remove
-    public void generateDebugPuzzles(int numOfFolders, int puzzlesPerFolder) {
-    	for (int f=0; f<numOfFolders; f++) {
-    		long folderID = insertFolder("debug" + f);
-    		for (int p=0; p<puzzlesPerFolder; p++) {
-    			SudokuGame game = new SudokuGame();
-    			game.setCells(CellCollection.createDebugGame());
-    			insertSudoku(folderID, game);
-    		}
-    	}
     }
     
     public void close() {

@@ -22,7 +22,11 @@ public class ExtrasImportTask extends AbstractImportTask {
 	
 	@Override
 	protected void processImport()  throws SudokuInvalidFormatException {
-		importFolder(mFolderName, mAppendToFolder);
+		if (mAppendToFolder) {
+			appendToFolder(mFolderName);
+		} else {
+			importFolder(mFolderName);
+		}
 		
 		for (String game : mGames.split("\n")) {
 			importGame(game);

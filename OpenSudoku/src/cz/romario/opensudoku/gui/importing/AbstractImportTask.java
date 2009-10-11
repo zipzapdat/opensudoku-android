@@ -7,8 +7,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import cz.romario.opensudoku.R;
 import cz.romario.opensudoku.db.SudokuDatabase;
+import cz.romario.opensudoku.db.SudokuImportParams;
 import cz.romario.opensudoku.db.SudokuInvalidFormatException;
 import cz.romario.opensudoku.game.FolderInfo;
+import cz.romario.opensudoku.game.SudokuGame;
 import cz.romario.opensudoku.gui.ImportSudokuActivity;
 import cz.romario.opensudoku.utils.Const;
 
@@ -141,50 +143,83 @@ public abstract class AbstractImportTask extends
 	 */
 	protected abstract void processImport() throws SudokuInvalidFormatException;
 
+
 	/**
-	 * Imports folder with given name. 
-	 * 
-	 * If <code>appendToExistingFolder</code> is true, folder with given <code>name</code>
-	 * won't be created if it already exists.
-	 * 
-	 * If <code>appendToExistingFolder</code> is false, new folder is created
-	 * every time this method is called.
+	 * Creates new folder and starts appending puzzles to this folder.
 	 * 
 	 * @param name
-	 * @param appendToExistingFolder
 	 */
-	protected void importFolder(String name, boolean appendToExistingFolder) {
+	protected void importFolder(String name) {
+		importFolder(name, System.currentTimeMillis());
+	}
+	
+
+	/**
+	 * Creates new folder and starts appending puzzles to this folder.
+	 * 
+	 * @param name
+	 * @param created
+	 */
+	protected void importFolder(String name, long created) {
 		if (mDatabase == null) {
 			throw new IllegalStateException("Database is not opened.");
 		}
 		
 		mFolderCount++;
 		
-		mFolder = null;
-		if (appendToExistingFolder) {
-			mFolder = mDatabase.findFolder(name);
-		}
-		if (mFolder == null) {
-			mFolder = new FolderInfo();
-			mFolder.name = name;
-			mFolder.id = mDatabase.insertFolder(mFolder.name);
-		}
+		mFolder = new FolderInfo();
+		mFolder.name = name;
+		mFolder.id = mDatabase.insertFolder(mFolder.name, created);
 	}
 	
 	/**
-	 * Imports game. Game will be stored in folder, which was set by {@link #importFolder(String, boolean)}
-	 * method. 
+	 * Starts appending puzzles to the folder with given <code>name</code>. If such folder does
+	 * not exist, this method creates new one.
+	 * 
+	 * @param name
+	 */
+	protected void appendToFolder(String name) {
+		if (mDatabase == null) {
+			throw new IllegalStateException("Database is not opened.");
+		}
+
+		mFolderCount++;
+		
+		mFolder = null;
+		mFolder = mDatabase.findFolder(name);
+		if (mFolder == null) {
+			mFolder = new FolderInfo();
+			mFolder.name = name;
+			mFolder.id = mDatabase.insertFolder(mFolder.name, System.currentTimeMillis());
+		}
+	}
+	
+	private SudokuImportParams mImportParams = new SudokuImportParams();
+	/**
+	 * Imports game. Game will be stored in folder, which was set by  
+	 * {@link #importFolder(String, boolean)} or {@link #appendToFolder(String)}.
 	 * 
 	 * @param game
 	 * @throws SudokuInvalidFormatException
 	 */
 	protected void importGame(String data) throws SudokuInvalidFormatException {
+		mImportParams.clear();
+		mImportParams.data = data;
+		importGame(mImportParams);
+	}
+	
+	/**
+	 * Imports game with all its fields.
+	 * 
+	 * @param game Fields to import (state of game, created, etc.)
+	 * @param data Data to import.
+	 */
+	protected void importGame(SudokuImportParams pars) throws SudokuInvalidFormatException  {
 		if (mDatabase == null) {
 			throw new IllegalStateException("Database is not opened.");
 		}
-		
-		mGameCount++;
-		mDatabase.insertSudokuImport(mFolder.id, data);
+
+		mDatabase.importSudoku(mFolder.id, pars);
 	}
 
 	protected void setError(String error) {

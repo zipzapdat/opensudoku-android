@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -38,6 +39,17 @@ import android.os.Parcelable;
 public class CellCollection  implements Parcelable {
 	
 	public static final int SUDOKU_SIZE = 9;
+	
+    /**
+     * String is expected to be in format "00002343243202...", where each number represents
+	 * cell value, no other information can be set using this method.
+     */
+    public static int DATA_VERSION_PLAIN = 0;
+    
+    /**
+     * See {@link #DATA_PATTERN_VERSION_1} and {@link #serialize()}.
+     */
+    public static int DATA_VERSION_1 = 1;
 	
 	// TODO: An array of ints is a much better than an array of Integers, but this also generalizes to the fact that two parallel arrays of ints are also a lot more efficient than an array of (int,int) objects
 	// Cell's data.
@@ -336,7 +348,7 @@ public class CellCollection  implements Parcelable {
 	 * @param note
 	 */
 	public static CellCollection deserialize(String data) {
-		// TODO: this could be maybe more defensive
+		// TODO: use DATA_PATTERN_VERSION_1 to validate and extract puzzle data
 		String[] lines = data.split("\n");
         if (lines.length == 0) {
             throw new IllegalArgumentException("Cannot deserialize Sudoku, data corrupted.");
@@ -359,6 +371,8 @@ public class CellCollection  implements Parcelable {
 	 * @return
 	 */
 	public static CellCollection fromString(String data) {
+		// TODO: validate
+		
 		Cell[][] cells = new Cell[SUDOKU_SIZE][SUDOKU_SIZE];
 
 		int pos = 0;
@@ -406,6 +420,26 @@ public class CellCollection  implements Parcelable {
                         cell.serialize(data);
                 }
         }
+	}
+	
+    private static Pattern DATA_PATTERN_VERSION_PLAIN = Pattern.compile("^\\d{81}$");
+    private static Pattern DATA_PATTERN_VERSION_1 = Pattern.compile("^version: 1\\n((?#value)\\d\\|(?#note)((\\d,)+|-)\\|(?#editable)[01]\\|){0,81}$");
+
+    /**
+	 * Returns true, if given <code>data</code> conform to format of given data version.
+	 * 
+	 * @param data
+	 * @param dataVersion
+	 * @return
+	 */
+	public static boolean isValid(String data, int dataVersion) {
+		if (dataVersion == DATA_VERSION_PLAIN) {
+			return DATA_PATTERN_VERSION_PLAIN.matcher(data).matches();
+		} else if (dataVersion == DATA_VERSION_1) {
+			return DATA_PATTERN_VERSION_1.matcher(data).matches();
+		} else {
+			throw new IllegalArgumentException("Unknown version: " + dataVersion);
+		}
 	}
 	
 	public void addOnChangeListener(OnChangeListener listener) {

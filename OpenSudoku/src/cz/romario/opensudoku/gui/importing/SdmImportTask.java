@@ -25,7 +25,7 @@ public class SdmImportTask extends AbstractImportTask {
 	
 	@Override
 	protected void processImport() throws SudokuInvalidFormatException {
-		importFolder(mUri.getLastPathSegment(), false);
+		importFolder(mUri.getLastPathSegment());
 
 		try {
 			URL url = new URL(mUri.toString());

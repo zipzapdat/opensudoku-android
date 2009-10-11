@@ -211,7 +211,7 @@ public class SudokuEditActivity extends Activity {
 			Toast.makeText(getApplicationContext(), R.string.puzzle_updated, Toast.LENGTH_SHORT).show();
 			break;
 		case STATE_INSERT:
-			mGame.setCreated(new Date());
+			mGame.setCreated(System.currentTimeMillis());
 			mDatabase.insertSudoku(mFolderID, mGame);
 			Toast.makeText(getApplicationContext(), R.string.puzzle_inserted, Toast.LENGTH_SHORT).show();
 			break;

@@ -13,7 +13,9 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.net.Uri;
 import cz.romario.opensudoku.R;
+import cz.romario.opensudoku.db.SudokuImportParams;
 import cz.romario.opensudoku.db.SudokuInvalidFormatException;
+import cz.romario.opensudoku.game.SudokuGame;
 
 /**
  * Handles import of application/x-opensudoku or .opensudoku files.
@@ -95,10 +97,44 @@ public class OpenSudokuImportTask extends AbstractImportTask {
 	}
 
 	private void importV2(XmlPullParser parser)
-		throws XmlPullParserException, IOException {
-		// TODO: version 2 parsing
-	}
+		throws XmlPullParserException, IOException, SudokuInvalidFormatException {
+		int eventType = parser.getEventType();
+		String lastTag = "";
+		SudokuImportParams importParams = new SudokuImportParams();
 
+		while (eventType != XmlPullParser.END_DOCUMENT) {
+			if (eventType == XmlPullParser.START_TAG) {
+				lastTag = parser.getName();
+				if (lastTag.equals("folder")) {
+					String name = parser.getAttributeValue(null, "name");
+					long created = parseLong(parser.getAttributeValue(null, "created"), System.currentTimeMillis());
+					importFolder(name, created);
+				} else if (lastTag.equals("game")) {
+					importParams.clear();
+					importParams.created = parseLong(parser.getAttributeValue(null, "created"), System.currentTimeMillis());
+					importParams.state = parseLong(parser.getAttributeValue(null, "state"), SudokuGame.GAME_STATE_NOT_STARTED);
+					importParams.time = parseLong(parser.getAttributeValue(null, "time"), 0);
+					importParams.lastPlayed = parseLong(parser.getAttributeValue(null, "last_played"), 0);
+					importParams.data = parser.getAttributeValue(null, "data");
+					importParams.note = parser.getAttributeValue(null, "note");
+					
+					importGame(importParams);
+				}
+			} else if (eventType == XmlPullParser.END_TAG) {
+				lastTag = "";
+			} else if (eventType == XmlPullParser.TEXT) {
+				if (lastTag.equals("name")) {
+				}
+
+			}
+			eventType = parser.next();
+		}
+	}
+	
+	private long parseLong(String string, long defaultValue) {
+		return string != null ? Long.parseLong(string) : defaultValue;
+	}
+	
 	private void importV1(XmlPullParser parser)
 			throws XmlPullParserException, IOException, SudokuInvalidFormatException {
 		int eventType = parser.getEventType();
@@ -114,7 +150,7 @@ public class OpenSudokuImportTask extends AbstractImportTask {
 				lastTag = "";
 			} else if (eventType == XmlPullParser.TEXT) {
 				if (lastTag.equals("name")) {
-					importFolder(parser.getText(), false);
+					importFolder(parser.getText());
 				}
 
 			}
