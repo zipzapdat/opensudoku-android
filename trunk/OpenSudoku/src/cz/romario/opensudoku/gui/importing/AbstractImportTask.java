@@ -27,6 +27,8 @@ import cz.romario.opensudoku.utils.Const;
  * 3) Add code to {@link ImportSudokuActivity} which creates instance of your new class and
  * passes it input parameters.
  * 
+ * TODO: zkontrolovat, ze se da stornovat stiskem tlacitka zpet
+ * 
  * @author romario
  *
  */
@@ -167,9 +169,7 @@ public abstract class AbstractImportTask extends
 		
 		mFolderCount++;
 		
-		mFolder = new FolderInfo();
-		mFolder.name = name;
-		mFolder.id = mDatabase.insertFolder(mFolder.name, created);
+		mFolder = mDatabase.insertFolder(name, created);
 	}
 	
 	/**
@@ -188,9 +188,7 @@ public abstract class AbstractImportTask extends
 		mFolder = null;
 		mFolder = mDatabase.findFolder(name);
 		if (mFolder == null) {
-			mFolder = new FolderInfo();
-			mFolder.name = name;
-			mFolder.id = mDatabase.insertFolder(mFolder.name, System.currentTimeMillis());
+			mFolder = mDatabase.insertFolder(mFolder.name, System.currentTimeMillis());
 		}
 	}
 	
