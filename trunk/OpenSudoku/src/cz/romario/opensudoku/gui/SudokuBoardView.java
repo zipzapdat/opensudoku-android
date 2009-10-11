@@ -22,12 +22,14 @@ package cz.romario.opensudoku.gui;
 
 import java.util.Collection;
 
+import cz.romario.opensudoku.R;
 import cz.romario.opensudoku.game.Cell;
 import cz.romario.opensudoku.game.CellCollection;
 import cz.romario.opensudoku.game.CellNote;
 import cz.romario.opensudoku.game.SudokuGame;
 import cz.romario.opensudoku.game.CellCollection.OnChangeListener;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -64,24 +66,119 @@ public class SudokuBoardView extends View {
 	private OnCellSelectedListener mOnCellSelectedListener;
 
 	private Paint mLinePaint;
-	private Paint mNumberPaint;
-	private Paint mNotePaint;
+	private Paint mCellValuePaint;
+	private Paint mCellValueReadonlyPaint;
+	private Paint mCellNotePaint;
 	private int mNumberLeft;
 	private int mNumberTop;
 	private float mNoteTop;
-	private Paint mReadonlyPaint;
-	private Paint mTouchedPaint;
-	private Paint mSelectedPaint;
+	private Paint mBackgroundColorReadOnly;
+	private Paint mBackgroundColorTouched;
+	private Paint mBackgroundColorSelected;
+
+	private Paint mCellValueInvalidPaint;
 	
 	public SudokuBoardView(Context context) {
-		super(context);
-		initWidget();
+		this(context, null);
 	}
 	
-	public SudokuBoardView(Context context, AttributeSet attrs) {
-		super(context, attrs);
+	//	public SudokuBoardView(Context context, AttributeSet attrs) {
+	//		this(context, attrs, R.attr.sudokuBoardViewStyle);
+	//	}
+	
+	// TODO: do I need an defStyle?
+	public SudokuBoardView(Context context, AttributeSet attrs/*, int defStyle*/) {
+		super(context, attrs/*, defStyle*/);
 		
-		initWidget();
+		setFocusable(true);
+		setFocusableInTouchMode(true);
+		
+		mLinePaint = new Paint();
+		mCellValuePaint = new Paint();
+		mCellValueReadonlyPaint = new Paint();
+		mCellValueInvalidPaint = new Paint();
+		mCellNotePaint = new Paint();
+		mBackgroundColorReadOnly = new Paint();
+		mBackgroundColorTouched = new Paint();
+		mBackgroundColorSelected = new Paint();
+
+		mCellValuePaint.setAntiAlias(true);
+		mCellValueReadonlyPaint.setAntiAlias(true);
+		mCellValueInvalidPaint.setAntiAlias(true);
+		mCellNotePaint.setAntiAlias(true);
+		mCellValueInvalidPaint.setColor(Color.RED);
+		
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SudokuBoardView/*, defStyle, 0*/);
+
+        setLineColor(a.getColor(R.styleable.SudokuBoardView_lineColor, Color.BLACK));
+        setTextColor(a.getColor(R.styleable.SudokuBoardView_textColor, Color.BLACK));
+        setTextColorReadOnly(a.getColor(R.styleable.SudokuBoardView_textColorReadOnly, Color.BLACK));
+        setTextColorNote(a.getColor(R.styleable.SudokuBoardView_textColorNote, Color.BLACK));
+        setBackgroundColor(a.getColor(R.styleable.SudokuBoardView_backgroundColor, Color.WHITE));
+        setBackgroundColorReadOnly(a.getColor(R.styleable.SudokuBoardView_backgroundColorReadOnly, Color.LTGRAY));
+        setBackgroundColorTouched(a.getColor(R.styleable.SudokuBoardView_backgroundColorTouched, Color.rgb(50, 50, 255)));
+        setBackgroundColorSelected(a.getColor(R.styleable.SudokuBoardView_backgroundColorSelected, Color.YELLOW));
+        
+        a.recycle();
+	}
+	
+
+	public int getLineColor() {
+		return  mLinePaint.getColor();
+	}
+	
+	public void setLineColor(int color) {
+		mLinePaint.setColor(color);
+	}
+	
+	public int getTextColor() {
+		return mCellValuePaint.getColor();
+	}
+	
+	public void setTextColor(int color) {
+		mCellValuePaint.setColor(color);
+	}
+
+	public int getTextColorReadOnly() {
+		return mCellValueReadonlyPaint.getColor();
+	}
+	
+	public void setTextColorReadOnly(int color) {
+		mCellValueReadonlyPaint.setColor(color);
+	}
+	
+	public int getTextColorNote() {
+		return mCellNotePaint.getColor();
+	}
+	
+	public void setTextColorNote(int color) {
+		mCellNotePaint.setColor(color);
+	}
+	
+	public int getBackgroundColorReadOnly() {
+		return mBackgroundColorReadOnly.getColor();
+	}
+	
+	public void setBackgroundColorReadOnly(int color) {
+		mBackgroundColorReadOnly.setColor(color);
+	}
+
+	public int getBackgroundColorTouched() {
+		return mBackgroundColorTouched.getColor();
+	}
+	
+	public void setBackgroundColorTouched(int color) {
+		mBackgroundColorTouched.setColor(color);
+		mBackgroundColorTouched.setAlpha(100);
+	}
+
+	public int getBackgroundColorSelected() {
+		return mBackgroundColorSelected.getColor();
+	}
+	
+	public void setBackgroundColorSelected(int color) {
+		mBackgroundColorSelected.setColor(color);
+		mBackgroundColorSelected.setAlpha(100);
 	}
 	
 	public void setGame(SudokuGame game) {
@@ -184,38 +281,6 @@ public class SudokuBoardView extends View {
 			mOnCellSelectedListener.onCellSelected(cell);
 		}
 	}
-	
-	
-	
-	private void initWidget() {
-		setFocusable(true);
-		setFocusableInTouchMode(true);
-		
-		setBackgroundColor(Color.WHITE);
-		
-		mLinePaint = new Paint();
-		mLinePaint.setColor(Color.BLACK);
-		
-		mNumberPaint = new Paint();
-		mNumberPaint.setColor(Color.BLACK);
-		mNumberPaint.setAntiAlias(true);
-
-		mNotePaint = new Paint();
-		mNotePaint.setColor(Color.BLACK);
-		mNotePaint.setAntiAlias(true);
-		
-		mReadonlyPaint = new Paint();
-		mReadonlyPaint.setColor(Color.LTGRAY);
-
-		mTouchedPaint = new Paint();
-		mTouchedPaint.setColor(Color.rgb(50, 50, 255));
-		//touchedPaint.setColor(Color.rgb(100, 255, 100));
-		mTouchedPaint.setAlpha(100);
-		
-		mSelectedPaint = new Paint();
-		mSelectedPaint.setColor(Color.YELLOW);
-		mSelectedPaint.setAlpha(100);
-	}
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -268,11 +333,14 @@ public class SudokuBoardView extends View {
 
         setMeasuredDimension(width, height);
         
-        mNumberPaint.setTextSize(mCellHeight * 0.75f);
-        mNotePaint.setTextSize(mCellHeight / 3.0f);
+        float cellTextSize = mCellHeight * 0.75f;
+        mCellValuePaint.setTextSize(cellTextSize);
+        mCellValueReadonlyPaint.setTextSize(cellTextSize);
+        mCellValueInvalidPaint.setTextSize(cellTextSize);
+        mCellNotePaint.setTextSize(mCellHeight / 3.0f);
         // compute offsets in each cell to center the rendered number
-        mNumberLeft = (int) ((mCellWidth - mNumberPaint.measureText("9")) / 2);
-        mNumberTop = (int) ((mCellHeight - mNumberPaint.getTextSize()) / 2);
+        mNumberLeft = (int) ((mCellWidth - mCellValuePaint.measureText("9")) / 2);
+        mNumberTop = (int) ((mCellHeight - mCellValuePaint.getTextSize()) / 2);
         
         // add some offset because in some resolutions notes are cut-off in the top
         mNoteTop = mCellHeight / 50.0f;
@@ -297,8 +365,8 @@ public class SudokuBoardView extends View {
 		int cellLeft, cellTop;
 		if (mCells != null) {
 			
-			float numberAscent = mNumberPaint.ascent();
-			float noteAscent = mNotePaint.ascent();
+			float numberAscent = mCellValuePaint.ascent();
+			float noteAscent = mCellNotePaint.ascent();
 			float noteWidth = mCellWidth / 3f;
 			for (int row=0; row<9; row++) {
 				for (int col=0; col<9; col++) {
@@ -312,21 +380,21 @@ public class SudokuBoardView extends View {
 						canvas.drawRect(
 								cellLeft, cellTop, 
 								cellLeft + mCellWidth, cellTop + mCellHeight,
-								mReadonlyPaint);
+								mBackgroundColorReadOnly);
 					}
 					
 					// draw cell Text
 					int value = cell.getValue();
 					if (value != 0) {
-						if (mHighlightWrongVals) {
-							mNumberPaint.setColor(cell.isValid() ? Color.BLACK : Color.RED);
-						} else {
-							mNumberPaint.setColor(Color.BLACK);
+						Paint cellValuePaint = cell.isEditable() ? mCellValuePaint : mCellValueReadonlyPaint;
+						
+						if (mHighlightWrongVals && !cell.isValid()) {
+							cellValuePaint = mCellValueInvalidPaint;
 						}
 						canvas.drawText(Integer.toString(value),
 								cellLeft + mNumberLeft, 
 								cellTop + mNumberTop - numberAscent, 
-								mNumberPaint);
+								cellValuePaint);
 					} else {
 						if (!cell.getNote().isEmpty()) {
 							Collection<Integer> numbers = cell.getNote().getNotedNumbers();
@@ -335,7 +403,7 @@ public class SudokuBoardView extends View {
 								int c = n % 3;
 								int r = n / 3;
 								//canvas.drawText(Integer.toString(number), cellLeft + c*noteWidth + 2, cellTop + noteAscent + r*noteWidth - 1, mNotePaint);
-								canvas.drawText(Integer.toString(number), cellLeft + c*noteWidth + 2, cellTop + mNoteTop - noteAscent + r*noteWidth - 1, mNotePaint);
+								canvas.drawText(Integer.toString(number), cellLeft + c*noteWidth + 2, cellTop + mNoteTop - noteAscent + r*noteWidth - 1, mCellNotePaint);
 							}
 						}
 					}
@@ -352,7 +420,7 @@ public class SudokuBoardView extends View {
 				canvas.drawRect(
 						cellLeft, cellTop, 
 						cellLeft + mCellWidth, cellTop + mCellHeight,
-						mSelectedPaint);
+						mBackgroundColorSelected);
 			}
 			
 			// visually highlight cell under the finger (to cope with touch screen
@@ -363,11 +431,11 @@ public class SudokuBoardView extends View {
 				canvas.drawRect(
 						cellLeft, paddingTop,
 						cellLeft + mCellWidth, height,
-						mTouchedPaint);
+						mBackgroundColorTouched);
 				canvas.drawRect(
 						paddingLeft, cellTop,
 						width, cellTop + mCellHeight,
-						mTouchedPaint);
+						mBackgroundColorTouched);
 			}
 
 		}

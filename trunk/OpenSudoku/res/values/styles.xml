@@ -19,4 +19,10 @@
         <item name="android:layout_marginTop">10sp</item>
         <item name="android:layout_marginLeft">45sp</item>
     </style>
+    
+    <!-- themes -->
+    <style name="DefaultTheme">
+    	<item name="textColor">#0000ff</item>
+    	<item name="textColorReadOnly">#00ff00</item>
+    </style>
 </resources>
