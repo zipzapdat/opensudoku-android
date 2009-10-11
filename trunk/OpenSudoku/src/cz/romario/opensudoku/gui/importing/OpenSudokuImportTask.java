@@ -2,11 +2,13 @@ package cz.romario.opensudoku.gui.importing;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
+import org.apache.http.conn.scheme.Scheme;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -35,20 +37,27 @@ public class OpenSudokuImportTask extends AbstractImportTask {
 	@Override
 	protected void processImport() throws SudokuInvalidFormatException {
 		try {
-//			java.net.URI juri;
-//			juri = new java.net.URI(mUri.getScheme(), mUri
-//					.getSchemeSpecificPart(), mUri.getFragment());
+			InputStreamReader streamReader;
+			if (mUri.getScheme().equals("content")) {
+				ContentResolver contentResolver = mContext.getContentResolver();
+				streamReader = new InputStreamReader(contentResolver.openInputStream(mUri));
+			} else {
+				java.net.URI juri;
+				juri = new java.net.URI(mUri.getScheme(), mUri
+						.getSchemeSpecificPart(), mUri.getFragment());
+				streamReader = new InputStreamReader(juri.toURL().openStream());
+			}
 			
-			ContentResolver contentResolver = mContext.getContentResolver();
-			InputStreamReader isr = new InputStreamReader(contentResolver.openInputStream(mUri));
 			try {
-				importXml(isr);
+				importXml(streamReader);
 			} finally {
-				isr.close();
+				streamReader.close();
 			}
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
 	}
