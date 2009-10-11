@@ -175,9 +175,9 @@ public class SudokuPlayActivity extends Activity{
         mIMSingleNumber.setEnabled(gameSettings.getBoolean("im_single_number", true));
         mIMNumpad.setEnabled(gameSettings.getBoolean("im_numpad", true));
         mIMNumpad.setMoveCellSelectionOnPress(gameSettings.getBoolean("im_numpad_move_right", false));
-        mIMPopup.setDisableCompletedValues(gameSettings.getBoolean("disable_completed_values", true));
-        mIMSingleNumber.setDisableCompletedValues(gameSettings.getBoolean("disable_completed_values", true));
-        mIMNumpad.setDisableCompletedValues(gameSettings.getBoolean("disable_completed_values", true));
+        mIMPopup.setDimCompletedValues(gameSettings.getBoolean("dim_completed_values", true));
+        mIMSingleNumber.setDimCompletedValues(gameSettings.getBoolean("dim_completed_values", true));
+        mIMNumpad.setDimCompletedValues(gameSettings.getBoolean("dim_completed_values", true));
         
         mIMControlPanelStatePersister.restoreState(mIMControlPanel);
 

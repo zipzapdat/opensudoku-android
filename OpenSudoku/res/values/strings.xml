@@ -118,8 +118,6 @@
 	
 	<!-- Strings added in 0.7.0 -->
 	<string name="loading">Loading...</string>
-	<string name="disable_completed_values">Disable completed numbers</string>
-	<string name="disable_completed_values_summary">Disables numbers which has been entered 9 times.</string>
 	
 	<!-- Strings added/changed in 0.7.1 -->
 	<string name="more_settings">More settings</string>
@@ -134,5 +132,7 @@
 	<string name="exporting">Exporting puzzles...</string>
 	<string name="unknown_export_error">Unknown error occurred while exporting puzzles.</string>
 	<string name="puzzles_exported_to_file">Puzzles have been saved to \'%s\'.</string>
+	<string name="dim_completed_values">Dim completed numbers</string>
+	<string name="dim_completed_values_summary">Dim buttons for numbers which has been entered 9 times.</string>
 	
 </resources>
