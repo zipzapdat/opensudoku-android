@@ -21,8 +21,27 @@
     </style>
     
     <!-- themes -->
-    <style name="DefaultTheme">
-    	<item name="textColor">#0000ff</item>
-    	<item name="textColorReadOnly">#00ff00</item>
+    <style name="Theme" parent="android:Theme">
+  	</style>
+    
+    <style name="Theme.Default">
+    	<item name="lineColor">@android:color/black</item>
+    	<item name="textColor">@android:color/black</item>
+    	<item name="textColorReadOnly">@android:color/black</item>
+    	<item name="textColorNote">@android:color/black</item>
+    	<item name="backgroundColor">@android:color/white</item>
+    	<item name="backgroundColorReadOnly">#cccccc</item>
+    	<item name="backgroundColorTouched">#3232ff</item>
+    	<item name="backgroundColorSelected">#ffff00</item>
+    </style>
+    <style name="Theme.Paper">
+    	<item name="lineColor">@android:color/black</item>
+    	<item name="textColor">@android:color/black</item>
+    	<item name="textColorReadOnly">@android:color/black</item>
+    	<item name="textColorNote">@android:color/black</item>
+    	<item name="backgroundColor">@android:color/white</item>
+    	<item name="backgroundColorReadOnly">@android:color/white</item>
+    	<item name="backgroundColorTouched">#3232ff</item>
+    	<item name="backgroundColorSelected">#ffff00</item>
     </style>
 </resources>

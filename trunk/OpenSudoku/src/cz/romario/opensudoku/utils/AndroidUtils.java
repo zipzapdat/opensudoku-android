@@ -2,10 +2,14 @@ package cz.romario.opensudoku.utils;
 
 import java.util.List;
 
+import cz.romario.opensudoku.R;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.preference.PreferenceManager;
 
 public class AndroidUtils {
 	/**
@@ -28,5 +32,14 @@ public class AndroidUtils {
 	                    PackageManager.MATCH_DEFAULT_ONLY);
 	    return list.size() > 0;
 	}
-
+	
+	public static void setThemeFromPreferences(Context context) {
+		SharedPreferences gameSettings = PreferenceManager.getDefaultSharedPreferences(context);
+		String theme = gameSettings.getString("theme", "default");
+		if (theme.equals("paper")) {
+			context.setTheme(R.style.Theme_Paper);
+		} else {
+			context.setTheme(R.style.Theme_Default);
+		}
+	}
 }

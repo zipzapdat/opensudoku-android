@@ -46,6 +46,7 @@ import cz.romario.opensudoku.gui.inputmethod.IMControlPanelStatePersister;
 import cz.romario.opensudoku.gui.inputmethod.IMNumpad;
 import cz.romario.opensudoku.gui.inputmethod.IMPopup;
 import cz.romario.opensudoku.gui.inputmethod.IMSingleNumber;
+import cz.romario.opensudoku.utils.AndroidUtils;
 
 /*
  */
@@ -63,6 +64,8 @@ public class SudokuPlayActivity extends Activity{
 	private static final int DIALOG_RESTART = 1;
 	private static final int DIALOG_WELL_DONE = 2;
 	private static final int DIALOG_CLEAR_NOTES = 3;
+	
+	private static final int REQUEST_SETTINGS = 1;
 	
 	private long mSudokuGameID;
 	private SudokuGame mSudokuGame;
@@ -101,6 +104,9 @@ public class SudokuPlayActivity extends Activity{
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			mIsSmallScreen = true;
 		}
+		
+		// theme must be set before setContentView
+		AndroidUtils.setThemeFromPreferences(this);
         
 		setContentView(R.layout.sudoku_play);
 		
@@ -281,13 +287,30 @@ public class SudokuPlayActivity extends Activity{
         case MENU_ITEM_SETTINGS:
         	Intent i = new Intent();
         	i.setClass(this, GameSettingsActivity.class);
-        	startActivity(i);
+        	startActivityForResult(i, REQUEST_SETTINGS);
         	return true;
         case MENU_ITEM_HELP:
         	mHintsQueue.showHint(R.string.help, R.string.help_text);
         	return true;
         }
         return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case REQUEST_SETTINGS:
+			restartActivity();
+			break;
+		}
+	}
+	
+	/**
+	 * Restarts whole activity.
+	 */
+	private void restartActivity() {
+		startActivity(getIntent());
+		finish();
 	}
     
     @Override

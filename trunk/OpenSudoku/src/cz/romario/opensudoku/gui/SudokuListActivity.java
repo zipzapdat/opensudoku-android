@@ -55,6 +55,7 @@ import cz.romario.opensudoku.game.FolderInfo;
 import cz.romario.opensudoku.game.CellCollection;
 import cz.romario.opensudoku.game.SudokuGame;
 import cz.romario.opensudoku.gui.FolderDetailLoader.FolderDetailCallback;
+import cz.romario.opensudoku.utils.AndroidUtils;
 
 /**
  * List of puzzles in folder.
@@ -105,6 +106,9 @@ public class SudokuListActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// theme must be set before setContentView
+		AndroidUtils.setThemeFromPreferences(this);
 		
 		setContentView(R.layout.sudoku_list);
 		mFilterStatus = (TextView)findViewById(R.id.filter_status);

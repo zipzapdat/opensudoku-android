@@ -27,6 +27,7 @@ import cz.romario.opensudoku.db.SudokuDatabase;
 import cz.romario.opensudoku.game.SudokuGame;
 import cz.romario.opensudoku.gui.inputmethod.IMControlPanel;
 import cz.romario.opensudoku.gui.inputmethod.InputMethod;
+import cz.romario.opensudoku.utils.AndroidUtils;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -85,6 +86,9 @@ public class SudokuEditActivity extends Activity {
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN); 		
 		}
+		
+		// theme must be set before setContentView
+		AndroidUtils.setThemeFromPreferences(this);
 		
 		setContentView(R.layout.sudoku_edit);
 		mBoard = (SudokuBoardView)findViewById(R.id.sudoku_board);
