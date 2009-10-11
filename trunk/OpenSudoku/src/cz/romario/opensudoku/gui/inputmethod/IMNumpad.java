@@ -42,7 +42,7 @@ import cz.romario.opensudoku.gui.inputmethod.IMControlPanelStatePersister.StateB
 public class IMNumpad extends InputMethod {
 
 	private boolean moveCellSelectionOnPress = true;
-	private boolean mDisableCompletedValues = true;
+	private boolean mDimCompletedValues = true;
 	
 	private static final int MODE_EDIT_VALUE = 0;
 	private static final int MODE_EDIT_NOTE = 1;
@@ -62,18 +62,18 @@ public class IMNumpad extends InputMethod {
 		this.moveCellSelectionOnPress = moveCellSelectionOnPress;
 	}
 	
-	public boolean getDisableCompletedValues() {
-		return mDisableCompletedValues;
+	public boolean getDimCompletedValues() {
+		return mDimCompletedValues;
 	}
 	
 	/**
 	 * If set to true, buttons for numbers, which occur in {@link CellCollection}
-	 * more than {@link CellCollection#SUDOKU_SIZE}-times, will be disabled.
+	 * more than {@link CellCollection#SUDOKU_SIZE}-times, will be dimmed.
 	 * 
-	 * @param disableCompletedValues
+	 * @param dimCompletedValues
 	 */
-	public void setDisableCompletedValues(boolean disableCompletedValues) {
-		mDisableCompletedValues = disableCompletedValues;
+	public void setDimCompletedValues(boolean dimCompletedValues) {
+		mDimCompletedValues = dimCompletedValues;
 	}
 	
 	@Override
@@ -200,16 +200,16 @@ public class IMNumpad extends InputMethod {
 			break;
 		}
 		
-		// enable all buttons (reset to the initial state)
-		for (Button button : mNumberButtons.values()) {
-			button.setEnabled(true);
-		}
-
-		if (mDisableCompletedValues) {
+		if (mDimCompletedValues) {
+			int dimmedColor = mContext.getResources().getColor(R.color.im_number_button_completed_text);
 			Map<Integer, Integer> valuesUseCount = mGame.getCells().getValuesUseCount();
 			for (Map.Entry<Integer, Integer> entry : valuesUseCount.entrySet()) {
-				boolean valueEnabled = entry.getValue() < CellCollection.SUDOKU_SIZE;
-				mNumberButtons.get(entry.getKey()).setEnabled(valueEnabled);
+				boolean dimValue = entry.getValue() >= CellCollection.SUDOKU_SIZE;
+				if (dimValue) {
+					mNumberButtons.get(entry.getKey()).setTextColor(dimmedColor);
+				} else {
+					mNumberButtons.get(entry.getKey()).setTextAppearance(mContext, android.R.style.TextAppearance_Widget_Button);
+				}
 			}
 		}
 	}

@@ -92,11 +92,14 @@ public class IMPopupDialog extends Dialog {
 	
 	// TODO: vsude jinde pouzivam misto number value
 	public void updateNumber(Integer number) {
+		LightingColorFilter selBkgColorFilter = new LightingColorFilter(
+				mContext.getResources().getColor(R.color.im_number_button_selected_background), 0);
+
 		for (Map.Entry<Integer, Button> entry : mNumberButtons.entrySet()) {
 			Button b = entry.getValue();
 			if (entry.getKey().equals(number)) {
 				b.setTextAppearance(mContext, android.R.style.TextAppearance_Large_Inverse);
-				b.getBackground().setColorFilter(new LightingColorFilter(Color.rgb(240, 179, 42), 0));
+				b.getBackground().setColorFilter(selBkgColorFilter);
 			} else {
 				b.setTextAppearance(mContext, android.R.style.TextAppearance_Widget_Button);
 				b.getBackground().setColorFilter(null);
@@ -122,18 +125,24 @@ public class IMPopupDialog extends Dialog {
 		}
 	}
 	
-	public void enableAllNumbers() {
-		for (Button b : mNumberButtons.values()) {
-			b.setEnabled(true);
-		}
-		for (Button b : mNoteNumberButtons.values()) {
-			b.setEnabled(true);
-		}
-	}
+//	public void enableAllNumbers() {
+//		for (Button b : mNumberButtons.values()) {
+//			b.setEnabled(true);
+//		}
+//		for (Button b : mNoteNumberButtons.values()) {
+//			b.setEnabled(true);
+//		}
+//	}
 	
 	public void setNumberEnabled(int number, boolean enabled) {
 		mNumberButtons.get(number).setEnabled(enabled);
 		mNoteNumberButtons.get(number).setEnabled(enabled);
+	}
+
+	public void dimNumber(int number) {
+		int dimmedColor = mContext.getResources().getColor(R.color.im_number_button_completed_text);
+		mNumberButtons.get(number).setTextColor(dimmedColor);
+		mNoteNumberButtons.get(number).setTextColor(dimmedColor);
 	}
 	
 	
