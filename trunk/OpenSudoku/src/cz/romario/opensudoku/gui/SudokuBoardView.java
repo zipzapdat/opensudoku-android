@@ -66,6 +66,7 @@ public class SudokuBoardView extends View {
 	private OnCellSelectedListener mOnCellSelectedListener;
 
 	private Paint mLinePaint;
+	private Paint mSectorLinePaint;
 	private Paint mCellValuePaint;
 	private Paint mCellValueReadonlyPaint;
 	private Paint mCellNotePaint;
@@ -94,6 +95,7 @@ public class SudokuBoardView extends View {
 		setFocusableInTouchMode(true);
 		
 		mLinePaint = new Paint();
+		mSectorLinePaint = new Paint();
 		mCellValuePaint = new Paint();
 		mCellValueReadonlyPaint = new Paint();
 		mCellValueInvalidPaint = new Paint();
@@ -111,6 +113,7 @@ public class SudokuBoardView extends View {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SudokuBoardView/*, defStyle, 0*/);
 
         setLineColor(a.getColor(R.styleable.SudokuBoardView_lineColor, Color.BLACK));
+        setSectorLineColor(a.getColor(R.styleable.SudokuBoardView_sectorLineColor, Color.BLACK));
         setTextColor(a.getColor(R.styleable.SudokuBoardView_textColor, Color.BLACK));
         setTextColorReadOnly(a.getColor(R.styleable.SudokuBoardView_textColorReadOnly, Color.BLACK));
         setTextColorNote(a.getColor(R.styleable.SudokuBoardView_textColorNote, Color.BLACK));
@@ -121,7 +124,6 @@ public class SudokuBoardView extends View {
         
         a.recycle();
 	}
-	
 
 	public int getLineColor() {
 		return  mLinePaint.getColor();
@@ -129,6 +131,14 @@ public class SudokuBoardView extends View {
 	
 	public void setLineColor(int color) {
 		mLinePaint.setColor(color);
+	}
+
+	public int getSectorLineColor() {
+		return  mSectorLinePaint.getColor();
+	}
+	
+	public void setSectorLineColor(int color) {
+		mSectorLinePaint.setColor(color);
 	}
 	
 	public int getTextColor() {
@@ -446,22 +456,26 @@ public class SudokuBoardView extends View {
 		// draw vertical lines
 		for (int c=0; c <= 9; c++) {
 			float x = (c * mCellWidth) + paddingLeft;
-			if (c % 3 == 0) {
-				canvas.drawRect(x-1, paddingTop, x+1, height, mLinePaint);
-			} else {
-				canvas.drawLine(x, paddingTop, x, height, mLinePaint);
-			}
+			canvas.drawLine(x, paddingTop, x, height, mLinePaint);
 		}
 		
 		// draw horizontal lines
 		for (int r=0; r <= 9; r++) {
 			float y = r * mCellHeight + paddingTop;
-			if (r % 3 == 0) {
-				canvas.drawRect(paddingLeft, y-1, width, y+1, mLinePaint);
-			} else {
-				canvas.drawLine(paddingLeft, y, width, y, mLinePaint);
-			}
+			canvas.drawLine(paddingLeft, y, width, y, mLinePaint);
 		}
+		
+		// draw sector (thick) lines
+		for (int c=0; c <= 9; c = c + 3) {
+			float x = (c * mCellWidth) + paddingLeft;
+			canvas.drawRect(x-1, paddingTop, x+1, height, mSectorLinePaint);
+		}
+		
+		for (int r=0; r <= 9; r = r + 3) {
+			float y = r * mCellHeight + paddingTop;
+			canvas.drawRect(paddingLeft, y-1, width, y+1, mSectorLinePaint);
+		}
+		
 	}
 	
 	@Override

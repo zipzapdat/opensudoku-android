@@ -8,6 +8,7 @@
     </declare-styleable>
      <declare-styleable name="SudokuBoardView">
         <attr name="lineColor" format="color" />
+        <attr name="sectorLineColor" format="color" />
         <attr name="textColor" format="color" />
         <attr name="textColorReadOnly" format="color" />
         <attr name="textColorNote" format="color" />
