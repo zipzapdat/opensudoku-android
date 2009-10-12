@@ -38,6 +38,8 @@ public class AndroidUtils {
 		String theme = gameSettings.getString("theme", "default");
 		if (theme.equals("paper")) {
 			context.setTheme(R.style.Theme_Paper);
+		} else if (theme.equals("default_test")) {
+			context.setTheme(R.style.Theme_DefaultTest);
 		} else {
 			context.setTheme(R.style.Theme_Default);
 		}
