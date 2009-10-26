@@ -5,5 +5,5 @@ import java.io.File;
 public class FileExportTaskResult {
 	public boolean successful;
 	public File file;
-	public boolean isTemporary;
+	public String error;
 }
