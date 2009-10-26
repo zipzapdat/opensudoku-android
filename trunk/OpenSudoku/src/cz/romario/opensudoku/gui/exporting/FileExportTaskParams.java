@@ -1,5 +1,7 @@
 package cz.romario.opensudoku.gui.exporting;
 
+import java.io.File;
+
 public class FileExportTaskParams {
 	
 	/**
@@ -12,9 +14,8 @@ public class FileExportTaskParams {
 	public Long sudokuID;
 	
 	/**
-	 * File name (including path) where data should be saved. If not set, temporary
-	 * file will be created.
+	 * File where data should be saved.
 	 */
-	public String fileName;
+	public File file;
 
 }

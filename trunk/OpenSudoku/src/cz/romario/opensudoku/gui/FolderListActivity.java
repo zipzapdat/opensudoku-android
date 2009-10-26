@@ -153,7 +153,7 @@ public class FolderListActivity extends ListActivity {
 		menu.add(0, MENU_ITEM_ADD, 0, R.string.add_folder)
                 .setShortcut('3', 'a')
                 .setIcon(android.R.drawable.ic_menu_add);
-        menu.add(0, MENU_ITEM_EXPORT_ALL, 1, R.string.share_all_folders)
+        menu.add(0, MENU_ITEM_EXPORT_ALL, 1, R.string.export_all_folders)
         .setShortcut('7', 'e')
         .setIcon(android.R.drawable.ic_menu_share);
         menu.add(0, MENU_ITEM_ABOUT, 2, R.string.about)
@@ -191,7 +191,7 @@ public class FolderListActivity extends ListActivity {
         menu.setHeaderTitle(cursor.getString(cursor.getColumnIndex(FolderColumns.NAME)));
 
         // TODO: why not call them just share, rename and delete?
-        menu.add(0, MENU_ITEM_EXPORT, 0, R.string.share_folder);
+        menu.add(0, MENU_ITEM_EXPORT, 0, R.string.export_folder);
         menu.add(0, MENU_ITEM_RENAME, 1, R.string.rename_folder);
         menu.add(0, MENU_ITEM_DELETE, 2, R.string.delete_folder);
     }

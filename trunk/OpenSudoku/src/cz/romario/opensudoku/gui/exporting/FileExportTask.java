@@ -27,7 +27,7 @@ import android.widget.Toast;
  * @author romario
  *
  */
-public class FileExportTask extends AsyncTask<FileExportTaskParams, Integer, Boolean> {
+public class FileExportTask extends AsyncTask<FileExportTaskParams, Integer, Void> {
 
 	private Context mContext;
 	private Handler mGuiHandler;
@@ -48,8 +48,7 @@ public class FileExportTask extends AsyncTask<FileExportTaskParams, Integer, Boo
 	}
 	
 	@Override
-	protected Boolean doInBackground(FileExportTaskParams... params) {
-		// TODO: exception handling a return false
+	protected Void doInBackground(FileExportTaskParams... params) {
 		for (FileExportTaskParams par : params) {
 			final FileExportTaskResult res = saveToFile(par);
 			
@@ -65,7 +64,7 @@ public class FileExportTask extends AsyncTask<FileExportTaskParams, Integer, Boo
 			});
 		}
 		
-		return true;
+		return null;
 	}
 	
 	private FileExportTaskResult saveToFile(FileExportTaskParams par) {
@@ -73,6 +72,10 @@ public class FileExportTask extends AsyncTask<FileExportTaskParams, Integer, Boo
 			throw new IllegalArgumentException("Exactly one of folderID and sudokuID must be set.");
 		} else if (par.folderID != null && par.sudokuID != null) {
 			throw new IllegalArgumentException("Exactly one of folderID and sudokuID must be set.");
+		}
+		
+		if (par.file == null) {
+			throw new IllegalArgumentException("Filename must be set.");
 		}
 		
 		long start = System.currentTimeMillis();
@@ -84,19 +87,13 @@ public class FileExportTask extends AsyncTask<FileExportTaskParams, Integer, Boo
 		Cursor cursor = null;
 		Writer writer = null;
 		try {
-			
-			
-			File file;
-			if (par.fileName != null) {
-				file = new File(par.fileName);
-				result.isTemporary = false;
-			} else {
-				// TODO: meaningful names e.g. "easy_15_2009-10-10-234561"
-				// TODO: do not create temp files in root and delete them
-				file = File.createTempFile("export-", ".opensudoku");
-				result.isTemporary = true;
+			// create dir if it does not exists already
+			File dir = new File(par.file.getParent());
+			if (!dir.exists()) {
+				dir.mkdirs();
 			}
-			result.file = file;
+			
+			result.file = par.file;
 			
 			database = new SudokuDatabase(mContext);
 			
@@ -110,7 +107,7 @@ public class FileExportTask extends AsyncTask<FileExportTaskParams, Integer, Boo
 			}
 			
 			XmlSerializer serializer = Xml.newSerializer();
-			writer = new BufferedWriter(new FileWriter(file, false));
+			writer = new BufferedWriter(new FileWriter(result.file, false));
 			serializer.setOutput(writer);
 			serializer.startDocument("UTF-8", true);
 			serializer.startTag("", "opensudoku");
@@ -167,8 +164,6 @@ public class FileExportTask extends AsyncTask<FileExportTaskParams, Integer, Boo
 		
 		long end = System.currentTimeMillis();
 		
-		//Toast.makeText(mContext, mContext.getString(R.string.puzzles_exported_to_file, fileName), Toast.LENGTH_LONG).show();
-
 		Log.i(Const.TAG, String.format("Exported in %f seconds.",
 				(end - start) / 1000f));
 

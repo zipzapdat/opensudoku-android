@@ -125,9 +125,9 @@
 	<string name="screen_border_size_summary">Some displays do not react to touches on screen edges. This could help in such case.</string>
 	<string name="highlight_touched_cell">Highlight cell on touch</string>
 	<string name="highlight_touched_cell_summary">Highlights row and column of touched cell.</string>
-	<string name="share">Share</string>
-	<string name="share_folder">Share folder</string>
-	<string name="share_all_folders">Share all folders</string>
+	<string name="export">Export</string>
+	<string name="export_folder">Export folder</string>
+	<string name="export_all_folders">Export all folders</string>
 	<string name="folders_created">%s folders have been imported.</string>
 	<string name="importing">Importing puzzles...</string>
 	<string name="exporting">Exporting puzzles...</string>
@@ -140,4 +140,8 @@
 	<string name="theme">Theme</string>
 	<string name="theme_summary"></string>
 	<string name="select_theme">Select theme</string>
+	<string name="filename">Filename</string>
+	<string name="directory">Directory</string>
+	<string name="sdcard_not_found">SD card not found.</string>
+	<string name="puzzles_have_been_saved">Puzzles have been saved to %s.</string>
 </resources>
