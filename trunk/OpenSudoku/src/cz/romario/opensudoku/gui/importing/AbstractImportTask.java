@@ -187,7 +187,7 @@ public abstract class AbstractImportTask extends
 		mFolder = null;
 		mFolder = mDatabase.findFolder(name);
 		if (mFolder == null) {
-			mFolder = mDatabase.insertFolder(mFolder.name, System.currentTimeMillis());
+			mFolder = mDatabase.insertFolder(name, System.currentTimeMillis());
 		}
 	}
 	
