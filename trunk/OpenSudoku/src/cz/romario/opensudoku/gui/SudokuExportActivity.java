@@ -1,41 +1,29 @@
 package cz.romario.opensudoku.gui;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Date;
 
-import org.xmlpull.v1.XmlSerializer;
-
-import cz.romario.opensudoku.R;
-import cz.romario.opensudoku.db.SudokuColumns;
-import cz.romario.opensudoku.db.SudokuDatabase;
-import cz.romario.opensudoku.game.FolderInfo;
-import cz.romario.opensudoku.gui.exporting.FileExportTask;
-import cz.romario.opensudoku.gui.exporting.FileExportTaskParams;
-import cz.romario.opensudoku.gui.exporting.FileExportTaskResult;
-import cz.romario.opensudoku.gui.exporting.FileExportTask.OnExportFinishedListener;
-import cz.romario.opensudoku.utils.Const;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.util.Xml;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import cz.romario.opensudoku.R;
+import cz.romario.opensudoku.db.SudokuDatabase;
+import cz.romario.opensudoku.game.FolderInfo;
+import cz.romario.opensudoku.gui.exporting.FileExportTask;
+import cz.romario.opensudoku.gui.exporting.FileExportTaskParams;
+import cz.romario.opensudoku.gui.exporting.FileExportTaskResult;
+import cz.romario.opensudoku.gui.exporting.FileExportTask.OnExportFinishedListener;
 
 public class SudokuExportActivity extends Activity {
 	
@@ -50,7 +38,8 @@ public class SudokuExportActivity extends Activity {
 	
 	public static final long ALL_FOLDERS = -1;
 	
-	private static final int DIALOG_SELECT_EXPORT_METHOD = 1;
+	private static final int DIALOG_FILE_EXISTS = 1;
+	
 	
 	private static final String TAG = SudokuExportActivity.class.getSimpleName();
 	
@@ -114,54 +103,51 @@ public class SudokuExportActivity extends Activity {
 	private OnClickListener mOnSaveClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			exportToFile(mDirectoryEdit.getText().toString(), mFileNameEdit.getText().toString());
+			exportToFile();
 		}
 	};
 
 	
-//	@Override
-//	protected Dialog onCreateDialog(int id) {
-//		switch (id) {
-//		case DIALOG_SELECT_EXPORT_METHOD:
-//	        
-//			final int EXPORT_METHOD_FILE = 0;
-//			final int EXPORT_METHOD_SDCARD = 1;
-//			CharSequence[] exportMethods = new CharSequence[] {
-//					getString(R.string.save_to_sdcard),
-//					getString(R.string.send_by_mail)
-//			};
-//			
-//			return new AlertDialog.Builder(this)
-//	        .setTitle(R.string.export)
-//	        .setItems(exportMethods, 
-//	        		new DialogInterface.OnClickListener() {
-//	            public void onClick(DialogInterface dialog, int which) {
-//	            	
-//	            	switch (which) {
-//	            	case EXPORT_METHOD_FILE:
-//	            		exportToFile();
-//	            		break;
-//	            	case EXPORT_METHOD_SDCARD:
-//	            		exportToMail();
-//	            		break;
-//	            	}
-//	            }
-//	        })
-//	        .create();
-//		}
-//		
-//		return null;
-//	}
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case DIALOG_FILE_EXISTS:
+	        
+			return new AlertDialog.Builder(this)
+	        .setTitle(R.string.export)
+	        .setMessage(R.string.file_exists)
+	        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					startExportToFileTask();
+				}
+	        })
+	        .setNegativeButton(android.R.string.no, null)
+	        .create();
+		}
+		
+		return null;
+	}
 	
-	private void exportToFile(String directory, String filename) {
+	private void exportToFile() {
 		File sdcard = new File("/sdcard");
 		if (!sdcard.exists()) {
 			Toast.makeText(SudokuExportActivity.this, R.string.sdcard_not_found, Toast.LENGTH_LONG);
 			finish();
 		}
 		
-		// TODO: ask user what to do when file already exists
+		String directory = mDirectoryEdit.getText().toString(); 
+		String filename = mFileNameEdit.getText().toString();
 		
+		File file = new File(directory, filename + ".opensudoku");
+		if (file.exists()) {
+			showDialog(DIALOG_FILE_EXISTS);
+		} else {
+			startExportToFileTask();
+		}
+	}
+	
+	private void startExportToFileTask() {
 		mFileExportTask.setOnExportFinishedListener(new OnExportFinishedListener() {
 			
 			@Override
@@ -169,7 +155,7 @@ public class SudokuExportActivity extends Activity {
 				mProgressDialog.dismiss();
 				
 				if (result.successful) {
-		            Toast.makeText(SudokuExportActivity.this, getString(R.string.puzzles_have_been_saved, result.file), Toast.LENGTH_SHORT).show();
+		            Toast.makeText(SudokuExportActivity.this, getString(R.string.puzzles_have_been_exported, result.file), Toast.LENGTH_SHORT).show();
 				} else {
 					Toast.makeText(SudokuExportActivity.this, getString(R.string.unknown_export_error), Toast.LENGTH_LONG).show();
 				}
@@ -177,10 +163,14 @@ public class SudokuExportActivity extends Activity {
 			}
 		});
 		
+		String directory = mDirectoryEdit.getText().toString(); 
+		String filename = mFileNameEdit.getText().toString();
+
 		mExportParams.file = new File(directory, filename + ".opensudoku");
 		
 		mProgressDialog.show();
 		mFileExportTask.execute(mExportParams);
+		
 	}
 	
 //	private void exportToMail() {
@@ -211,38 +201,10 @@ public class SudokuExportActivity extends Activity {
 //			}
 //		});
 //		
-//		// TODO: tady by bylo hezky, aby bylo videt, ze po nem chci vygenerovat temp soubor
 //		
 //		mProgressDialog.show();
 //		mFileExportTask.execute(mExportParams);
 //	}
 	
-	
-	
-	
-	
-	private void ensureOpenSudokuDirectory() throws SDCardNotFoundException {
-		File sdcard = new File("/sdcard");
-		if (!sdcard.exists()) {
-			throw new SDCardNotFoundException();
-		}
-		
-		File ouDir = new File("/sdcard/opensudoku");
-		if (!ouDir.exists()) {
-			ouDir.mkdir();
-		}
-	}
-	
-	public static class SDCardNotFoundException extends Exception {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -7187487062106017855L;
-
-		public SDCardNotFoundException() {
-			super("SD card not found.");
-		}
-	}
 	
 }
