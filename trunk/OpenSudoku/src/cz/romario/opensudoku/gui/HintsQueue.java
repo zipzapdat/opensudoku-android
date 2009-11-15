@@ -110,7 +110,6 @@ public class HintsQueue {
 	private void showHintDialog(Message hint) {
 		synchronized (mHintDialog) {
 			mHintDialog.setTitle(mContext.getString(hint.titleResID));
-			// TODO: hint.args !!
 			mHintDialog.setMessage(mContext.getText(hint.messageResID));
 			mHintDialog.show();
 		}

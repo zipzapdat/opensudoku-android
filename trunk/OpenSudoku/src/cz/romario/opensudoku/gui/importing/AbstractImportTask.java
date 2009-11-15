@@ -26,7 +26,7 @@ import cz.romario.opensudoku.utils.Const;
  * 3) Add code to {@link ImportSudokuActivity} which creates instance of your new class and
  * passes it input parameters.
  * 
- * TODO: zkontrolovat, ze se da stornovat stiskem tlacitka zpet
+ * TODO: add cancel support
  * 
  * @author romario
  *
