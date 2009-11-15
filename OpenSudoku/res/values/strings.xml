@@ -143,5 +143,6 @@
 	<string name="filename">Filename</string>
 	<string name="directory">Directory</string>
 	<string name="sdcard_not_found">SD card not found.</string>
-	<string name="puzzles_have_been_saved">Puzzles have been saved to %s.</string>
+	<string name="puzzles_have_been_exported">Puzzles have been exported to %s.</string>
+	<string name="file_exists">File already exists, do you want to overwrite it?</string>
 </resources>
