@@ -10,7 +10,6 @@ import cz.romario.opensudoku.db.SudokuDatabase;
 import cz.romario.opensudoku.db.SudokuImportParams;
 import cz.romario.opensudoku.db.SudokuInvalidFormatException;
 import cz.romario.opensudoku.game.FolderInfo;
-import cz.romario.opensudoku.game.SudokuGame;
 import cz.romario.opensudoku.gui.ImportSudokuActivity;
 import cz.romario.opensudoku.utils.Const;
 

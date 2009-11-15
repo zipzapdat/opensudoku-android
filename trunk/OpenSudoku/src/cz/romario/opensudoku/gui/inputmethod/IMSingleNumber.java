@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.os.Handler;
 import android.view.LayoutInflater;

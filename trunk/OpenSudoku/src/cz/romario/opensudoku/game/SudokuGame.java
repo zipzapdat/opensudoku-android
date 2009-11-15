@@ -20,19 +20,16 @@
 
 package cz.romario.opensudoku.game;
 
-import java.util.Date;
 import java.util.Stack;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.os.SystemClock;
 import cz.romario.opensudoku.game.command.ClearAllNotesCommand;
 import cz.romario.opensudoku.game.command.Command;
 import cz.romario.opensudoku.game.command.EditCellNoteCommand;
 import cz.romario.opensudoku.game.command.FillInNotesCommand;
 import cz.romario.opensudoku.game.command.SetCellValueCommand;
-
-
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.os.SystemClock;
 
 public class SudokuGame implements Parcelable {
 	
