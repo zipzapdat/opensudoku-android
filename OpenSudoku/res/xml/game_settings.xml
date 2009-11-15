@@ -10,9 +10,9 @@
                 android:summary="@string/highlight_wrong_values_summary"
                 android:defaultValue="true" />
         <CheckBoxPreference
-                android:key="dim_completed_values"
-                android:title="@string/dim_completed_values"
-                android:summary="@string/dim_completed_values_summary"
+                android:key="highlight_completed_values"
+                android:title="@string/highlight_completed_values"
+                android:summary="@string/highlight_completed_values_summary"
                 android:defaultValue="true" />
     </PreferenceCategory>
     <PreferenceCategory

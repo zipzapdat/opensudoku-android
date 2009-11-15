@@ -55,7 +55,7 @@ public class IMSingleNumber extends InputMethod {
 	private static final int MODE_EDIT_VALUE = 0;
 	private static final int MODE_EDIT_NOTE = 1;
 	
-	private boolean mDimCompletedValues = true;
+	private boolean mHighlightCompletedValues = true;
 	
 	private int mSelectedNumber = 1;
 	private int mEditMode = MODE_EDIT_VALUE;
@@ -70,18 +70,18 @@ public class IMSingleNumber extends InputMethod {
 		mGuiHandler = new Handler();
 	}
 	
-	public boolean getDimCompletedValues() {
-		return mDimCompletedValues;
+	public boolean getHighlightCompletedValues() {
+		return mHighlightCompletedValues;
 	}
 	
 	/**
 	 * If set to true, buttons for numbers, which occur in {@link CellCollection}
-	 * more than {@link CellCollection#SUDOKU_SIZE}-times, will be dimmed.
+	 * more than {@link CellCollection#SUDOKU_SIZE}-times, will be highlighted.
 	 * 
-	 * @param dimCompletedValues
+	 * @param highlightCompletedValues
 	 */
-	public void setDimCompletedValues(boolean dimCompletedValues) {
-		mDimCompletedValues = dimCompletedValues;
+	public void setHighlightCompletedValues(boolean highlightCompletedValues) {
+		mHighlightCompletedValues = highlightCompletedValues;
 	}
 	
 	@Override
@@ -180,6 +180,7 @@ public class IMSingleNumber extends InputMethod {
 			@Override
 			public void run() {
 				for (Button b : mNumberButtons.values()) {
+					b.setBackgroundResource(R.drawable.btn_default_bg);
 					if (b.getTag().equals(mSelectedNumber)) {
 						b.setTextAppearance(mContext, android.R.style.TextAppearance_Large_Inverse);
 						LightingColorFilter selBkgColorFilter = new LightingColorFilter(
@@ -191,13 +192,20 @@ public class IMSingleNumber extends InputMethod {
 					}
 				}
 				
-				if (mDimCompletedValues) {
-					int dimmedColor = mContext.getResources().getColor(R.color.im_number_button_completed_text);
+				if (mHighlightCompletedValues) {
+					int completedTextColor = mContext.getResources().getColor(R.color.im_number_button_completed_text);
 					Map<Integer, Integer> valuesUseCount = mGame.getCells().getValuesUseCount();
 					for (Map.Entry<Integer, Integer> entry : valuesUseCount.entrySet()) {
-						boolean dimValue = entry.getValue() >= CellCollection.SUDOKU_SIZE;
-						if (dimValue) {
-							mNumberButtons.get(entry.getKey()).setTextColor(dimmedColor);
+						boolean highlightValue = entry.getValue() >= CellCollection.SUDOKU_SIZE;
+						if (highlightValue) {
+							
+							Button b = mNumberButtons.get(entry.getKey());
+							if (b.getTag().equals(mSelectedNumber)) {
+								b.setTextColor(completedTextColor);
+							} else {
+								b.setBackgroundResource(R.drawable.btn_completed_bg);
+							}
+
 						}
 					}
 				}

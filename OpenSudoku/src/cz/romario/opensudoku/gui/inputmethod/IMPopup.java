@@ -36,23 +36,23 @@ import cz.romario.opensudoku.gui.inputmethod.IMPopupDialog.OnNumberEditListener;
 
 public class IMPopup extends InputMethod {
 
-	private boolean mDimCompletedValues = true;
+	private boolean mHighlightCompletedValues = true;
 	
 	private IMPopupDialog mEditCellDialog;
 	private Cell mSelectedCell;
 
-	public boolean getDimCompletedValues() {
-		return mDimCompletedValues;
+	public boolean getHighlightCompletedValues() {
+		return mHighlightCompletedValues;
 	}
 	
 	/**
 	 * If set to true, buttons for numbers, which occur in {@link CellCollection}
-	 * more than {@link CellCollection#SUDOKU_SIZE}-times, will be dimmed.
+	 * more than {@link CellCollection#SUDOKU_SIZE}-times, will be highlighted.
 	 * 
-	 * @param dimCompletedValues
+	 * @param highlightCompletedValues
 	 */
-	public void setDimCompletedValues(boolean dimCompletedValues) {
-		mDimCompletedValues = dimCompletedValues;
+	public void setHighlightCompletedValues(boolean highlightCompletedValues) {
+		mHighlightCompletedValues = highlightCompletedValues;
 	}
 	
 	
@@ -81,13 +81,15 @@ public class IMPopup extends InputMethod {
 		mSelectedCell = cell;
 		if (cell.isEditable()) {
 			ensureEditCellDialog();
+			
+			mEditCellDialog.resetButtons();
 			mEditCellDialog.updateNumber(cell.getValue());
 			mEditCellDialog.updateNote(cell.getNote().getNotedNumbers());
-			if (mDimCompletedValues) {
+			if (mHighlightCompletedValues) {
 				Map<Integer, Integer> valuesUseCount = mGame.getCells().getValuesUseCount();
 				for (Map.Entry<Integer, Integer> entry : valuesUseCount.entrySet()) {
 					if (entry.getValue() >= CellCollection.SUDOKU_SIZE) {
-						mEditCellDialog.dimNumber(entry.getKey());
+						mEditCellDialog.highlightNumber(entry.getKey());
 					}
 				}
 			}
