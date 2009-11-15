@@ -98,7 +98,7 @@ public class FileExportTask extends AsyncTask<FileExportTaskParams, Integer, Voi
 			if (par.folderID != null) {
 				cursor = database.exportFolder(par.folderID);
 				generateFolders = true;
-			} else if (par.sudokuID != null) {
+			} else {
 				cursor = database.exportFolder(par.sudokuID);
 				generateFolders = false;
 			}

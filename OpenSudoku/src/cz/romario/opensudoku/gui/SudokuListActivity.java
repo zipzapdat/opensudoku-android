@@ -486,10 +486,9 @@ public class SudokuListActivity extends ListActivity {
 				CellCollection cells = null;;
 				try {
 					cells = CellCollection.deserialize(data);
-				// TODO: InvalidSudokuFormatException
 				} catch (Exception e) {
 					long id = c.getLong(c.getColumnIndex(SudokuColumns._ID));
-					Log.e(TAG, String.format("Exception occurred when deserializing puzzle with id %s.", id, e));
+					Log.e(TAG, String.format("Exception occurred when deserializing puzzle with id %s.", id), e);
 				}
 				SudokuBoardView board = (SudokuBoardView) view;
 				board.setReadOnly(true);

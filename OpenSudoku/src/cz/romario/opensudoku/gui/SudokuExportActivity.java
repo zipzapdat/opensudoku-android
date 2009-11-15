@@ -89,6 +89,8 @@ public class SudokuExportActivity extends Activity {
 			FolderInfo folder = database.getFolderInfo(mExportParams.folderID);
 			if (folder == null) {
 				Log.d(TAG, String.format("Folder with id %s not found, exiting.", mExportParams.folderID));
+				finish();
+				return;
 			}
 			fileName = folder.name + "-" + timestamp;
 			database.close();
