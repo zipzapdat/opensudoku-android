@@ -132,7 +132,6 @@
 	<string name="importing">Importing puzzles...</string>
 	<string name="exporting">Exporting puzzles...</string>
 	<string name="unknown_export_error">Unknown error occurred while exporting puzzles.</string>
-	<string name="puzzles_exported_to_file">Puzzles have been saved to \'%s\'.</string>
 	<string name="highlight_completed_values">Highlight completed numbers</string>
 	<string name="highlight_completed_values_summary">Highlight buttons for numbers which has been entered 9 times.</string>
 	<string name="save_to_sdcard">Save to sdcard</string>

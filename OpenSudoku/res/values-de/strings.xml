@@ -125,18 +125,25 @@
 	<string name="screen_border_size_summary">Spielfeld verkleinern, falls Ihr Bildschirm nicht auf Berührungen am Bildschirmrand reagiert.</string>
 	<string name="highlight_touched_cell">Berührte Zelle hervorheben</string>
 	<string name="highlight_touched_cell_summary">Spalte und Zeile einer berührten Zelle hervorheben.</string>
-	<string name="share">Freigeben</string>
-	<string name="share_folder">Ordner freigeben</string>
-	<string name="share_all_folders">Alle Ordner freigeben</string>
+	<string name="export">Export</string>
+	<string name="export_folder">Export folder</string>
+	<string name="export_all_folders">Export all folders</string>
 	<string name="folders_created">%s Ordner wurden importiert</string>
 	<string name="importing">Importiere Sudoku-Rätsel...</string>
 	<string name="exporting">Exportiere Sudoku-Rätsel...</string>
 	<string name="unknown_export_error">Ein unbekannter Fehler ist während des Exports aufgetreten.</string>
-	<string name="puzzles_exported_to_file">Puzzles wurden gespeichert nach \'%s\'.</string>
-	<string name="dim_completed_values">Bereits eingetragene Zahlen ausblenden</string>
-	<string name="dim_completed_values_summary">Zahlen die bereits neun mal eingegeben wurden ausblenden.</string>
+	<string name="highlight_completed_values">Highlight completed numbers</string>
+	<string name="highlight_completed_values_summary">Highlight buttons for numbers which has been entered 9 times.</string>
 	<string name="save_to_sdcard">Speichern auf SD-Karte</string>
 	<string name="send_by_mail">Senden per E-Mail</string>
+	<string name="theme">Theme</string>
+	<string name="theme_summary">Select color theme for puzzle board.</string>
+	<string name="select_theme">Select theme</string>
+	<string name="filename">Filename</string>
+	<string name="directory">Directory</string>
+	<string name="sdcard_not_found">SD card not found.</string>
+	<string name="puzzles_have_been_exported">Puzzles have been exported to %s.</string>
+	<string name="file_exists">File already exists, do you want to overwrite it?</string>
 	
 	<!-- Strings added for localization of default folder names -->
 	<string name="difficulty_hard">Schwer</string>
