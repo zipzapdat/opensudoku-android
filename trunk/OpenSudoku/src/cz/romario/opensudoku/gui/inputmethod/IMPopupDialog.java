@@ -54,6 +54,9 @@ public class IMPopupDialog extends Dialog {
 	private Map<Integer,Button> mNumberButtons = new HashMap<Integer, Button>();
 	// buttons from "Edit note" tab
 	private Map<Integer,ToggleButton> mNoteNumberButtons = new HashMap<Integer, ToggleButton>();
+	
+	// selected number on "Select number" tab (0 if nothing is selected).
+	private int mSelectedNumber;
 	// selected numbers on "Edit note" tab
 	private Set<Integer> mNoteSelectedNumbers = new HashSet<Integer>();
 	
@@ -74,7 +77,9 @@ public class IMPopupDialog extends Dialog {
 		setContentView(mTabHost);
 	}
 	
-	/**
+	/**					LightingColorFilter bkgColorFilter = new LightingColorFilter(
+							mContext.getResources().getColor(R.color.im_number_button_completed_background), 0);
+
 	 * Registers a callback to be invoked when number is selected.
 	 * @param l
 	 */
@@ -90,14 +95,26 @@ public class IMPopupDialog extends Dialog {
 		mOnNoteEditListener = l;
 	}
 	
+	public void resetButtons() {
+		for (Button b : mNumberButtons.values()) {
+			b.setBackgroundResource(R.drawable.btn_default_bg);
+		}
+
+		for (Button b : mNoteNumberButtons.values()) {
+			b.setBackgroundResource(R.drawable.btn_toggle_bg);
+		}
+	}
+	
 	// TODO: vsude jinde pouzivam misto number value
 	public void updateNumber(Integer number) {
+		mSelectedNumber = number;
+		
 		LightingColorFilter selBkgColorFilter = new LightingColorFilter(
 				mContext.getResources().getColor(R.color.im_number_button_selected_background), 0);
 
 		for (Map.Entry<Integer, Button> entry : mNumberButtons.entrySet()) {
 			Button b = entry.getValue();
-			if (entry.getKey().equals(number)) {
+			if (entry.getKey().equals(mSelectedNumber)) {
 				b.setTextAppearance(mContext, android.R.style.TextAppearance_Large_Inverse);
 				b.getBackground().setColorFilter(selBkgColorFilter);
 			} else {
@@ -134,15 +151,21 @@ public class IMPopupDialog extends Dialog {
 //		}
 //	}
 	
-	public void setNumberEnabled(int number, boolean enabled) {
-		mNumberButtons.get(number).setEnabled(enabled);
-		mNoteNumberButtons.get(number).setEnabled(enabled);
-	}
+//	public void setNumberEnabled(int number, boolean enabled) {
+//		mNumberButtons.get(number).setEnabled(enabled);
+//		mNoteNumberButtons.get(number).setEnabled(enabled);
+//	}
 
-	public void dimNumber(int number) {
-		int dimmedColor = mContext.getResources().getColor(R.color.im_number_button_completed_text);
-		mNumberButtons.get(number).setTextColor(dimmedColor);
-		mNoteNumberButtons.get(number).setTextColor(dimmedColor);
+	public void highlightNumber(int number) {
+		int completedTextColor = mContext.getResources().getColor(R.color.im_number_button_completed_text);
+		
+		if (number == mSelectedNumber) {
+			mNumberButtons.get(number).setTextColor(completedTextColor);
+		} else {
+			mNumberButtons.get(number).setBackgroundResource(R.drawable.btn_completed_bg);
+		}
+
+		mNoteNumberButtons.get(number).setBackgroundResource(R.drawable.btn_toggle_completed_bg);
 	}
 	
 	
