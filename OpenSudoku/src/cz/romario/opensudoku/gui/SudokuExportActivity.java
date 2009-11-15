@@ -192,11 +192,10 @@ public class SudokuExportActivity extends Activity {
 //			        try { 
 //			            startActivity(intent);
 //			        } catch (android.content.ActivityNotFoundException ex) {
-//			            Toast.makeText(SudokuExportActivity.this, "TODO: no way to share folder", Toast.LENGTH_SHORT).show();
+//			            Toast.makeText(SudokuExportActivity.this, "no way to share folder", Toast.LENGTH_SHORT).show();
 //			        }
 //				} else {
-//					// TODO: what to do?
-//					Toast.makeText(SudokuExportActivity.this, "TODO: not successful, maybe I should not show myself?.", Toast.LENGTH_LONG).show();
+//					Toast.makeText(SudokuExportActivity.this, "not successful.", Toast.LENGTH_LONG).show();
 //				}
 //				
 //				finish();

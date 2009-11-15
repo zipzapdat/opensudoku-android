@@ -190,7 +190,6 @@ public class FolderListActivity extends ListActivity {
         }
         menu.setHeaderTitle(cursor.getString(cursor.getColumnIndex(FolderColumns.NAME)));
 
-        // TODO: why not call them just share, rename and delete?
         menu.add(0, MENU_ITEM_EXPORT, 0, R.string.export_folder);
         menu.add(0, MENU_ITEM_RENAME, 1, R.string.rename_folder);
         menu.add(0, MENU_ITEM_DELETE, 2, R.string.delete_folder);
