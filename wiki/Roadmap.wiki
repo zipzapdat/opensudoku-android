@@ -1,6 +1,0 @@
-#summary Project's roadmap.
-
-*1.0.0*
- * ETA: ???
- * Show hints using common solving techniques.
- * Add some multi-player features - create some simple web application where people can compete (competition based on the time needed to solve the puzzle).
