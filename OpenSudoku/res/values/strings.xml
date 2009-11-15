@@ -138,7 +138,7 @@
 	<string name="save_to_sdcard">Save to sdcard</string>
 	<string name="send_by_mail">Send by mail</string>
 	<string name="theme">Theme</string>
-	<string name="theme_summary"></string>
+	<string name="theme_summary">Select color theme for puzzle board.</string>
 	<string name="select_theme">Select theme</string>
 	<string name="filename">Filename</string>
 	<string name="directory">Directory</string>
