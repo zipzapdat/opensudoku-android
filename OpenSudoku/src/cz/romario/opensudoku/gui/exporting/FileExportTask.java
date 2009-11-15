@@ -8,18 +8,15 @@ import java.io.Writer;
 
 import org.xmlpull.v1.XmlSerializer;
 
-import cz.romario.opensudoku.R;
-import cz.romario.opensudoku.db.SudokuColumns;
-import cz.romario.opensudoku.db.SudokuDatabase;
-import cz.romario.opensudoku.utils.Const;
-import android.app.PendingIntent.OnFinished;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 import android.util.Xml;
-import android.widget.Toast;
+import cz.romario.opensudoku.db.SudokuColumns;
+import cz.romario.opensudoku.db.SudokuDatabase;
+import cz.romario.opensudoku.utils.Const;
 
 /**
  * Must be created on GUI thread.

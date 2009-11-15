@@ -20,14 +20,6 @@
 
 package cz.romario.opensudoku.gui;
 
-import java.util.Date;
-
-import cz.romario.opensudoku.R;
-import cz.romario.opensudoku.db.SudokuDatabase;
-import cz.romario.opensudoku.game.SudokuGame;
-import cz.romario.opensudoku.gui.inputmethod.IMControlPanel;
-import cz.romario.opensudoku.gui.inputmethod.InputMethod;
-import cz.romario.opensudoku.utils.AndroidUtils;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -39,6 +31,12 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+import cz.romario.opensudoku.R;
+import cz.romario.opensudoku.db.SudokuDatabase;
+import cz.romario.opensudoku.game.SudokuGame;
+import cz.romario.opensudoku.gui.inputmethod.IMControlPanel;
+import cz.romario.opensudoku.gui.inputmethod.InputMethod;
+import cz.romario.opensudoku.utils.AndroidUtils;
 
 /**
  * Activity for editing content of puzzle.

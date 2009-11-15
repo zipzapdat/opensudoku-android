@@ -26,10 +26,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import cz.romario.opensudoku.R;
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.LightingColorFilter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +41,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout.LayoutParams;
+import cz.romario.opensudoku.R;
 
 public class IMPopupDialog extends Dialog {
 

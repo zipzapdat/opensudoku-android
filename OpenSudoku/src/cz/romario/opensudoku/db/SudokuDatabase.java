@@ -20,9 +20,6 @@
 
 package cz.romario.opensudoku.db;
 
-import java.util.Date;
-import java.util.regex.Pattern;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -30,8 +27,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.database.sqlite.SQLiteStatement;
-import cz.romario.opensudoku.game.FolderInfo;
 import cz.romario.opensudoku.game.CellCollection;
+import cz.romario.opensudoku.game.FolderInfo;
 import cz.romario.opensudoku.game.SudokuGame;
 import cz.romario.opensudoku.gui.SudokuListFilter;
 
