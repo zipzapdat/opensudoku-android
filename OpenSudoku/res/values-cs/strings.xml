@@ -144,6 +144,9 @@
 	<string name="sdcard_not_found">Nebyla nalezena sd karta.</string>
 	<string name="puzzles_have_been_exported">Sudoku byla exportována do %s.</string>
 	<string name="file_exists">Soubor existuje, chcete ho přepsat?</string>
-	
+	<!-- localization of default folder names -->
+	<string name="difficulty_hard">Hard</string>
+    <string name="difficulty_medium">Medium</string>
+    <string name="difficulty_easy">Easy</string>
 	
 </resources>

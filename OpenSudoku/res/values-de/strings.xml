@@ -42,7 +42,7 @@
 	<string name="solved">Gelöst</string>
 	<string name="playing">In Bearbeitung</string>
 	<string name="not_started">Neu</string>
-	<string name="last_played_at">Zuletzt gespielt am %s</string>
+	<string name="last_played_at">Zuletzt gespielt %s</string>
 	<string name="created_at">Erstellt am %s</string>
 	<string name="at_time">um %s</string>
 	<string name="yesterday_at_time">gestern um %s</string>
@@ -132,20 +132,19 @@
 	<string name="importing">Importiere Sudoku-Rätsel...</string>
 	<string name="exporting">Exportiere Sudoku-Rätsel...</string>
 	<string name="unknown_export_error">Ein unbekannter Fehler ist während des Exports aufgetreten.</string>
-	<string name="highlight_completed_values">Highlight completed numbers</string>
-	<string name="highlight_completed_values_summary">Highlight buttons for numbers which has been entered 9 times.</string>
+	<string name="highlight_completed_values">Markiere vollständige Zahlen</string>
+	<string name="highlight_completed_values_summary">Markiere Zahlen die bereits vollständig eingegeben wurden.</string>
 	<string name="save_to_sdcard">Speichern auf SD-Karte</string>
 	<string name="send_by_mail">Senden per E-Mail</string>
-	<string name="theme">Theme</string>
-	<string name="theme_summary">Select color theme for puzzle board.</string>
-	<string name="select_theme">Select theme</string>
-	<string name="filename">Filename</string>
-	<string name="directory">Directory</string>
-	<string name="sdcard_not_found">SD card not found.</string>
-	<string name="puzzles_have_been_exported">Puzzles have been exported to %s.</string>
-	<string name="file_exists">File already exists, do you want to overwrite it?</string>
-	
-	<!-- Strings added for localization of default folder names -->
+	<string name="theme">Farbschema</string>
+	<string name="theme_summary">Farbschema für das Spielfeld auswählen.</string>
+	<string name="select_theme">Farbschema auswählen</string>
+	<string name="filename">Dateiname</string>
+	<string name="directory">Verzeichnis</string>
+	<string name="sdcard_not_found">SD-Karte nicht eingelegt.</string>
+	<string name="puzzles_have_been_exported">Sudoku-Rätsel wurden nach %s exportiert.</string>
+	<string name="file_exists">Die Datei existiert bereits, möchten Sie diese überschreiben?</string>
+	<!-- localization of default folder names -->
 	<string name="difficulty_hard">Schwer</string>
     <string name="difficulty_medium">Mittel</string>
     <string name="difficulty_easy">Leicht</string>
