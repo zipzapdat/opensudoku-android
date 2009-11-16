@@ -144,4 +144,8 @@
 	<string name="sdcard_not_found">SD card not found.</string>
 	<string name="puzzles_have_been_exported">Puzzles have been exported to %s.</string>
 	<string name="file_exists">File already exists, do you want to overwrite it?</string>
+	<!-- localization of default folder names -->
+	<string name="difficulty_hard">Hard</string>
+    <string name="difficulty_medium">Medium</string>
+    <string name="difficulty_easy">Easy</string>
 </resources>
