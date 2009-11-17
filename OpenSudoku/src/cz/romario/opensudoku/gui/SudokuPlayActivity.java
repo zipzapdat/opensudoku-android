@@ -185,6 +185,7 @@ public class SudokuPlayActivity extends Activity{
         mIMSingleNumber.setHighlightCompletedValues(gameSettings.getBoolean("highlight_completed_values", true));
         mIMNumpad.setHighlightCompletedValues(gameSettings.getBoolean("highlight_completed_values", true));
         
+        mIMControlPanel.activateFirstInputMethod(); // make sure that some input method is activated
         mIMControlPanelStatePersister.restoreState(mIMControlPanel);
 
 		updateTime();

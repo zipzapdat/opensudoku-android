@@ -77,20 +77,17 @@ public class IMControlPanel extends LinearLayout {
 		createInputMethods();
 	}
 	
-	
-	
-	// TODO: 
-//	/**
-//	 * Activates first enabled input method. If such method does not exists, nothing
-//	 * happens.
-//	 */
-//	public void activateFirstInputMethod() {
-//		ensureInputMethods();
-//		if (mActiveMethodIndex == -1 || !mInputMethods.get(mActiveMethodIndex).enabled) {
-//			activateInputMethod(0);
-//		}
-//		
-//	}
+	/**
+	 * Activates first enabled input method. If such method does not exists, nothing
+	 * happens.
+	 */
+	public void activateFirstInputMethod() {
+		ensureInputMethods();
+		if (mActiveMethodIndex == -1 || !mInputMethods.get(mActiveMethodIndex).isEnabled()) {
+			activateInputMethod(0);
+		}
+		
+	}
 	
 	/**
 	 * Activates given input method (see INPUT_METHOD_* constants). If the given method is
