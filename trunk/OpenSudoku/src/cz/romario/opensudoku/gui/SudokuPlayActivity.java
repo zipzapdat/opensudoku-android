@@ -28,6 +28,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.Display;
 import android.view.Menu;
@@ -73,6 +74,8 @@ public class SudokuPlayActivity extends Activity{
 	
 	private SudokuDatabase mDatabase;
 	
+	private Handler mGuiHandler;
+	
 	private ViewGroup mRootLayout;
 	private SudokuBoardView mSudokuBoard;
 	private TextView mTimeLabel;
@@ -86,7 +89,7 @@ public class SudokuPlayActivity extends Activity{
 	private boolean mShowTime = true;
 	private GameTimer mGameTimer;
 	private GameTimeFormat mGameTimeFormatter = new GameTimeFormat();
-	private boolean mIsSmallScreen;
+	private boolean mFullScreen;
 	
 	private HintsQueue mHintsQueue;
 
@@ -102,7 +105,7 @@ public class SudokuPlayActivity extends Activity{
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 					WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			mIsSmallScreen = true;
+			mFullScreen = true;
 		}
 		
 		// theme must be set before setContentView
@@ -117,6 +120,8 @@ public class SudokuPlayActivity extends Activity{
 		mDatabase = new SudokuDatabase(getApplicationContext());
 		mHintsQueue = new HintsQueue(this);
         mGameTimer = new GameTimer();
+        
+        mGuiHandler = new Handler();
         
         // create sudoku game instance
         if (savedInstanceState == null) {
@@ -175,7 +180,7 @@ public class SudokuPlayActivity extends Activity{
 				mGameTimer.start();
 			}
 		}
-        mTimeLabel.setVisibility(mIsSmallScreen && mShowTime ? View.VISIBLE : View.GONE);
+        mTimeLabel.setVisibility(mFullScreen && mShowTime ? View.VISIBLE : View.GONE);
         
         mIMPopup.setEnabled(gameSettings.getBoolean("im_popup", true));
         mIMSingleNumber.setEnabled(gameSettings.getBoolean("im_single_number", true));
@@ -189,6 +194,18 @@ public class SudokuPlayActivity extends Activity{
         mIMControlPanelStatePersister.restoreState(mIMControlPanel);
 
 		updateTime();
+		
+		// FIXME: When activity is resumed, title isn't sometimes hidden properly (there is black 
+		// empty space at the top of the screen). This is desperate workaround.
+		if (mFullScreen) {
+			mGuiHandler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+			        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+					mRootLayout.requestLayout();
+				}
+			}, 1000);
+		}
 	}
 	
     @Override
