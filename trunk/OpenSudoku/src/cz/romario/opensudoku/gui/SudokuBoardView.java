@@ -48,6 +48,12 @@ public class SudokuBoardView extends View {
 
 	public static final int DEFAULT_BOARD_SIZE = 100;
 	
+	/**
+	 * "Color not set" value. (In relation to {@link Color}, it is in fact black color with 
+	 * alpha channel set to 0 => that means it is completely transparent).
+	 */
+	private static final int NO_COLOR = 0;
+	
 	private float mCellWidth;
 	private float mCellHeight;
 	
@@ -73,6 +79,7 @@ public class SudokuBoardView extends View {
 	private int mNumberLeft;
 	private int mNumberTop;
 	private float mNoteTop;
+	private Paint mBackgroundColorSecondary;
 	private Paint mBackgroundColorReadOnly;
 	private Paint mBackgroundColorTouched;
 	private Paint mBackgroundColorSelected;
@@ -100,6 +107,7 @@ public class SudokuBoardView extends View {
 		mCellValueReadonlyPaint = new Paint();
 		mCellValueInvalidPaint = new Paint();
 		mCellNotePaint = new Paint();
+		mBackgroundColorSecondary = new Paint();
 		mBackgroundColorReadOnly = new Paint();
 		mBackgroundColorTouched = new Paint();
 		mBackgroundColorSelected = new Paint();
@@ -118,7 +126,8 @@ public class SudokuBoardView extends View {
         setTextColorReadOnly(a.getColor(R.styleable.SudokuBoardView_textColorReadOnly, Color.BLACK));
         setTextColorNote(a.getColor(R.styleable.SudokuBoardView_textColorNote, Color.BLACK));
         setBackgroundColor(a.getColor(R.styleable.SudokuBoardView_backgroundColor, Color.WHITE));
-        setBackgroundColorReadOnly(a.getColor(R.styleable.SudokuBoardView_backgroundColorReadOnly, Color.LTGRAY));
+        setBackgroundColorSecondary(a.getColor(R.styleable.SudokuBoardView_backgroundColorSecondary, NO_COLOR));
+        setBackgroundColorReadOnly(a.getColor(R.styleable.SudokuBoardView_backgroundColorReadOnly, NO_COLOR));
         setBackgroundColorTouched(a.getColor(R.styleable.SudokuBoardView_backgroundColorTouched, Color.rgb(50, 50, 255)));
         setBackgroundColorSelected(a.getColor(R.styleable.SudokuBoardView_backgroundColorSelected, Color.YELLOW));
         
@@ -163,6 +172,14 @@ public class SudokuBoardView extends View {
 	
 	public void setTextColorNote(int color) {
 		mCellNotePaint.setColor(color);
+	}
+	
+	public int getBackgroundColorSecondary() {
+		return mBackgroundColorSecondary.getColor();
+	}
+	
+	public void setBackgroundColorSecondary(int color) {
+		mBackgroundColorSecondary.setColor(color);
 	}
 	
 	public int getBackgroundColorReadOnly() {
@@ -374,9 +391,19 @@ public class SudokuBoardView extends View {
 		int paddingLeft = getPaddingLeft();
 		int paddingTop = getPaddingTop();
 		
+		// draw secondary background
+		if (mBackgroundColorSecondary.getColor() != NO_COLOR) {
+			canvas.drawRect(3 * mCellWidth,  0, 6 * mCellWidth, 3 * mCellWidth, mBackgroundColorSecondary);
+			canvas.drawRect(0,  3 * mCellWidth, 3 * mCellWidth, 6 * mCellWidth, mBackgroundColorSecondary);
+			canvas.drawRect(6 * mCellWidth,  3 * mCellWidth, 9 * mCellWidth, 6 * mCellWidth, mBackgroundColorSecondary);
+			canvas.drawRect(3 * mCellWidth,  6 * mCellWidth, 6 * mCellWidth, 9 * mCellWidth, mBackgroundColorSecondary);
+		}
+		
 		// draw cells
 		int cellLeft, cellTop;
 		if (mCells != null) {
+			
+			boolean hasBackgroundColorReadOnly = mBackgroundColorReadOnly.getColor() != NO_COLOR;
 			
 			float numberAscent = mCellValuePaint.ascent();
 			float noteAscent = mCellNotePaint.ascent();
@@ -389,11 +416,13 @@ public class SudokuBoardView extends View {
 					cellTop = Math.round((row * mCellHeight) + paddingTop);
 
 					// draw read-only field background
-					if (!cell.isEditable()) {
-						canvas.drawRect(
-								cellLeft, cellTop, 
-								cellLeft + mCellWidth, cellTop + mCellHeight,
-								mBackgroundColorReadOnly);
+					if (!cell.isEditable() && hasBackgroundColorReadOnly) {
+						if (mBackgroundColorReadOnly.getColor() != NO_COLOR) {
+							canvas.drawRect(
+									cellLeft, cellTop, 
+									cellLeft + mCellWidth, cellTop + mCellHeight,
+									mBackgroundColorReadOnly);
+						}
 					}
 					
 					// draw cell Text
