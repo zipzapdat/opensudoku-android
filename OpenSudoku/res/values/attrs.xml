@@ -13,6 +13,7 @@
         <attr name="textColorReadOnly" format="color" />
         <attr name="textColorNote" format="color" />
         <attr name="backgroundColor" format="color" />
+        <attr name="backgroundColorSecondary" format="color" />
         <attr name="backgroundColorReadOnly" format="color" />
         <attr name="backgroundColorTouched" format="color" />
         <attr name="backgroundColorSelected" format="color" />
