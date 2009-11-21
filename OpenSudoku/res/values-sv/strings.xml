@@ -120,35 +120,35 @@
 	
 	<!-- Strings added in 0.7.0 -->
 	<string name="loading">Laddar...</string>
-
+	
 	<!-- Strings added/changed in 0.7.1 -->
-	<string name="more_settings">More settings</string>
-	<string name="screen_border_size">Screen border size</string>
-	<string name="screen_border_size_summary">Some displays do not react to touches on screen edges. This could help in such case.</string>
-	<string name="highlight_touched_cell">Highlight cell on touch</string>
-	<string name="highlight_touched_cell_summary">Highlights row and column of touched cell.</string>
-	<string name="export">Export</string>
-	<string name="export_folder">Export folder</string>
-	<string name="export_all_folders">Export all folders</string>
-	<string name="folders_created">%s folders have been imported.</string>
-	<string name="importing">Importing puzzles...</string>
-	<string name="exporting">Exporting puzzles...</string>
-	<string name="unknown_export_error">Unknown error occurred while exporting puzzles.</string>
-	<string name="highlight_completed_values">Highlight completed numbers</string>
-	<string name="highlight_completed_values_summary">Highlight buttons for numbers which has been entered 9 times.</string>
-	<string name="save_to_sdcard">Save to sdcard</string>
-	<string name="send_by_mail">Send by mail</string>
-	<string name="theme">Theme</string>
-	<string name="theme_summary">Select color theme for puzzle board.</string>
-	<string name="select_theme">Select theme</string>
-	<string name="filename">Filename</string>
-	<string name="directory">Directory</string>
-	<string name="sdcard_not_found">SD card not found.</string>
-	<string name="puzzles_have_been_exported">Puzzles have been exported to %s.</string>
-	<string name="file_exists">File already exists, do you want to overwrite it?</string>
+	<string name="more_settings">Fler inställningar</string>
+	<string name="screen_border_size">Storlek på skärmkant</string>
+	<string name="screen_border_size_summary">Vissa pekskärmar reagerar inte närmast kanterna, Den här inställningen kan hjälpa till att motverka detta.</string>
+	<string name="highlight_touched_cell">Markera ruta vid tryck</string>
+	<string name="highlight_touched_cell_summary">Indikera raden och kolumnen för den ruta som precis tryckts ner.</string>
+	<string name="export">Exportera</string>
+	<string name="export_folder">Exportera mapp</string>
+	<string name="export_all_folders">Exportera alla mappar</string>
+	<string name="folders_created">%s mappar har importerats.</string>
+	<string name="importing">Importerar pussel...</string>
+	<string name="exporting">Exporterar pussel...</string>
+	<string name="unknown_export_error">Okänt fel uppstod vid pusselexport.</string>
+	<string name="highlight_completed_values">Markera färdiga nummer</string>
+	<string name="highlight_completed_values_summary">Markera de nummer som använts 9 gånger.</string>
+	<string name="save_to_sdcard">Spara till SD-kort</string>
+	<string name="send_by_mail">Skicka via e-post</string>
+	<string name="theme">Tema</string>
+	<string name="theme_summary">Välj färgschema för spelplanen/pusslet.</string>
+	<string name="select_theme">Välj tema</string>
+	<string name="filename">Filnamn</string>
+	<string name="directory">Mapp</string>
+	<string name="sdcard_not_found">SD-kort kunde inte hittas.</string>
+	<string name="puzzles_have_been_exported">Pusslen har exporterats till %s.</string>
+	<string name="file_exists">Filen finns redan, vill du skriva över den?</string>
 	<!-- localization of default folder names -->
-	<string name="difficulty_hard">Hard</string>
-    <string name="difficulty_medium">Medium</string>
-    <string name="difficulty_easy">Easy</string>
+	<string name="difficulty_hard">Svår</string>
+    <string name="difficulty_medium">Mellan</string>
+    <string name="difficulty_easy">Enkel</string> 
 	
 </resources>
