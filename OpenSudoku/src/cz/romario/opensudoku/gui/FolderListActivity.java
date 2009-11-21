@@ -272,23 +272,22 @@ public class FolderListActivity extends ListActivity {
     protected void onPrepareDialog(int id, Dialog dialog) {
     	super.onPrepareDialog(id, dialog);
     	
-    	// TODO: when changing orientation, it seems that only onCreateDialog is called, 
-    	// delete folder then does not have proper title (it has %s instead)
-    	
     	switch (id) {
     	case DIALOG_ADD_FOLDER:
     		break;
     	case DIALOG_RENAME_FOLDER:
     	{
     		FolderInfo folder = mDatabase.getFolderInfo(mRenameFolderID);
-    		dialog.setTitle(getString(R.string.rename_folder_title, folder.name));
+    		String folderName = folder != null ? folder.name : "";
+    		dialog.setTitle(getString(R.string.rename_folder_title, folderName));
     		mRenameFolderNameInput.setText(folder.name);
     		break;
     	}
     	case DIALOG_DELETE_FOLDER:
     	{
     		FolderInfo folder = mDatabase.getFolderInfo(mDeleteFolderID);
-    		dialog.setTitle(getString(R.string.delete_folder_title, folder.name));
+    		String folderName = folder != null ? folder.name : "";
+    		dialog.setTitle(getString(R.string.delete_folder_title, folderName));
     		break;
     	}
     	}

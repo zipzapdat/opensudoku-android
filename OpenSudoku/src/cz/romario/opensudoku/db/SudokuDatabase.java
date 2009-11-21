@@ -394,7 +394,9 @@ public class SudokuDatabase {
 		mInsertSudokuStatement.bindLong(4, pars.time);
 		mInsertSudokuStatement.bindLong(5, pars.lastPlayed);
 		mInsertSudokuStatement.bindString(6, pars.data);
-		if (pars.note != null) {
+		if (pars.note == null) {
+			mInsertSudokuStatement.bindNull(7);
+		} else {
 			mInsertSudokuStatement.bindString(7, pars.note);
 		}
 		
