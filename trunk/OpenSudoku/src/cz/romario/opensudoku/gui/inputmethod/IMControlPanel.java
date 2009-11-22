@@ -144,7 +144,7 @@ public class IMControlPanel extends LinearLayout {
 			activeMethod.activate();
 			
 			if (mHintsQueue != null) {
-				mHintsQueue.showOneTimeHint(activeMethod.getNameResID(), activeMethod.getHelpResID());
+				mHintsQueue.showOneTimeHint(activeMethod.getInputMethodName(), activeMethod.getNameResID(), activeMethod.getHelpResID());
 			}
 		}
 	}
@@ -155,7 +155,7 @@ public class IMControlPanel extends LinearLayout {
 		int id = mActiveMethodIndex + 1;
 		if (id >= mInputMethods.size()) {
 			if (mHintsQueue != null) {
-				mHintsQueue.showOneTimeHint(R.string.that_is_all, R.string.im_disable_modes_hint);
+				mHintsQueue.showOneTimeHint("thatIsAll", R.string.that_is_all, R.string.im_disable_modes_hint);
 			}
 			id = 0;
 		}

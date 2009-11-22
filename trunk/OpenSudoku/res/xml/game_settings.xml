@@ -64,7 +64,7 @@
                 android:entries="@array/theme_names"
                 android:entryValues="@array/theme_codes"
                 android:dialogTitle="@string/select_theme"
-                android:defaultValue="defaulti" />
+                android:defaultValue="default" />
         <PreferenceScreen
                 android:key="screen_game_advanced"
                 android:title="@string/more_settings">
