@@ -35,15 +35,15 @@ public class AndroidUtils {
 	
 	public static void setThemeFromPreferences(Context context) {
 		SharedPreferences gameSettings = PreferenceManager.getDefaultSharedPreferences(context);
-		String theme = gameSettings.getString("theme", "defaulti");
-		if (theme.equals("defaultii")) {
-			context.setTheme(R.style.Theme_DefaultII);
+		String theme = gameSettings.getString("theme", "default");
+		if (theme.equals("default")) {
+			context.setTheme(R.style.Theme_Default);
 		} else if (theme.equals("paperi")) {
 			context.setTheme(R.style.Theme_PaperI);
 		} else if (theme.equals("paperii")) {
 			context.setTheme(R.style.Theme_PaperII);
 		} else {
-			context.setTheme(R.style.Theme_DefaultI);
+			context.setTheme(R.style.Theme_Default);
 		}
 	}
 }
