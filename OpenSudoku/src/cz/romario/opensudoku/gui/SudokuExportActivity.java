@@ -39,13 +39,12 @@ public class SudokuExportActivity extends Activity {
 	public static final long ALL_FOLDERS = -1;
 	
 	private static final int DIALOG_FILE_EXISTS = 1;
-	
+	private static final int DIALOG_PROGRESS = 2;
 	
 	private static final String TAG = SudokuExportActivity.class.getSimpleName();
 	
 	private FileExportTask mFileExportTask;
 	private FileExportTaskParams mExportParams;
-	private ProgressDialog mProgressDialog;
 	
 	private EditText mFileNameEdit;
 	private EditText mDirectoryEdit;
@@ -64,10 +63,6 @@ public class SudokuExportActivity extends Activity {
 
 		mFileExportTask = new FileExportTask(this);
 		mExportParams = new FileExportTaskParams();
-		mProgressDialog = new ProgressDialog(this);
-		mProgressDialog.setIndeterminate(true);
-		mProgressDialog.setTitle(R.string.app_name);
-		mProgressDialog.setMessage(getString(R.string.exporting));
 
 		Intent intent = getIntent();
 		if (intent.hasExtra(EXTRA_FOLDER_ID)) {
@@ -126,6 +121,12 @@ public class SudokuExportActivity extends Activity {
 	        })
 	        .setNegativeButton(android.R.string.no, null)
 	        .create();
+		case DIALOG_PROGRESS:
+			ProgressDialog progressDialog = new ProgressDialog(this);
+			progressDialog.setIndeterminate(true);
+			progressDialog.setTitle(R.string.app_name);
+			progressDialog.setMessage(getString(R.string.exporting));
+			return progressDialog;
 		}
 		
 		return null;
@@ -154,7 +155,7 @@ public class SudokuExportActivity extends Activity {
 			
 			@Override
 			public void onExportFinished(FileExportTaskResult result) {
-				mProgressDialog.dismiss();
+				dismissDialog(DIALOG_PROGRESS);
 				
 				if (result.successful) {
 		            Toast.makeText(SudokuExportActivity.this, getString(R.string.puzzles_have_been_exported, result.file), Toast.LENGTH_SHORT).show();
@@ -170,7 +171,7 @@ public class SudokuExportActivity extends Activity {
 
 		mExportParams.file = new File(directory, filename + ".opensudoku");
 		
-		mProgressDialog.show();
+		showDialog(DIALOG_PROGRESS);
 		mFileExportTask.execute(mExportParams);
 		
 	}
