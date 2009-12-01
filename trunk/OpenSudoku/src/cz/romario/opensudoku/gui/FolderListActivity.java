@@ -280,7 +280,7 @@ public class FolderListActivity extends ListActivity {
     		FolderInfo folder = mDatabase.getFolderInfo(mRenameFolderID);
     		String folderName = folder != null ? folder.name : "";
     		dialog.setTitle(getString(R.string.rename_folder_title, folderName));
-    		mRenameFolderNameInput.setText(folder.name);
+    		mRenameFolderNameInput.setText(folderName);
     		break;
     	}
     	case DIALOG_DELETE_FOLDER:
