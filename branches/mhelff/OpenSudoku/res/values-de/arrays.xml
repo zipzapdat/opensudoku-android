@@ -5,4 +5,9 @@
         <item>am spielen</item>
         <item>gelöst</item>
     </string-array>
+    <string-array name="game_levels">
+        <item>Einfach</item>
+        <item>Medium</item>
+        <item>Schwer</item>
+    </string-array>
 </resources>
