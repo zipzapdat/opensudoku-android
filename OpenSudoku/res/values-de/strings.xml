@@ -43,7 +43,7 @@
 	<string name="playing">In Bearbeitung</string>
 	<string name="not_started">Neu</string>
 	<string name="last_played_at">Zuletzt gespielt %s</string>
-	<string name="created_at">Erstellt am %s</string>
+	<string name="created_at">Erstellt %s</string>
 	<string name="at_time">um %s</string>
 	<string name="yesterday_at_time">gestern um %s</string>
 	<string name="on_date">am %s</string>
@@ -148,4 +148,10 @@
 	<string name="difficulty_hard">Schwer</string>
     <string name="difficulty_medium">Mittel</string>
     <string name="difficulty_easy">Leicht</string>
+    
+    <!-- generate new sudoku -->
+    <string name="generate_sudoku">Generiere neues Sudoku</string>
+    <string name="select_difficulty">Schwierigkeit auswählen</string>
+    <string name="generating">Generiere Sudoku-Rätsel...</string>
+    <string name="generated_note">Generiert von OpenSudoku</string>
 </resources>

@@ -26,6 +26,7 @@ import java.util.Date;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,6 +43,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -55,6 +57,10 @@ import cz.romario.opensudoku.game.FolderInfo;
 import cz.romario.opensudoku.game.CellCollection;
 import cz.romario.opensudoku.game.SudokuGame;
 import cz.romario.opensudoku.gui.FolderDetailLoader.FolderDetailCallback;
+import cz.romario.opensudoku.gui.generating.GenerateSudokuTask;
+import cz.romario.opensudoku.gui.generating.GenerateSudokuTaskParams;
+import cz.romario.opensudoku.gui.generating.GenerateSudokuTask.OnGenerateFinishedListener;
+import cz.romario.opensudoku.logic.Generator;
 import cz.romario.opensudoku.utils.AndroidUtils;
 
 /**
@@ -75,15 +81,20 @@ public class SudokuListActivity extends ListActivity {
 	public static final int MENU_ITEM_EDIT_NOTE = Menu.FIRST + 5;
 	public static final int MENU_ITEM_FILTER = Menu.FIRST + 6;
 	public static final int MENU_ITEM_FOLDERS = Menu.FIRST + 7;
+	public static final int MENU_ITEM_GENERATE = Menu.FIRST + 8;
 	
 	private static final int DIALOG_DELETE_PUZZLE = 0;
 	private static final int DIALOG_RESET_PUZZLE = 1;
 	private static final int DIALOG_EDIT_NOTE = 2;
 	private static final int DIALOG_FILTER = 3;
+	private static final int DIALOG_GENERATE = 4;
+	private static final int DIALOG_GENERATE_PROGRESS = 5;
 	
 	private static final String FILTER_STATE_NOT_STARTED = "filter" + SudokuGame.GAME_STATE_NOT_STARTED;
 	private static final String FILTER_STATE_PLAYING = "filter" + SudokuGame.GAME_STATE_PLAYING;
 	private static final String FILTER_STATE_SOLVED = "filter" + SudokuGame.GAME_STATE_COMPLETED;
+	
+	private static final String GENERATE_LEVEL = "generateLevel";
 	
 	private static final String TAG = "SudokuListActivity";
 	
@@ -198,6 +209,8 @@ public class SudokuListActivity extends ListActivity {
 		.setIcon(android.R.drawable.ic_menu_view);
 		menu.add(0, MENU_ITEM_INSERT, 2, R.string.add_sudoku).setShortcut('3', 'a')
 		.setIcon(android.R.drawable.ic_menu_add);
+		menu.add(0, MENU_ITEM_GENERATE, 3, R.string.generate_sudoku).setShortcut('4', 'g')
+		.setIcon(android.R.drawable.ic_menu_add);
 
 		// Generate any additional actions that can be performed on the
 		// overall list. In a normal install, there are no additional
@@ -215,6 +228,7 @@ public class SudokuListActivity extends ListActivity {
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		switch (id) {
 		case DIALOG_DELETE_PUZZLE:
 			return new AlertDialog.Builder(this).setIcon(
@@ -264,7 +278,6 @@ public class SudokuListActivity extends ListActivity {
 								}
 							}).setNegativeButton(android.R.string.no, null).create();
 		case DIALOG_FILTER:
-			final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			return new AlertDialog.Builder(this)
 				.setIcon(android.R.drawable.ic_menu_view)
 				.setTitle(R.string.filter_by_gamestate)
@@ -307,6 +320,64 @@ public class SudokuListActivity extends ListActivity {
 			            /* User clicked No so do some stuff */
 			        }
 			    }).create();
+			
+		case DIALOG_GENERATE:
+			return new AlertDialog.Builder(this)
+				.setIcon(android.R.drawable.ic_menu_view)
+				.setTitle(R.string.select_difficulty)
+				.setSingleChoiceItems(
+						R.array.game_levels,
+						(settings.getInt(GENERATE_LEVEL, Generator.DIFFICULTY_MEDIUM) - 1),
+                        new DialogInterface.OnClickListener() {
+			                public void onClick(DialogInterface dialog, int whichButton) {
+			                	settings.edit().putInt(GENERATE_LEVEL, whichButton + 1).commit();
+			                }
+			            })
+			    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int whichButton) {
+			        	// now generate game
+			        	// Launch activity to generate a new item
+			        	
+			        	GenerateSudokuTask generateTask = new GenerateSudokuTask(SudokuListActivity.this);
+
+			    		GenerateSudokuTaskParams param = new GenerateSudokuTaskParams();
+			    		param.folderID = mFolderID;
+			    		param.level = settings.getInt(GENERATE_LEVEL, Generator.DIFFICULTY_MEDIUM);
+			    		param.comment = SudokuListActivity.this.getString(R.string.generated_note);
+			    		
+			    		generateTask.setOnGenerateFinishedListener(new OnGenerateFinishedListener() {
+			    			@Override
+			    			public void onGenerateFinished(long gameId) {
+			    				// hide progress dialog, maybe show toast?
+			    				dismissDialog(DIALOG_GENERATE_PROGRESS);
+			    				
+			    				Intent i = new Intent(SudokuListActivity.this,
+										SudokuListActivity.class);
+			    				i.putExtra(SudokuListActivity.EXTRA_FOLDER_ID, mFolderID);
+								startActivity(i);
+								
+								// remove this from history
+								finish();
+			    			}
+			    		});
+			    		showDialog(DIALOG_GENERATE_PROGRESS);
+			    		generateTask.execute(param);
+			        }
+			    })
+			    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+			        public void onClick(DialogInterface dialog, int whichButton) {
+			            /* User clicked no, don't generate */
+			        }
+			    }).create();
+				
+			case DIALOG_GENERATE_PROGRESS:
+				ProgressDialog progressDialog = new ProgressDialog(this);
+				progressDialog.setIndeterminate(true);
+				progressDialog.setTitle(R.string.app_name);
+				progressDialog.setMessage(getString(R.string.generating));
+				progressDialog.setIcon(R.drawable.opensudoku);
+				return progressDialog;
+			
 		}
 		return null;
 	}
@@ -408,6 +479,9 @@ public class SudokuListActivity extends ListActivity {
 			finish();
 			return true;
 		}
+		case MENU_ITEM_GENERATE:
+			showDialog(DIALOG_GENERATE);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
