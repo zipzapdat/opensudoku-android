@@ -24,9 +24,6 @@ package cz.romario.opensudoku.logic;
 import java.util.Random;
 import java.util.Vector;
 
-
-import android.util.Log;
-
 /**
 *
 * @author Matt Parker
@@ -147,7 +144,7 @@ public class Generator// extends Random
         int x = position / 9;
         int y = position % 9;
 
-        Vector possiblesVector = getCorrectValuesForArray(x, y, array);
+        Vector<Integer> possiblesVector = getCorrectValuesForArray(x, y, array);
 
         while (!possiblesVector.isEmpty())
         {
@@ -254,9 +251,9 @@ public class Generator// extends Random
         return (array);
     }
     
-    private Vector getCorrectValuesForArray(int x, int y, int[][] array)
+    private Vector<Integer> getCorrectValuesForArray(int x, int y, int[][] array)
     {
-        Vector correctValues = new Vector();
+        Vector<Integer> correctValues = new Vector<Integer>();
         
         if (array[x][y] != 0) 
         {

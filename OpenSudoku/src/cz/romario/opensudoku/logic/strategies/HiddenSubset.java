@@ -43,7 +43,7 @@ public class HiddenSubset extends Strategy
             {
                 for (int y = 0; y < 9; y += 3)
                 {
-                    Vector blockSubsets = new Vector();
+                    Vector<Subset> blockSubsets = new Vector<Subset>();
 
                     for (int i = 0; i < 3; i++)
                     {
@@ -77,7 +77,7 @@ public class HiddenSubset extends Strategy
             // Check rows
             for (int y = 0; y < 9; y++)
             {
-                Vector rowSubsets = new Vector();
+                Vector<Subset> rowSubsets = new Vector<Subset>();
                 
                 for (int x = 0; x < 9; x++)
                 {
@@ -107,7 +107,7 @@ public class HiddenSubset extends Strategy
             // Check columns
             for (int x = 0; x < 9; x++)
             {
-                Vector columnSubsets = new Vector();
+                Vector<Subset> columnSubsets = new Vector<Subset>();
                 
                 for (int y = 0; y < 9; y++)
                 {
@@ -138,14 +138,14 @@ public class HiddenSubset extends Strategy
         return (false);
     }
     
-    private boolean compareSubsets(int subsetSize, Vector subsets, PossibleValues possibleValues)
+    private boolean compareSubsets(int subsetSize, Vector<Subset> subsets, PossibleValues possibleValues)
     {
         if (subsetSize > subsets.size())
         {
             return (false);
         }
         
-        Vector possibleSubsets = getAllPossibleSubsetsForBlockRowOrColumn(subsetSize, 
+        Vector<Subset> possibleSubsets = getAllPossibleSubsetsForBlockRowOrColumn(subsetSize, 
             subsets);;
 
         if (possibleSubsets.isEmpty())
@@ -158,7 +158,7 @@ public class HiddenSubset extends Strategy
         for (int i = 0; i < possibleSubsets.size(); i++)
         {
             Subset possibleSubset = (Subset)possibleSubsets.elementAt(i);
-            Vector foundSubsets = new Vector();
+            Vector<Subset> foundSubsets = new Vector<Subset>();
             
             for (int j = 0; j < subsets.size(); j++)
             {
@@ -205,10 +205,10 @@ public class HiddenSubset extends Strategy
         return (false);
     }
     
-    private Vector getAllPossibleSubsetsForBlockRowOrColumn(int subsetSize, Vector subsets)
+    private Vector<Subset> getAllPossibleSubsetsForBlockRowOrColumn(int subsetSize, Vector<Subset> subsets)
     {
-        Vector possibleSubsets = new Vector();
-        Vector numberListVector = new Vector();
+        Vector<Subset> possibleSubsets = new Vector<Subset>();
+        Vector<Integer> numberListVector = new Vector<Integer>();
         
         for (int i = 0; i < subsets.size(); i++)
         {

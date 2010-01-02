@@ -22,7 +22,6 @@ import java.util.Vector;
 
 import cz.romario.opensudoku.logic.PossibleValues;
 import cz.romario.opensudoku.logic.Strategy;
-import cz.romario.opensudoku.logic.Strategy.Subset;
 
 /**
  *
@@ -44,7 +43,7 @@ public class NakedSubset extends Strategy
             {
                 for (int y = 0; y < 9; y += 3)
                 {
-                    Vector blockSubsets = new Vector();
+                    Vector<Subset> blockSubsets = new Vector<Subset>();
 
                     for (int i = 0; i < 3; i++)
                     {
@@ -127,7 +126,7 @@ public class NakedSubset extends Strategy
             // Check rows
             for (int y = 0; y < 9; y++)
             {
-                Vector rowSubsets = new Vector();
+                Vector<Subset> rowSubsets = new Vector<Subset>();
                 
                 for (int x = 0; x < 9; x++)
                 {
@@ -201,7 +200,7 @@ public class NakedSubset extends Strategy
             // Check columns
             for (int x = 0; x < 9; x++)
             {
-                Vector columnSubsets = new Vector();
+                Vector<Subset> columnSubsets = new Vector<Subset>();
                 
                 for (int y = 0; y < 9; y++)
                 {

@@ -22,7 +22,6 @@ import java.util.Vector;
 
 import cz.romario.opensudoku.logic.PossibleValues;
 import cz.romario.opensudoku.logic.Strategy;
-import cz.romario.opensudoku.logic.Strategy.Candidate;
 
 public class Swordfish extends Strategy
 {
@@ -38,11 +37,11 @@ public class Swordfish extends Strategy
             for (int noOfCandidates = 2; noOfCandidates <= 3; noOfCandidates++)
             {
                 // Check number of columns that have <noOfCandidates> of <n>
-                Vector columnCandidates = new Vector();
+                Vector<Vector<Candidate>> columnCandidates = new Vector<Vector<Candidate>>();
                 
                 for (int x = 0; x < 9; x++)
                 {
-                    Vector candidates = new Vector();
+                    Vector<Candidate> candidates = new Vector<Candidate>();
                     
                     for (int y = 0; y < 9; y++)
                     {
@@ -63,11 +62,11 @@ public class Swordfish extends Strategy
                 if (columnCandidates.size() == 3)
                 {
                     // Check that candidates are on 3 common rows
-                    Vector commonRows = new Vector();
+                    Vector<Integer> commonRows = new Vector<Integer>();
                     
                     for (int i = 0; i < columnCandidates.size(); i++)
                     {
-                        Vector vector = (Vector)columnCandidates.elementAt(i);
+                        Vector<Candidate> vector = (Vector<Candidate>)columnCandidates.elementAt(i);
                         
                         for (int j = 0; j < vector.size(); j++)
                         {
@@ -89,11 +88,11 @@ public class Swordfish extends Strategy
                             int row = ((Integer)commonRows.elementAt(i)).intValue();
                             
                             // Get the 3 protected columns for the candidates in row <row>
-                            Vector protectedColumns = new Vector();
+                            Vector<Integer> protectedColumns = new Vector<Integer>();
                             
                             for (int k = 0; k < columnCandidates.size(); k++)
                             {
-                                Vector vector = (Vector)columnCandidates.elementAt(k);
+                                Vector<Candidate> vector = columnCandidates.elementAt(k);
                                 
                                 for (int l = 0; l < vector.size(); l++)
                                 {
@@ -125,11 +124,11 @@ public class Swordfish extends Strategy
                 }
                 
                 // Check number of rows that have <noOfCandidates> of <n>
-                Vector rowCandidates = new Vector();
+                Vector<Vector<Candidate>> rowCandidates = new Vector<Vector<Candidate>>();
                 
                 for (int y = 0; y < 9; y++)
                 {
-                    Vector candidates = new Vector();
+                    Vector<Candidate> candidates = new Vector<Candidate>();
                     
                     for (int x = 0; x < 9; x++)
                     {
@@ -150,11 +149,11 @@ public class Swordfish extends Strategy
                 if (rowCandidates.size() == 3)
                 {
                     // Check that candidates are on 3 common columns
-                    Vector commonColumns = new Vector();
+                    Vector<Integer> commonColumns = new Vector<Integer>();
                     
                     for (int i = 0; i < rowCandidates.size(); i++)
                     {
-                        Vector vector = (Vector)rowCandidates.elementAt(i);
+                        Vector<Candidate> vector = rowCandidates.elementAt(i);
                         
                         for (int j = 0; j < vector.size(); j++)
                         {
@@ -176,11 +175,11 @@ public class Swordfish extends Strategy
                             int column = ((Integer)commonColumns.elementAt(i)).intValue();
                             
                             // Get the 3 protected rows for the candidates in column <column>
-                            Vector protectedRows = new Vector();
+                            Vector<Integer> protectedRows = new Vector<Integer>();
                             
                             for (int k = 0; k < rowCandidates.size(); k++)
                             {
-                                Vector vector = (Vector)rowCandidates.elementAt(k);
+                                Vector<Candidate> vector = rowCandidates.elementAt(k);
                                 
                                 for (int l = 0; l < vector.size(); l++)
                                 {

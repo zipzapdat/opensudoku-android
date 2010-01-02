@@ -22,8 +22,6 @@ import java.util.Vector;
 
 import cz.romario.opensudoku.logic.PossibleValues;
 import cz.romario.opensudoku.logic.Strategy;
-import cz.romario.opensudoku.logic.Strategy.Candidate;
-import cz.romario.opensudoku.logic.Strategy.CountContainer;
 
 /**
  *
@@ -199,7 +197,7 @@ public class BlockBlockInteractions extends Strategy
     private CountContainer getRowAndColumnCounts(PossibleValues possibleValues, int[][] gameData, 
         int x, int y, int n)
     {
-        Vector blockCandidates = getCandidatesForBlock(possibleValues, gameData, 
+        Vector<Candidate> blockCandidates = getCandidatesForBlock(possibleValues, gameData, 
             x, y, n);
 
         int[] rowCounts = new int[3];
