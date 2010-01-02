@@ -47,7 +47,7 @@ public class Solver
         {
             gridUpdated = false;
 
-            for (Enumeration strategies = StrategyFactory.getStrategies(); strategies.hasMoreElements();)
+            for (Enumeration<Strategy> strategies = StrategyFactory.getStrategies(); strategies.hasMoreElements();)
             {
                 Strategy nextStrategy = (Strategy)strategies.nextElement();
 

@@ -71,10 +71,10 @@ public abstract class Strategy
         return (false);
     }
     
-    protected Vector getCandidatesForBlock(PossibleValues possibleValues, int[][]gameData, 
+    protected Vector<Candidate> getCandidatesForBlock(PossibleValues possibleValues, int[][]gameData, 
         int x, int y, int candidateValue)
     {
-        Vector candidates = new Vector();
+        Vector<Candidate> candidates = new Vector<Candidate>();
         
         for (int i = 0; i < 3; i++)
         {

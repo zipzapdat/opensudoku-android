@@ -30,11 +30,11 @@ import cz.romario.opensudoku.logic.strategies.*;
  */
 public class StrategyFactory
 {
-    private static Vector strategies;
+    private static Vector<Strategy> strategies;
     
     static
     {
-        strategies = new Vector();
+        strategies = new Vector<Strategy>();
         strategies.addElement(new NakedSingle(false));
         strategies.addElement(new HiddenSingle());
         strategies.addElement(new NakedSubset());
@@ -48,7 +48,7 @@ public class StrategyFactory
     
     private StrategyFactory() {}
     
-    public static Enumeration getStrategies()
+    public static Enumeration<Strategy> getStrategies()
     {
         return (strategies.elements());
     }
