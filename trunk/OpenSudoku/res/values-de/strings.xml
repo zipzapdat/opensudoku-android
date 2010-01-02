@@ -43,7 +43,7 @@
 	<string name="playing">In Bearbeitung</string>
 	<string name="not_started">Neu</string>
 	<string name="last_played_at">Zuletzt gespielt %s</string>
-	<string name="created_at">Erstellt am %s</string>
+	<string name="created_at">Erstellt %s</string>
 	<string name="at_time">um %s</string>
 	<string name="yesterday_at_time">gestern um %s</string>
 	<string name="on_date">am %s</string>
@@ -114,7 +114,7 @@
 	<string name="unknown_import_error">Unbekanntes Format, importieren wurde abgebrochen.</string>
 	<string name="invalid_format">Unbekanntes Format, importieren wurde abgebrochen.</string>
 	
-	<string name="credits">Autoren:\nRoman Mašek\nVit Hnilica\nMartin Sobola</string>
+	<string name="credits">Autoren:\nRoman Mašek\nVit Hnilica\nMartin Sobola\nMartin Helff</string>
 	
 	<!-- Strings added in 0.7.0 -->
 	<string name="loading">Lade...</string>
@@ -148,4 +148,9 @@
 	<string name="difficulty_hard">Schwer</string>
     <string name="difficulty_medium">Mittel</string>
     <string name="difficulty_easy">Leicht</string>
+    
+	<!-- Strings added/changed in 1.1.0 -->
+    <string name="generate_sudoku">Generiere neues Sudoku</string>
+    <string name="select_difficulty">Schwierigkeit auswählen</string>
+    <string name="generating">Generiere Sudoku-Rätsel...</string>
 </resources>

@@ -114,7 +114,7 @@
 	<string name="unknown_import_error">V průběhu importu došlo k neznáme chybě, import byl zrušen.</string>
 	<string name="invalid_format">Neplatný formát, import byl zrušen.</string>
 	
-	<string name="credits">Credits:\nRoman Mašek\nVit Hnilica\nMartin Sobola</string>
+	<string name="credits">Credits:\nRoman Mašek\nVit Hnilica\nMartin Sobola\nMartin Helff</string>
 
 	<!-- Strings added in 0.7.0 -->
 	<string name="loading">Loading...</string>
@@ -148,5 +148,10 @@
 	<string name="difficulty_hard">Hard</string>
     <string name="difficulty_medium">Medium</string>
     <string name="difficulty_easy">Easy</string>
+    
+	<!-- Strings added/changed in 1.1.0 -->
+    <string name="generate_sudoku">Vygeneruj sudoku</string>
+    <string name="select_difficulty">Vyber obtížnost</string>
+    <string name="generating">Generuji sudoku...</string>
 	
 </resources>

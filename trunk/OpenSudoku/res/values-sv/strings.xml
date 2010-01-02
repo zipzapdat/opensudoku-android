@@ -116,7 +116,7 @@
 	<string name="unknown_import_error">Ett okänt fel inträffade under inläsningen av pussel, inläsningen avbröts.</string>
 	<string name="invalid_format">Felaktigt format, inläsningen avbröts.</string>
 	
-	<string name="credits">Utvecklare:\nRoman Mašek\nVit Hnilica\nMartin Sobola</string>
+	<string name="credits">Utvecklare:\nRoman Mašek\nVit Hnilica\nMartin Sobola\nMartin Helff</string>
 	
 	<!-- Strings added in 0.7.0 -->
 	<string name="loading">Laddar...</string>
@@ -150,5 +150,10 @@
 	<string name="difficulty_hard">Svår</string>
     <string name="difficulty_medium">Mellan</string>
     <string name="difficulty_easy">Enkel</string> 
+    
+	<!-- Strings added/changed in 1.1.0 -->
+    <string name="generate_sudoku">Generiere neues Sudoku</string>
+    <string name="select_difficulty">Schwierigkeit auswählen</string>
+    <string name="generating">Generiere Sudoku-Rätsel...</string>
 	
 </resources>
