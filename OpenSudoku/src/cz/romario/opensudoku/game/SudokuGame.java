@@ -54,6 +54,8 @@ public class SudokuGame implements Parcelable {
 	public static SudokuGame createEmptyGame() {
 		SudokuGame game = new SudokuGame();
 		game.setCells(CellCollection.createEmpty());
+		// set creation time
+		game.setCreated(System.currentTimeMillis());
 		return game;
 	}
 

@@ -114,7 +114,7 @@
 	<string name="unknown_import_error">Unknown error occurred while importing puzzles, import was canceled.</string>
 	<string name="invalid_format">Invalid format, import was canceled.</string>
 	
-	<string name="credits">Credits:\nRoman Mašek\nVit Hnilica\nMartin Sobola</string>
+	<string name="credits">Credits:\nRoman Mašek\nVit Hnilica\nMartin Sobola\nMartin Helff</string>
 	
 	<!-- Strings added in 0.7.0 -->
 	<string name="loading">Loading...</string>
@@ -148,4 +148,9 @@
 	<string name="difficulty_hard">Hard</string>
     <string name="difficulty_medium">Medium</string>
     <string name="difficulty_easy">Easy</string>
+    
+	<!-- Strings added/changed in 1.1.0 -->
+    <string name="generate_sudoku">Generate new game</string>
+    <string name="select_difficulty">Select difficulty</string>
+    <string name="generating">Generating puzzle...</string>
 </resources>
