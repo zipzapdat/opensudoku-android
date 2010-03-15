@@ -208,8 +208,9 @@ public class SudokuListActivity extends ListActivity {
 		.setIcon(android.R.drawable.ic_menu_view);
 		menu.add(0, MENU_ITEM_INSERT, 2, R.string.add_sudoku).setShortcut('3', 'a')
 		.setIcon(android.R.drawable.ic_menu_add);
-		menu.add(0, MENU_ITEM_GENERATE, 3, R.string.generate_sudoku).setShortcut('4', 'g')
-		.setIcon(android.R.drawable.ic_menu_add);
+		// I'm not sure this one is ready for release
+//		menu.add(0, MENU_ITEM_GENERATE, 3, R.string.generate_sudoku).setShortcut('4', 'g')
+//		.setIcon(android.R.drawable.ic_menu_add);
 
 		// Generate any additional actions that can be performed on the
 		// overall list. In a normal install, there are no additional
