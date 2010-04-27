@@ -26,7 +26,6 @@ import java.util.Date;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -85,8 +84,6 @@ public class SudokuListActivity extends ListActivity {
 	private static final String FILTER_STATE_NOT_STARTED = "filter" + SudokuGame.GAME_STATE_NOT_STARTED;
 	private static final String FILTER_STATE_PLAYING = "filter" + SudokuGame.GAME_STATE_PLAYING;
 	private static final String FILTER_STATE_SOLVED = "filter" + SudokuGame.GAME_STATE_COMPLETED;
-	
-	private static final String GENERATE_LEVEL = "generateLevel";
 	
 	private static final String TAG = "SudokuListActivity";
 	
