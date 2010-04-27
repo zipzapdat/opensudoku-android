@@ -56,10 +56,6 @@ import cz.romario.opensudoku.game.FolderInfo;
 import cz.romario.opensudoku.game.CellCollection;
 import cz.romario.opensudoku.game.SudokuGame;
 import cz.romario.opensudoku.gui.FolderDetailLoader.FolderDetailCallback;
-import cz.romario.opensudoku.gui.generating.GenerateSudokuTask;
-import cz.romario.opensudoku.gui.generating.GenerateSudokuTaskParams;
-import cz.romario.opensudoku.gui.generating.GenerateSudokuTask.OnGenerateFinishedListener;
-import cz.romario.opensudoku.logic.Generator;
 import cz.romario.opensudoku.utils.AndroidUtils;
 
 /**
@@ -80,14 +76,11 @@ public class SudokuListActivity extends ListActivity {
 	public static final int MENU_ITEM_EDIT_NOTE = Menu.FIRST + 5;
 	public static final int MENU_ITEM_FILTER = Menu.FIRST + 6;
 	public static final int MENU_ITEM_FOLDERS = Menu.FIRST + 7;
-	public static final int MENU_ITEM_GENERATE = Menu.FIRST + 8;
 	
 	private static final int DIALOG_DELETE_PUZZLE = 0;
 	private static final int DIALOG_RESET_PUZZLE = 1;
 	private static final int DIALOG_EDIT_NOTE = 2;
 	private static final int DIALOG_FILTER = 3;
-	private static final int DIALOG_GENERATE = 4;
-	private static final int DIALOG_GENERATE_PROGRESS = 5;
 	
 	private static final String FILTER_STATE_NOT_STARTED = "filter" + SudokuGame.GAME_STATE_NOT_STARTED;
 	private static final String FILTER_STATE_PLAYING = "filter" + SudokuGame.GAME_STATE_PLAYING;
@@ -320,61 +313,6 @@ public class SudokuListActivity extends ListActivity {
 			            /* User clicked No so do some stuff */
 			        }
 			    }).create();
-			
-		case DIALOG_GENERATE:
-			return new AlertDialog.Builder(this)
-				.setIcon(android.R.drawable.ic_menu_view)
-				.setTitle(R.string.select_difficulty)
-				.setSingleChoiceItems(
-						R.array.game_levels,
-						(settings.getInt(GENERATE_LEVEL, Generator.DIFFICULTY_MEDIUM) - 1),
-                        new DialogInterface.OnClickListener() {
-			                public void onClick(DialogInterface dialog, int whichButton) {
-			                	settings.edit().putInt(GENERATE_LEVEL, whichButton + 1).commit();
-			                }
-			            })
-			    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-			        public void onClick(DialogInterface dialog, int whichButton) {
-			        	// now generate game
-			        	GenerateSudokuTask generateTask = new GenerateSudokuTask(SudokuListActivity.this);
-
-			    		GenerateSudokuTaskParams param = new GenerateSudokuTaskParams();
-			    		param.folderID = mFolderID;
-			    		param.level = settings.getInt(GENERATE_LEVEL, Generator.DIFFICULTY_MEDIUM);
-			    		
-			    		generateTask.setOnGenerateFinishedListener(new OnGenerateFinishedListener() {
-			    			@Override
-			    			public void onGenerateFinished(long gameId) {
-			    				// hide progress dialog, maybe show toast?
-			    				dismissDialog(DIALOG_GENERATE_PROGRESS);
-			    				
-			    				Intent i = new Intent(SudokuListActivity.this,
-										SudokuListActivity.class);
-			    				i.putExtra(SudokuListActivity.EXTRA_FOLDER_ID, mFolderID);
-								startActivity(i);
-								
-								// remove this from history
-								finish();
-			    			}
-			    		});
-			    		showDialog(DIALOG_GENERATE_PROGRESS);
-			    		generateTask.execute(param);
-			        }
-			    })
-			    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-			        public void onClick(DialogInterface dialog, int whichButton) {
-			            /* User clicked no, don't generate */
-			        }
-			    }).create();
-				
-			case DIALOG_GENERATE_PROGRESS:
-				ProgressDialog progressDialog = new ProgressDialog(this);
-				progressDialog.setIndeterminate(true);
-				progressDialog.setTitle(R.string.app_name);
-				progressDialog.setMessage(getString(R.string.generating));
-				progressDialog.setIcon(R.drawable.opensudoku);
-				return progressDialog;
-			
 		}
 		return null;
 	}
@@ -476,9 +414,6 @@ public class SudokuListActivity extends ListActivity {
 			finish();
 			return true;
 		}
-		case MENU_ITEM_GENERATE:
-			showDialog(DIALOG_GENERATE);
-			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
