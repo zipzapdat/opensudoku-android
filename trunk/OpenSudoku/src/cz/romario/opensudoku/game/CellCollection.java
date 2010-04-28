@@ -86,6 +86,23 @@ public class CellCollection  implements Parcelable {
 	}
 	
 	/**
+	 * Return true, if no value is entered in any of cells.
+	 * 
+	 * @return
+	 */
+	public boolean isEmpty() {
+		for (int r=0; r<SUDOKU_SIZE; r++) {
+			for (int c=0; c<SUDOKU_SIZE; c++){
+				Cell cell = mCells[r][c];
+				if (cell.getValue() != 0)
+					return false;
+			}
+		}
+		return true;
+	}
+	
+	
+	/**
 	 * Generates debug game.
 	 * 
 	 * @return
