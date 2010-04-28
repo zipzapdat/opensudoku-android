@@ -43,7 +43,7 @@ public class IMNumpad extends InputMethod {
 
 	private boolean moveCellSelectionOnPress = true;
 	private boolean mHighlightCompletedValues = true;
-	private boolean mShowNumberTotals = true;
+	private boolean mShowNumberTotals = false;
 	
 	private static final int MODE_EDIT_VALUE = 0;
 	private static final int MODE_EDIT_NOTE = 1;

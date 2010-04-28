@@ -37,7 +37,7 @@ import cz.romario.opensudoku.gui.inputmethod.IMPopupDialog.OnNumberEditListener;
 public class IMPopup extends InputMethod {
 
 	private boolean mHighlightCompletedValues = true;
-	private boolean mShowNumberTotals = true;
+	private boolean mShowNumberTotals = false;
 	
 	private IMPopupDialog mEditCellDialog;
 	private Cell mSelectedCell;
