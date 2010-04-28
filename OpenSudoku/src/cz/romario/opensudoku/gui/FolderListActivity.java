@@ -49,6 +49,7 @@ import cz.romario.opensudoku.db.FolderColumns;
 import cz.romario.opensudoku.db.SudokuDatabase;
 import cz.romario.opensudoku.game.FolderInfo;
 import cz.romario.opensudoku.gui.FolderDetailLoader.FolderDetailCallback;
+import cz.romario.opensudoku.utils.AndroidUtils;
 
 /**
  * List of puzzle's folder. This activity also serves as root activity of application.
@@ -112,6 +113,10 @@ public class FolderListActivity extends ListActivity {
 		adapter.setViewBinder(mFolderListBinder);
 		
         setListAdapter(adapter);
+        
+        // show changelog on first run
+        Changelog changelog = new Changelog(this);
+        changelog.showOnFirstRun();
 	}
     
     @Override
@@ -203,12 +208,7 @@ public class FolderListActivity extends ListActivity {
     	case DIALOG_ABOUT:
             final View aboutView = factory.inflate(R.layout.about, null);
             TextView versionLabel = (TextView)aboutView.findViewById(R.id.version_label);
-            String versionName = null;
-    		try {
-    			versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-    		} catch (NameNotFoundException e) {
-    			versionName = "unable to retreive version";
-    		}
+            String versionName = AndroidUtils.getAppVersionName(getApplicationContext());
             versionLabel.setText(getString(R.string.version, versionName));
             return new AlertDialog.Builder(this)
                 .setIcon(R.drawable.opensudoku)
