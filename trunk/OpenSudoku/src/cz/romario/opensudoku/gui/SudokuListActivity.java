@@ -170,6 +170,16 @@ public class SudokuListActivity extends ListActivity {
 		mResetPuzzleID = state.getLong("mResetPuzzleID");
 		mEditNotePuzzleID = state.getLong("mEditNotePuzzleID");
 	}
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		if (hasFocus) {
+			// the puzzle list is naturally refreshed when the window
+			// regains focus, so we only need to update the title
+			updateTitle();
+		}
+	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
