@@ -197,17 +197,25 @@ public class SudokuPlayActivity extends Activity{
         mIMControlPanelStatePersister.restoreState(mIMControlPanel);
 
 		updateTime();
+	}
+	
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
 		
-		// FIXME: When activity is resumed, title isn't sometimes hidden properly (there is black 
-		// empty space at the top of the screen). This is desperate workaround.
-		if (mFullScreen) {
-			mGuiHandler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-			        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-					mRootLayout.requestLayout();
-				}
-			}, 1000);
+		if (hasFocus) {
+			// FIXME: When activity is resumed, title isn't sometimes hidden properly (there is black 
+			// empty space at the top of the screen). This is desperate workaround.
+			if (mFullScreen) {
+				mGuiHandler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+				        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+						mRootLayout.requestLayout();
+					}
+				}, 1000);
+			}
+			
 		}
 	}
 	
