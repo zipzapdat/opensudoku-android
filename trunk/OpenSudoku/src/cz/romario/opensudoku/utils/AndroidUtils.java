@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.preference.PreferenceManager;
 
 public class AndroidUtils {
@@ -44,6 +45,32 @@ public class AndroidUtils {
 			context.setTheme(R.style.Theme_PaperII);
 		} else {
 			context.setTheme(R.style.Theme_Default);
+		}
+	}
+	
+	/** 
+	 * Returns version code of OpenSudoku.
+	 * @return
+	 */
+	public static int getAppVersionCode(Context context) {
+		try {
+			return context.getPackageManager().getPackageInfo(
+					context.getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/** 
+	 * Returns version name of OpenSudoku.
+	 * @return
+	 */
+	public static String getAppVersionName(Context context) {
+		try {
+			return context.getPackageManager().getPackageInfo(
+					context.getPackageName(), 0).versionName;
+		} catch (NameNotFoundException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
