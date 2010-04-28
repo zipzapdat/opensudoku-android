@@ -54,7 +54,7 @@ public class IMSingleNumber extends InputMethod {
 	private static final int MODE_EDIT_NOTE = 1;
 	
 	private boolean mHighlightCompletedValues = true;
-	private boolean mShowNumberTotals = true;
+	private boolean mShowNumberTotals = false;
 	
 	private int mSelectedNumber = 1;
 	private int mEditMode = MODE_EDIT_VALUE;
