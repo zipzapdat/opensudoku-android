@@ -187,8 +187,11 @@ public class SudokuPlayActivity extends Activity{
         mIMNumpad.setEnabled(gameSettings.getBoolean("im_numpad", true));
         mIMNumpad.setMoveCellSelectionOnPress(gameSettings.getBoolean("im_numpad_move_right", false));
         mIMPopup.setHighlightCompletedValues(gameSettings.getBoolean("highlight_completed_values", true));
+        mIMPopup.setShowNumberTotals(gameSettings.getBoolean("show_number_totals", false));
         mIMSingleNumber.setHighlightCompletedValues(gameSettings.getBoolean("highlight_completed_values", true));
+        mIMSingleNumber.setShowNumberTotals(gameSettings.getBoolean("show_number_totals", false));
         mIMNumpad.setHighlightCompletedValues(gameSettings.getBoolean("highlight_completed_values", true));
+        mIMNumpad.setShowNumberTotals(gameSettings.getBoolean("show_number_totals", false));
         
         mIMControlPanel.activateFirstInputMethod(); // make sure that some input method is activated
         mIMControlPanelStatePersister.restoreState(mIMControlPanel);

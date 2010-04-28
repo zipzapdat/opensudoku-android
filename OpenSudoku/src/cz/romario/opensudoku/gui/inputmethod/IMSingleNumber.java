@@ -54,6 +54,7 @@ public class IMSingleNumber extends InputMethod {
 	private static final int MODE_EDIT_NOTE = 1;
 	
 	private boolean mHighlightCompletedValues = true;
+	private boolean mShowNumberTotals = true;
 	
 	private int mSelectedNumber = 1;
 	private int mEditMode = MODE_EDIT_VALUE;
@@ -80,6 +81,14 @@ public class IMSingleNumber extends InputMethod {
 	 */
 	public void setHighlightCompletedValues(boolean highlightCompletedValues) {
 		mHighlightCompletedValues = highlightCompletedValues;
+	}
+	
+	public boolean getShowNumberTotals() {
+		return mShowNumberTotals;
+	}
+	
+	public void setShowNumberTotals(boolean showNumberTotals) {
+		mShowNumberTotals = showNumberTotals;
 	}
 	
 	@Override
@@ -190,24 +199,34 @@ public class IMSingleNumber extends InputMethod {
 					}
 				}
 				
+				Map<Integer, Integer> valuesUseCount = null;		
+				if (mHighlightCompletedValues || mShowNumberTotals)
+					valuesUseCount = mGame.getCells().getValuesUseCount();
+				
 				if (mHighlightCompletedValues) {
 					int completedTextColor = mContext.getResources().getColor(R.color.im_number_button_completed_text);
-					Map<Integer, Integer> valuesUseCount = mGame.getCells().getValuesUseCount();
 					for (Map.Entry<Integer, Integer> entry : valuesUseCount.entrySet()) {
 						boolean highlightValue = entry.getValue() >= CellCollection.SUDOKU_SIZE;
 						if (highlightValue) {
-							
 							Button b = mNumberButtons.get(entry.getKey());
 							if (b.getTag().equals(mSelectedNumber)) {
 								b.setTextColor(completedTextColor);
 							} else {
 								b.setBackgroundResource(R.drawable.btn_completed_bg);
 							}
-
 						}
-					}
+					}				
 				}
-				
+
+				if (mShowNumberTotals) {
+					for (Map.Entry<Integer, Integer> entry : valuesUseCount.entrySet()) {
+						Button b = mNumberButtons.get(entry.getKey());
+						if (!b.getTag().equals(mSelectedNumber))
+							b.setText(entry.getKey() + " (" + entry.getValue() + ")");
+						else
+							b.setText("" + entry.getKey());
+					}
+				}				
 			}
 		}, 100);
 	}

@@ -153,4 +153,9 @@
     <string name="generate_sudoku">Generate new game</string>
     <string name="select_difficulty">Select difficulty</string>
     <string name="generating">Generating puzzle...</string>
+
+    <!-- Strings added for number totals/counts -->
+    <string name="show_number_totals">Show Number Totals</string>
+    <string name="show_number_totals_summary">Displays count of each number placed.</string>    
+
 </resources>

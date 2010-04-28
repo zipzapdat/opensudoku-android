@@ -102,6 +102,10 @@ public class IMPopupDialog extends Dialog {
 		for (Button b : mNoteNumberButtons.values()) {
 			b.setBackgroundResource(R.drawable.btn_toggle_bg);
 		}
+		
+		for (Map.Entry<Integer, ToggleButton> entry: mNoteNumberButtons.entrySet()) {
+			entry.getValue().setText("" + entry.getKey());
+		}
 	}
 	
 	// TODO: vsude jinde pouzivam misto number value
@@ -167,6 +171,9 @@ public class IMPopupDialog extends Dialog {
 		mNoteNumberButtons.get(number).setBackgroundResource(R.drawable.btn_toggle_completed_bg);
 	}
 	
+	public void setValueCount(int number, int count) {
+		mNumberButtons.get(number).setText(number + " (" + count + ")");
+	}
 	
 	/**
 	 * Creates view with two tabs, first for number in cell selection, second for
