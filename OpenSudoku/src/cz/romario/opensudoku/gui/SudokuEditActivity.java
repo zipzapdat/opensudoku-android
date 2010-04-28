@@ -148,7 +148,7 @@ public class SudokuEditActivity extends Activity {
 	protected void onPause() {
 		super.onPause();
 		
-		if (isFinishing() && mState != STATE_CANCEL) {
+		if (isFinishing() && mState != STATE_CANCEL && !mGame.getCells().isEmpty()) {
 			savePuzzle();
 		}
 	}
