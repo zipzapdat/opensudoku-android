@@ -14,6 +14,11 @@
                 android:title="@string/highlight_completed_values"
                 android:summary="@string/highlight_completed_values_summary"
                 android:defaultValue="true" />
+        <CheckBoxPreference
+                android:key="show_number_totals"
+                android:title="@string/show_number_totals"
+                android:summary="@string/show_number_totals_summary"
+                android:defaultValue="false" />
     </PreferenceCategory>
     <PreferenceCategory
             android:title="@string/input_methods">

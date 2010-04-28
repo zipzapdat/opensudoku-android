@@ -43,6 +43,7 @@ public class IMNumpad extends InputMethod {
 
 	private boolean moveCellSelectionOnPress = true;
 	private boolean mHighlightCompletedValues = true;
+	private boolean mShowNumberTotals = true;
 	
 	private static final int MODE_EDIT_VALUE = 0;
 	private static final int MODE_EDIT_NOTE = 1;
@@ -74,6 +75,14 @@ public class IMNumpad extends InputMethod {
 	 */
 	public void setHighlightCompletedValues(boolean highlightCompletedValues) {
 		mHighlightCompletedValues = highlightCompletedValues;
+	}
+
+	public boolean getShowNumberTotals() {
+		return mShowNumberTotals;
+	}
+	
+	public void setShowNumberTotals(boolean showNumberTotals) {
+		mShowNumberTotals = showNumberTotals;
 	}
 	
 	@Override
@@ -200,8 +209,11 @@ public class IMNumpad extends InputMethod {
 			break;
 		}
 		
+		Map<Integer, Integer> valuesUseCount = null;		
+		if (mHighlightCompletedValues || mShowNumberTotals)
+			valuesUseCount = mGame.getCells().getValuesUseCount();
+		
 		if (mHighlightCompletedValues) {
-			Map<Integer, Integer> valuesUseCount = mGame.getCells().getValuesUseCount();
 			for (Map.Entry<Integer, Integer> entry : valuesUseCount.entrySet()) {
 				boolean highlightValue = entry.getValue() >= CellCollection.SUDOKU_SIZE;
 				Button b = mNumberButtons.get(entry.getKey());
@@ -213,6 +225,12 @@ public class IMNumpad extends InputMethod {
 			}
 		}
 		
+		if (mShowNumberTotals) {
+			for (Map.Entry<Integer, Integer> entry : valuesUseCount.entrySet()) {
+				Button b = mNumberButtons.get(entry.getKey());
+				b.setText(entry.getKey() + " (" + entry.getValue() + ")");
+			}
+		}		
 	}
 	
 	@Override
