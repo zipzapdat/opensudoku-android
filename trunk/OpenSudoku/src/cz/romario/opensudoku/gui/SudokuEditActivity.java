@@ -24,10 +24,12 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -68,8 +70,12 @@ public class SudokuEditActivity extends Activity {
     
     private SudokuDatabase mDatabase;
     private SudokuGame mGame;
+    private ViewGroup mRootLayout;
     private SudokuBoardView mBoard;
     private IMControlPanel mInputMethods;
+    private Handler mGuiHandler;
+    
+    private boolean mFullScreen;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +88,20 @@ public class SudokuEditActivity extends Activity {
 				&& (display.getHeight() == 240 || display.getHeight() == 320)) {
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-					WindowManager.LayoutParams.FLAG_FULLSCREEN); 		
+					WindowManager.LayoutParams.FLAG_FULLSCREEN); 	
+			mFullScreen = true;
 		}
 		
 		// theme must be set before setContentView
 		AndroidUtils.setThemeFromPreferences(this);
 		
 		setContentView(R.layout.sudoku_edit);
+		mRootLayout = (ViewGroup)findViewById(R.id.root_layout);
 		mBoard = (SudokuBoardView)findViewById(R.id.sudoku_board);
 		
         mDatabase = new SudokuDatabase(getApplicationContext());
+        
+        mGuiHandler = new Handler();
 		
 		Intent intent = getIntent();
         String action = intent.getAction();
@@ -143,6 +153,27 @@ public class SudokuEditActivity extends Activity {
         mInputMethods.getInputMethod(IMControlPanel.INPUT_METHOD_NUMPAD).setEnabled(true);
         mInputMethods.activateInputMethod(IMControlPanel.INPUT_METHOD_NUMPAD);
 	}
+	
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		super.onWindowFocusChanged(hasFocus);
+		
+		if (hasFocus) {
+			// FIXME: When activity is resumed, title isn't sometimes hidden properly (there is black 
+			// empty space at the top of the screen). This is desperate workaround.
+			if (mFullScreen) {
+				mGuiHandler.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+				        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+						mRootLayout.requestLayout();
+					}
+				}, 1000);
+			}
+			
+		}
+	}
+	
 	
 	@Override
 	protected void onPause() {
