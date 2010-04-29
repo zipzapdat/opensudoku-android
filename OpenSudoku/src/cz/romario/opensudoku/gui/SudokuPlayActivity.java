@@ -294,7 +294,16 @@ public class SudokuPlayActivity extends Activity{
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		
-		menu.findItem(MENU_ITEM_UNDO).setEnabled(mSudokuGame.hasSomethingToUndo());
+		if (mSudokuGame.getState() == SudokuGame.GAME_STATE_PLAYING) {
+			menu.findItem(MENU_ITEM_CLEAR_ALL_NOTES).setEnabled(true);
+//			menu.findItem(MENU_ITEM_FILL_IN_NOTES).setEnabled(true);
+			menu.findItem(MENU_ITEM_UNDO).setEnabled(mSudokuGame.hasSomethingToUndo());
+		} else {
+			menu.findItem(MENU_ITEM_CLEAR_ALL_NOTES).setEnabled(false);
+//			menu.findItem(MENU_ITEM_FILL_IN_NOTES).setEnabled(false);
+			menu.findItem(MENU_ITEM_UNDO).setEnabled(false);
+		}
+		
 		return true;
 	}
 	
