@@ -172,13 +172,11 @@ public class SudokuListActivity extends ListActivity {
 	}
 
 	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		if (hasFocus) {
-			// the puzzle list is naturally refreshed when the window
-			// regains focus, so we only need to update the title
-			updateTitle();
-		}
+	protected void onResume() {
+		super.onResume();
+		// the puzzle list is naturally refreshed when the window
+		// regains focus, so we only need to update the title
+		updateTitle();
 	}
 	
 	@Override

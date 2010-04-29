@@ -155,7 +155,7 @@
     <string name="generating">Generating puzzle...</string>
     <string name="show_number_totals">Show Number Totals</string>
     <string name="show_number_totals_summary">Displays count of each number placed.</string>
-    <string name="what_is_new">What's new</string>
+    <string name="what_is_new">What\'s new</string>
     
     <!-- There's no point in translating change-log. -->
     <string name="changelog"><b>1.1.0</b>\n- TODO\n- TODO</string>    
