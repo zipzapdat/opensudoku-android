@@ -79,6 +79,7 @@ public class SudokuBoardView extends View {
 	private int mNumberLeft;
 	private int mNumberTop;
 	private float mNoteTop;
+	private int mSectorLineWidth;
 	private Paint mBackgroundColorSecondary;
 	private Paint mBackgroundColorReadOnly;
 	private Paint mBackgroundColorTouched;
@@ -374,7 +375,22 @@ public class SudokuBoardView extends View {
         
         // add some offset because in some resolutions notes are cut-off in the top
         mNoteTop = mCellHeight / 50.0f;
-
+        
+        computeSectorLineWidth(width, height);
+	}
+	
+	private void computeSectorLineWidth(int widthInPx, int heightInPx) {
+		int sizeInPx = widthInPx < heightInPx ? widthInPx : heightInPx;
+		float dipScale = getContext().getResources().getDisplayMetrics().density;
+		float sizeInDip = sizeInPx / dipScale;
+		
+		float sectorLineWidthInDip = 2.0f;
+		
+		if (sizeInDip > 150) {
+			sectorLineWidthInDip = 3.0f;
+		}
+		
+		mSectorLineWidth = (int)(sectorLineWidthInDip * dipScale);
 	}
 	
 	@Override
@@ -494,15 +510,18 @@ public class SudokuBoardView extends View {
 			canvas.drawLine(paddingLeft, y, width, y, mLinePaint);
 		}
 		
+		int sectorLineWidth1 = mSectorLineWidth / 2;
+		int sectorLineWidth2 = sectorLineWidth1 + (mSectorLineWidth % 2);
+		
 		// draw sector (thick) lines
 		for (int c=0; c <= 9; c = c + 3) {
 			float x = (c * mCellWidth) + paddingLeft;
-			canvas.drawRect(x-1, paddingTop, x+1, height, mSectorLinePaint);
+			canvas.drawRect(x-sectorLineWidth1, paddingTop, x+sectorLineWidth2, height, mSectorLinePaint);
 		}
 		
 		for (int r=0; r <= 9; r = r + 3) {
 			float y = r * mCellHeight + paddingTop;
-			canvas.drawRect(paddingLeft, y-1, width, y+1, mSectorLinePaint);
+			canvas.drawRect(paddingLeft, y-sectorLineWidth1, width, y+sectorLineWidth2, mSectorLinePaint);
 		}
 		
 	}
