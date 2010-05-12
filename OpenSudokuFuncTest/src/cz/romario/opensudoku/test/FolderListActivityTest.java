@@ -52,6 +52,13 @@ public class FolderListActivityTest extends
 		assertTrue(solo.searchText("Version:"));
 		solo.clickOnButton(getString(android.R.string.ok));
 	}
+
+	public void testGetPuzzlesOnline() {
+		solo.clickOnButton(getString(R.string.get_more_puzzles_online));
+		solo.waitForText("opensudoku-android");
+	}
+	
+	
 	
 	public void test01MenuAddFolder() throws InterruptedException {
 		// create test folder
