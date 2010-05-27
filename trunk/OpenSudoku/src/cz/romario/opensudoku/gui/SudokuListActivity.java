@@ -460,7 +460,8 @@ public class SudokuListActivity extends ListActivity {
 		mFolderDetailLoader.loadDetailAsync(mFolderID, new FolderDetailCallback() {
 			@Override
 			public void onLoaded(FolderInfo folderInfo) {
-				setTitle(folderInfo.name + " - " + folderInfo.getDetail(getApplicationContext()));
+				if (folderInfo != null)
+					setTitle(folderInfo.name + " - " + folderInfo.getDetail(getApplicationContext()));
 			}
 		});
 	}
