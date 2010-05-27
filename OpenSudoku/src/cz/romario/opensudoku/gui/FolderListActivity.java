@@ -377,7 +377,8 @@ public class FolderListActivity extends ListActivity {
 				mDetailLoader.loadDetailAsync(folderID, new FolderDetailCallback() {
 					@Override
 					public void onLoaded(FolderInfo folderInfo) {
-						detailView.setText(folderInfo.getDetail(mContext));
+						if (folderInfo != null)
+							detailView.setText(folderInfo.getDetail(mContext));
 					}
 				});
 			}

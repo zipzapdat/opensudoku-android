@@ -7,8 +7,9 @@
 <body>
 <b>1.1.1</b>
 <ul>
-<li>Nicer changelog ;-)</li>
 <li>Android 2.2 - added move application to SD card support.</li>
+<li>Fixes few bugs reported via new Android 2.2 "Report" button.
+<li>Nicer changelog ;-)</li>
 </ul>
 <b>1.1.0</b>
 <ul>
