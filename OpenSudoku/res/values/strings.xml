@@ -157,7 +157,4 @@
     <string name="show_number_totals_summary">Displays count of each number placed.</string>
     <string name="what_is_new">What\'s new</string>
     
-    <!-- There's no point in translating change-log. -->
-    <string name="changelog"><b>1.1.0</b>\n- Italian translation (thanks to diego.pierotto)\n- Few visual tweaks (thicker lines, some changes in Paper themes)\n- New game helper - shows how many times number has been used (thanks to Todd Southen)\n- Fixed bugs:\n  - QVGA - Sceen is sometimes shifted down (issue #82)\n  - Undo should be disabled for a completed puzzle (issue #84)\n  - List of games does not update (issue #73) \n  - Other small fixes</string>    
-
 </resources>
