@@ -90,6 +90,7 @@ public class SudokuPlayActivity extends Activity{
 	private GameTimer mGameTimer;
 	private GameTimeFormat mGameTimeFormatter = new GameTimeFormat();
 	private boolean mFullScreen;
+	private boolean mFillInNotesEnabled = false;
 	
 	private HintsQueue mHintsQueue;
 
@@ -168,6 +169,8 @@ public class SudokuPlayActivity extends Activity{
         
 		int screenPadding = gameSettings.getInt("screen_border_size", 0);
 		mRootLayout.setPadding(screenPadding, screenPadding, screenPadding, screenPadding);
+		
+		mFillInNotesEnabled = gameSettings.getBoolean("fill_in_notes_enabled", false);
 		
 		mSudokuBoard.setHighlightWrongVals(gameSettings.getBoolean("highlight_wrong_values", true));
 		mSudokuBoard.setHighlightTouchedCell(gameSettings.getBoolean("highlight_touched_cell", true));
@@ -262,9 +265,12 @@ public class SudokuPlayActivity extends Activity{
         menu.add(0, MENU_ITEM_CLEAR_ALL_NOTES, 0, R.string.clear_all_notes)
         .setShortcut('3', 'a')
         .setIcon(android.R.drawable.ic_menu_delete);
+        
+        if (mFillInNotesEnabled) {
+          menu.add(0, MENU_ITEM_FILL_IN_NOTES, 0, R.string.fill_in_notes)
+          .setIcon(android.R.drawable.ic_menu_edit);
+        }
 
-//        menu.add(0, MENU_ITEM_FILL_IN_NOTES, 0, R.string.fill_in_notes)
-//        .setIcon(android.R.drawable.ic_menu_edit);
         
         menu.add(0, MENU_ITEM_RESTART, 1, R.string.restart)
         .setShortcut('7', 'r')
@@ -296,11 +302,15 @@ public class SudokuPlayActivity extends Activity{
 		
 		if (mSudokuGame.getState() == SudokuGame.GAME_STATE_PLAYING) {
 			menu.findItem(MENU_ITEM_CLEAR_ALL_NOTES).setEnabled(true);
-//			menu.findItem(MENU_ITEM_FILL_IN_NOTES).setEnabled(true);
+			if (mFillInNotesEnabled) {
+				menu.findItem(MENU_ITEM_FILL_IN_NOTES).setEnabled(true);
+			}
 			menu.findItem(MENU_ITEM_UNDO).setEnabled(mSudokuGame.hasSomethingToUndo());
 		} else {
 			menu.findItem(MENU_ITEM_CLEAR_ALL_NOTES).setEnabled(false);
-//			menu.findItem(MENU_ITEM_FILL_IN_NOTES).setEnabled(false);
+			if (mFillInNotesEnabled) {
+				menu.findItem(MENU_ITEM_FILL_IN_NOTES).setEnabled(false);
+			}
 			menu.findItem(MENU_ITEM_UNDO).setEnabled(false);
 		}
 		
