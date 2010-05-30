@@ -8,7 +8,7 @@
 <b>1.1.1</b>
 <ul>
 <li>Android 2.2 - move application to SD card support.</li>
-<li>Fixes few bugs reported via new Android 2.2 "Report" button.
+<li>Fixes few bugs reported via new Android 2.2 "Report" button.</li>
 <li>Few visual tweaks for Nexus One.</li>
 <li>"Fill in notes" menu item can now be enabled in game settings.</li>
 </ul>
@@ -20,7 +20,7 @@
 <li>
 Fixed bugs:
   <ul>
-    <li>QVGA - Sceen is sometimes shifted down (issue #82)</li>
+    <li>QVGA - Screen is sometimes shifted down (issue #82)</li>
     <li>Undo should be disabled for a completed puzzle (issue #84)</li>
     <li>List of games does not update (issue #73) </li>
     <li>Other small fixes</li>
