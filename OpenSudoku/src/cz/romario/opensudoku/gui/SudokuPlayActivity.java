@@ -125,13 +125,11 @@ public class SudokuPlayActivity extends Activity{
         mGuiHandler = new Handler();
         
         // create sudoku game instance
-        if (savedInstanceState == null) {
-        	// activity runs for the first time, read game from database
-        	mSudokuGameID = getIntent().getLongExtra(EXTRA_SUDOKU_ID, 0);
-        	mSudokuGame = mDatabase.getSudoku(mSudokuGameID);
-        } else {
+    	mSudokuGameID = getIntent().getLongExtra(EXTRA_SUDOKU_ID, 0);
+    	mSudokuGame = mDatabase.getSudoku(mSudokuGameID);
+        
+        if (savedInstanceState != null) {
         	// activity has been running before, restore its state
-        	mSudokuGame = (SudokuGame)savedInstanceState.getParcelable("sudoku_game");
         	mGameTimer.restoreState(savedInstanceState);
         }
         
@@ -250,7 +248,7 @@ public class SudokuPlayActivity extends Activity{
     	super.onSaveInstanceState(outState);
 		
     	mGameTimer.stop();
-    	outState.putParcelable("sudoku_game", mSudokuGame);
+    	//mSudokuGame.saveState(outState);
     	mGameTimer.saveState(outState);
     }
     
