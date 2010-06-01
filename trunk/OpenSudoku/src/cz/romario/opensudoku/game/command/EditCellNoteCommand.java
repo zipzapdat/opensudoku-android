@@ -43,6 +43,7 @@ public class EditCellNoteCommand implements Command {
 	@Override
 	public void undo() {
 		mCell.setNote(mOldNote);
+		mCell.select();
 	}
 
 }

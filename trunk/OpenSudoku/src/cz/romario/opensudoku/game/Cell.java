@@ -53,7 +53,7 @@ public class Cell implements Parcelable {
 	/**
 	 * Creates empty editable cell.
 	 */
-	public Cell() {
+	Cell() {
 		this (0, new CellNote(), true, true);
 	}
 	
@@ -61,7 +61,7 @@ public class Cell implements Parcelable {
 	 * Creates empty editable cell containing given value.
 	 * @param value Value of the cell.
 	 */
-	public Cell(int value) {
+	Cell(int value) {
 		this(value, new CellNote(), true, true);
 	}
 	
@@ -223,6 +223,14 @@ public class Cell implements Parcelable {
 		return mValid;
 	}
 	
+	public void select() {
+		synchronized (mCellCollectionLock) {
+			if (mCellCollection != null) {
+				mCellCollection.setSelectedCell(this);
+			}
+		}
+	}
+	
 	
 	/**
 	 * Creates instance from given <code>StringTokenizer</code>.
@@ -316,7 +324,6 @@ public class Cell implements Parcelable {
 			if (mCellCollection != null) {
 				mCellCollection.onChange();
 			}
-			
 		}
 	}
 }

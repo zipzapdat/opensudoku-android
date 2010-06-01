@@ -27,6 +27,7 @@ import android.os.Parcelable;
 import android.os.SystemClock;
 import cz.romario.opensudoku.game.command.ClearAllNotesCommand;
 import cz.romario.opensudoku.game.command.Command;
+import cz.romario.opensudoku.game.command.CommandInvoker;
 import cz.romario.opensudoku.game.command.EditCellNoteCommand;
 import cz.romario.opensudoku.game.command.FillInNotesCommand;
 import cz.romario.opensudoku.game.command.SetCellValueCommand;
@@ -46,8 +47,8 @@ public class SudokuGame implements Parcelable {
 	private CellCollection mCells;
 	
 	private OnPuzzleSolvedListener mOnPuzzleSolvedListener;
-	// very basic implementation of undo
-	private Stack<Command> mUndoStack = new Stack<Command>();
+	 
+	private CommandInvoker mCommandInvoker;
 	// Time when current activity has become active. 
 	private long mActiveFromTime = -1; 
 
@@ -65,6 +66,8 @@ public class SudokuGame implements Parcelable {
 		mCreated = 0;
 		
 		mState = GAME_STATE_NOT_STARTED;
+		
+		mCommandInvoker = new CommandInvoker(this);
 	}
 	
 	public void setOnPuzzleSolvedListener(OnPuzzleSolvedListener l) {
@@ -158,6 +161,7 @@ public class SudokuGame implements Parcelable {
 		if (cell.isEditable()) {
 			executeCommand(new SetCellValueCommand(cell, value));
 			
+			// TODO: tohle ma probihat v onValueChange modelu
 			validate();
 			if (isCompleted()) {
 				finish();
@@ -188,25 +192,20 @@ public class SudokuGame implements Parcelable {
 	}
 	
 	private void executeCommand(Command c) {
-		c.execute();
-		mUndoStack.push(c);
+		mCommandInvoker.execute(c);
 	}
 	
 	/** 
 	 * Undo last command.
 	 */
 	public void undo() {
-		// TODO: undo stack should be saved to activity's saved state
-		// TODO: redo
-		if (!mUndoStack.empty()) {
-			Command c = mUndoStack.pop();
-			c.undo();
-			validate();
-		}
+		mCommandInvoker.undo();
+		// TODO: az pujde validace pres onchange, tak tohle nebude treba
+		validate();
 	}
 	
 	public boolean hasSomethingToUndo() {
-		return mUndoStack.size() != 0;
+		return mCommandInvoker.hasSomethingToUndo();
 	}
 	
 	/**

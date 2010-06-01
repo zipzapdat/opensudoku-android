@@ -65,6 +65,9 @@
         <activity android:name=".gui.GameSettingsActivity"
                   android:label="@string/game_settings">
         </activity>
+        <activity android:name=".gui.SudokuBoardView2TestActivity"
+                  android:label="SudokuBoardView2TestActivity">
+        </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

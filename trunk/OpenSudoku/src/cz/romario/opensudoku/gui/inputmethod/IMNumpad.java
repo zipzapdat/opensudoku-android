@@ -150,7 +150,7 @@ public class IMNumpad extends InputMethod {
 	protected void onActivated() {
 		update();
 		
-		mSelectedCell = mBoard.getSelectedCell();
+		mSelectedCell = mGame.getCells().getSelectedCell();
 	}
 	
 	@Override
