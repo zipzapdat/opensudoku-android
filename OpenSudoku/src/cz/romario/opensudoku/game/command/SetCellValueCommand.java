@@ -42,6 +42,7 @@ public class SetCellValueCommand implements Command {
 	@Override
 	public void undo() {
 		mCell.setValue(mOldValue);
+		mCell.select();
 	}
 
 }

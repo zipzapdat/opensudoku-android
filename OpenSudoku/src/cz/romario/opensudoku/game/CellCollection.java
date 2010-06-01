@@ -36,6 +36,8 @@ import android.os.Parcelable;
  * @author romario
  *
  */
+// TODO: prejmenovat na model
+// TODO: pokusit se rozsekat do mensich trid
 public class CellCollection  implements Parcelable {
 	
 	public static final int SUDOKU_SIZE = 9;
@@ -61,9 +63,13 @@ public class CellCollection  implements Parcelable {
 	private CellGroup[] mRows;
 	private CellGroup[] mColumns;
 	
+	private Cell mSelectedCell;
+	
 	private boolean mOnChangeEnabled = true;
 
+	// TODO: nejak rozlisit value vs note change
 	private final List<OnChangeListener> mChangeListeners = new ArrayList<OnChangeListener>();
+	private final List<OnSelectionChangeListener> mOnSelectedChangeListeners = new ArrayList<OnSelectionChangeListener>();
 	
 	/**
 	 * Creates empty sudoku.
@@ -148,6 +154,19 @@ public class CellCollection  implements Parcelable {
 		return mCells[rowIndex][colIndex];
 	}
 	
+	public Cell getSelectedCell() {
+		return mSelectedCell;
+	}
+	
+	public void setSelectedCell(Cell cell) {
+		mSelectedCell = cell;
+		onSelectionChange(mSelectedCell);
+	}
+	
+	public void selectCell(int rowIndex, int colIndex) {
+		setSelectedCell(getCell(rowIndex, colIndex));
+	}
+	
 	public void markAllCellsAsValid() {
 		mOnChangeEnabled = false;
 		for (int r=0; r<SUDOKU_SIZE; r++)
@@ -161,6 +180,7 @@ public class CellCollection  implements Parcelable {
 		onChange();
 	}
 	
+	// TODO: pryc s timhle
 	/**
 	 * Validates numbers in collection according to the sudoku rules. Cells with invalid
 	 * values are marked - you can use getInvalid method of cell to find out whether cell
@@ -482,6 +502,30 @@ public class CellCollection  implements Parcelable {
 			mChangeListeners.remove(listener);
 		}
 	}
+
+	public void addOnSelectionChangeListener(OnSelectionChangeListener listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException("The listener is null.");
+		}
+		synchronized (mOnSelectedChangeListeners) {
+			if (mOnSelectedChangeListeners.contains(listener)) {
+				throw new IllegalStateException("Listener " + listener + "is already registered.");
+			}
+			mOnSelectedChangeListeners.add(listener);
+		}
+	}
+	
+	public void removeOnSelectionChangeListener(OnSelectionChangeListener listener) {
+		if (listener == null) {
+			throw new IllegalArgumentException("The listener is null.");
+		}
+		synchronized (mOnSelectedChangeListeners) {
+			if (!mOnSelectedChangeListeners.contains(listener)) {
+				throw new IllegalStateException("Listener " + listener + " was not registered.");
+			}
+			mOnSelectedChangeListeners.remove(listener);
+		}
+	}
 	
 	/**
 	 * Returns whether change notification is enabled.
@@ -523,5 +567,25 @@ public class CellCollection  implements Parcelable {
 		 * Called when anything in the collection changes (cell's value, note, etc.)
 		 */
 		void onChange();
+	}
+	
+	protected void onSelectionChange(Cell newSelection) {
+		if (mOnChangeEnabled) { // TODO: doresit povolovani / zakazovani eventu
+			synchronized (mOnSelectedChangeListeners) {
+				for (OnSelectionChangeListener l : mOnSelectedChangeListeners) {
+					l.onSelectionChange(newSelection);
+				}
+			}
+		}
+	}	
+	
+	public interface OnSelectionChangeListener {
+		
+		/**
+		 * Called when selected cell is changed.
+		 * 
+		 * @param newSelection
+		 */
+		void onSelectionChange(Cell newSelection);
 	}
 }
