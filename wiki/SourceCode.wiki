@@ -1,7 +1,11 @@
-==Repository Layout==
+You can [http://code.google.com/p/opensudoku-android/source/browse/ browse source code here].
+
+You can view [http://code.google.com/p/opensudoku-android/source/list changes here].
+
+==Repository layout==
 
 Please note that source code in trunk may be broken. You can find source code of the
-latest stable release in [http://code.google.com/p/opensudoku-android/source/browse/#svn/branches/1.1.x 1.1.* branch]. 
+latest stable release in [http://code.google.com/p/opensudoku-android/source/browse/#svn/branches/1.1.x 1.1.* branch].
 
 ==Command-line access==
 
