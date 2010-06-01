@@ -1,4 +1,4 @@
-#summary Instruction fo
+#summary Source code repository
 ==Repository Layout==
 
 Please note that source code in trunk may be broken. You can find source code of the
