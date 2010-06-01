@@ -1,6 +1,6 @@
 You can [http://code.google.com/p/opensudoku-android/source/browse/ browse source code here].
 
-You can view [http://code.google.com/p/opensudoku-android/source/list changes here].
+You can [http://code.google.com/p/opensudoku-android/source/list view changes here].
 
 ==Repository layout==
 
