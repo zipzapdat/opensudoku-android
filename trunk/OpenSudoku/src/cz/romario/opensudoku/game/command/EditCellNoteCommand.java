@@ -20,14 +20,20 @@
 
 package cz.romario.opensudoku.game.command;
 
+import android.os.Bundle;
 import cz.romario.opensudoku.game.Cell;
 import cz.romario.opensudoku.game.CellNote;
+import cz.romario.opensudoku.game.SudokuGame;
 
 public class EditCellNoteCommand implements Command {
 
 	private Cell mCell;
 	private CellNote mNote;
 	private CellNote mOldNote;
+	
+	EditCellNoteCommand() {
+		
+	}
 	
 	public EditCellNoteCommand(Cell cell, CellNote note) {
 		mCell = cell;
@@ -44,6 +50,24 @@ public class EditCellNoteCommand implements Command {
 	public void undo() {
 		mCell.setNote(mOldNote);
 		mCell.select();
+	}
+
+	@Override
+	public void restoreState(Bundle state, SudokuGame game) {
+		int rowIndex = state.getInt("rowIndex");
+		int colIndex = state.getInt("colIndex");
+		mCell = game.getCells().getCell(rowIndex, colIndex);
+		
+		mNote = CellNote.deserialize(state.getString("note"));
+		mOldNote = CellNote.deserialize(state.getString("oldNote"));
+	}
+
+	@Override
+	public void saveState(Bundle outState) {
+		outState.putInt("rowIndex", mCell.getRowIndex());
+		outState.putInt("colIndex", mCell.getColumnIndex());
+		outState.putString("note", mNote.serialize());
+		outState.putString("oldNote", mOldNote.serialize());
 	}
 
 }

@@ -23,15 +23,21 @@ package cz.romario.opensudoku.game.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Bundle;
+
 import cz.romario.opensudoku.game.Cell;
 import cz.romario.opensudoku.game.CellCollection;
 import cz.romario.opensudoku.game.CellNote;
+import cz.romario.opensudoku.game.SudokuGame;
 
 public class ClearAllNotesCommand implements Command {
 
 	private CellCollection mCells; 
 	private List<NoteEntry> mOldNotes = new ArrayList<NoteEntry>();
 	
+	ClearAllNotesCommand() {
+		
+	}
 	
 	public ClearAllNotesCommand(CellCollection cells) {
 		mCells = cells;
@@ -71,6 +77,38 @@ public class ClearAllNotesCommand implements Command {
 			this.note = note;
 		}
 		
+	}
+
+	@Override
+	public void restoreState(Bundle state, SudokuGame game) {
+		mCells = game.getCells();
+		
+		int[] rows = state.getIntArray("rows");
+		int[] cols = state.getIntArray("cols");
+		String[] notes = state.getStringArray("notes");
+		
+		for (int i = 0; i < rows.length; i++) {
+			mOldNotes.add(new NoteEntry(rows[i], cols[i], CellNote
+					.deserialize(notes[i])));
+		}
+	}
+
+	@Override
+	public void saveState(Bundle outState) {
+		int[] rows = new int[mOldNotes.size()];
+		int[] cols = new int[mOldNotes.size()];
+		String[] notes = new String[mOldNotes.size()];
+		
+		int i = 0;
+		for (NoteEntry ne : mOldNotes) {
+			rows[i] = ne.rowIndex;
+			cols[i] = ne.colIndex;
+			notes[i] = ne.note.serialize();
+		}
+		
+		outState.putIntArray("rows", rows);
+		outState.putIntArray("cols", cols);
+		outState.putStringArray("notes", notes);
 	}
 	
 

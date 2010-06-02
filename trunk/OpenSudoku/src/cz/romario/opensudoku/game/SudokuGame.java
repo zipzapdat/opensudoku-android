@@ -280,6 +280,10 @@ public class SudokuGame {
 		mCells.validate();
 	}
 	
+	public CommandInvoker getCommandInvoker() {
+		return mCommandInvoker;
+	}
+	
 //	public void saveState(Bundle outState) {
 //		outState.putLong("id", mId);
 //		outState.putString("note", mNote);
