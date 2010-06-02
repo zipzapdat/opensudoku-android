@@ -35,6 +35,13 @@ public class SetCellValueCommand implements Command {
 	}
 	
 	public SetCellValueCommand(Cell cell, int value) {
+		if (cell == null) {
+			throw new IllegalArgumentException("Cell cannot be null.");
+		}
+		if (value < 0 || value > 9) {
+			throw new IllegalArgumentException("Value must be between 0-9.");
+		}
+
 		mCell = cell;
 		mValue = value;
 	}

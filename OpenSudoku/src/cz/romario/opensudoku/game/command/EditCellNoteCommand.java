@@ -36,6 +36,13 @@ public class EditCellNoteCommand implements Command {
 	}
 	
 	public EditCellNoteCommand(Cell cell, CellNote note) {
+		if (cell == null) {
+			throw new IllegalArgumentException("Cell cannot be null.");
+		}
+		if (note == null) {
+			throw new IllegalArgumentException("Note cannot be null.");
+		}
+
 		mCell = cell;
 		mNote = note;
 	}
