@@ -1,7 +1,7 @@
 package cz.romario.opensudoku.game;
 
-import android.os.Bundle;
 import junit.framework.TestCase;
+import cz.romario.opensudoku.game.CellCollection.OnChangeListener;
 
 public class CellCollectionTest extends TestCase {
 	
@@ -18,22 +18,151 @@ public class CellCollectionTest extends TestCase {
 		}
 	}
 	
-	public void testParcelableVsToString() {
-		CellCollection cells = CellCollection.createDebugGame();
-		cells.getCell(2, 2).setNote(CellNote.deserialize("5,7,"));
-		cells.getCell(1, 4).setNote(CellNote.deserialize("5,7,"));
-		cells.getCell(5, 4).setNote(CellNote.deserialize("5,7,"));
-		cells.getCell(7, 7).setNote(CellNote.deserialize("5,7,"));
-		cells.getCell(6, 6).setNote(CellNote.deserialize("5,7,"));
-		cells.getCell(6, 7).setNote(CellNote.deserialize("5,7,"));
-		cells.getCell(7, 6).setNote(CellNote.deserialize("5,7,"));
+	public void testOnChange() {
+		CellCollection target = CellCollection.createEmpty();
+		TestOnChangeListener listener = new TestOnChangeListener();
+		target.addOnChangeListener(CellCollection.CHANGE_TYPE_ALL, listener);
 		
-		Bundle bundle = new Bundle();
-		bundle.putParcelable("test", cells);
+		Cell cell = target.getCell(3, 3);
 		
+		cell.setValue(5);
+		assertEquals(1, listener.invokeCount);
+		assertEquals(CellCollection.CHANGE_TYPE_VALUE, listener.lastChangeType);
+		assertSame(cell, listener.lastCell);
+
+		cell.setNote(new CellNote(5));
+		assertEquals(2, listener.invokeCount);
+		assertEquals(CellCollection.CHANGE_TYPE_NOTE, listener.lastChangeType);
+		assertSame(cell, listener.lastCell);
+
+		cell.setEditable(false);
+		assertEquals(3, listener.invokeCount);
+		assertEquals(CellCollection.CHANGE_TYPE_EDITABLE, listener.lastChangeType);
+		assertSame(cell, listener.lastCell);
 		
+		cell.select();
+		assertEquals(4, listener.invokeCount);
+		assertEquals(CellCollection.CHANGE_TYPE_SELECTION, listener.lastChangeType);
+		assertSame(cell, listener.lastCell);
+	}
+	
+	public void testOnChangeFilteringValue() {
+		CellCollection target = CellCollection.createEmpty();
+		TestOnChangeListener listener = new TestOnChangeListener();
+		target.addOnChangeListener(CellCollection.CHANGE_TYPE_VALUE, listener);
+		
+		Cell cell = target.getCell(3, 3);
+		
+		cell.setValue(5);
+		assertEquals(1, listener.invokeCount);
+		assertEquals(CellCollection.CHANGE_TYPE_VALUE, listener.lastChangeType);
+		assertSame(cell, listener.lastCell);
+		
+		cell.setNote(new CellNote(5));
+		cell.setEditable(false);
+		cell.select();
+		assertEquals(1, listener.invokeCount);
+	}
+
+	public void testOnChangeFilteringNote() {
+		CellCollection target = CellCollection.createEmpty();
+		TestOnChangeListener listener = new TestOnChangeListener();
+		target.addOnChangeListener(CellCollection.CHANGE_TYPE_NOTE, listener);
+		
+		Cell cell = target.getCell(3, 3);
+		
+		cell.setNote(new CellNote(5));
+		assertEquals(1, listener.invokeCount);
+		assertEquals(CellCollection.CHANGE_TYPE_NOTE, listener.lastChangeType);
+		assertSame(cell, listener.lastCell);
+		
+		cell.setValue(5);
+		cell.setEditable(false);
+		cell.select();
+		assertEquals(1, listener.invokeCount);
+	}
+
+	public void testOnChangeFilteringEditable() {
+		CellCollection target = CellCollection.createEmpty();
+		TestOnChangeListener listener = new TestOnChangeListener();
+		target.addOnChangeListener(CellCollection.CHANGE_TYPE_EDITABLE, listener);
+		
+		Cell cell = target.getCell(3, 3);
+		
+		cell.setEditable(false);
+		assertEquals(1, listener.invokeCount);
+		assertEquals(CellCollection.CHANGE_TYPE_EDITABLE, listener.lastChangeType);
+		assertSame(cell, listener.lastCell);
+		
+		cell.setNote(new CellNote(5));
+		cell.setValue(5);
+		cell.select();
+		assertEquals(1, listener.invokeCount);
+	}
+
+	public void testOnChangeFilteringSelection() {
+		CellCollection target = CellCollection.createEmpty();
+		TestOnChangeListener listener = new TestOnChangeListener();
+		target.addOnChangeListener(CellCollection.CHANGE_TYPE_SELECTION, listener);
+		
+		Cell cell = target.getCell(3, 3);
+		
+		cell.select();
+		assertEquals(1, listener.invokeCount);
+		assertEquals(CellCollection.CHANGE_TYPE_SELECTION, listener.lastChangeType);
+		assertSame(cell, listener.lastCell);
+		
+		cell.setNote(new CellNote(5));
+		cell.setValue(5);
+		cell.setEditable(false);
+		assertEquals(1, listener.invokeCount);
+	}
+	
+	public void testAddOnChangeListenerCannotAddTwice() {
+		CellCollection target = CellCollection.createEmpty();
+		TestOnChangeListener listener = new TestOnChangeListener();
+		target.addOnChangeListener(CellCollection.CHANGE_TYPE_ALL, listener);
+		try {
+			target.addOnChangeListener(CellCollection.CHANGE_TYPE_ALL, listener);
+		} catch (IllegalStateException e) {
+			return;
+		}
+		
+		fail("IllegalStateException expected, but nothing was raised.");
+	}
+	
+	public void testRemoveOnChangeListener() {
+		CellCollection target = CellCollection.createEmpty();
+		TestOnChangeListener listener = new TestOnChangeListener();
+		target.addOnChangeListener(CellCollection.CHANGE_TYPE_ALL, listener);
+		
+		assertEquals(1, target.getListenerCount());
+
+		target.removeOnChangeListener(listener);
+		
+		assertEquals(0, target.getListenerCount());
+	}
+	
+	
+	static class TestOnChangeListener implements OnChangeListener {
+
+		public int invokeCount;
+		public int lastChangeType;
+		public Cell lastCell;
+		
+		public TestOnChangeListener() {
+		}
+		
+		@Override
+		public void onChange(int changeType, Cell cell) {
+			invokeCount++;
+			lastChangeType = changeType;
+			lastCell = cell;
+		}
 		
 	}
+	
+	// TODO: test bit masky
 	
 
 	

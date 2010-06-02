@@ -22,13 +22,6 @@ package cz.romario.opensudoku.gui;
 
 import java.util.Collection;
 
-import cz.romario.opensudoku.R;
-import cz.romario.opensudoku.game.Cell;
-import cz.romario.opensudoku.game.CellCollection;
-import cz.romario.opensudoku.game.CellNote;
-import cz.romario.opensudoku.game.SudokuGame;
-import cz.romario.opensudoku.game.CellCollection.OnChangeListener;
-import cz.romario.opensudoku.game.CellCollection.OnSelectionChangeListener;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -38,6 +31,12 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import cz.romario.opensudoku.R;
+import cz.romario.opensudoku.game.Cell;
+import cz.romario.opensudoku.game.CellCollection;
+import cz.romario.opensudoku.game.CellNote;
+import cz.romario.opensudoku.game.SudokuGame;
+import cz.romario.opensudoku.game.CellCollection.OnChangeListener;
 
 /**
  *  Sudoku board widget.
@@ -220,20 +219,15 @@ public class SudokuBoardView extends View {
 				mCells.selectCell(0, 0); // first cell will be selected by default
 			}
 			
-			mCells.addOnChangeListener(new OnChangeListener() {
-				@Override
-				public void onChange() {
-					postInvalidate();
-				}
-			});
-			
-			mCells.addOnSelectionChangeListener(new OnSelectionChangeListener() {
-				
-				@Override
-				public void onSelectionChange(Cell newSelection) {
-					postInvalidate();
-				}
-			});
+			mCells.addOnChangeListener(CellCollection.CHANGE_TYPE_ALL,
+					new OnChangeListener() {
+
+					@Override
+						public void onChange(int changeType, Cell cell) {
+							postInvalidate();
+						}
+
+					});
 		}
 		
 		postInvalidate();
