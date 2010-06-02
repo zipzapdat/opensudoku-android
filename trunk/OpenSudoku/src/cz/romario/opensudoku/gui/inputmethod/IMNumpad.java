@@ -90,7 +90,7 @@ public class IMNumpad extends InputMethod {
 			SudokuGame game, SudokuBoardView board, HintsQueue hintsQueue) {
 		super.initialize(context, controlPanel, game, board, hintsQueue);
 		
-		game.getCells().addOnChangeListener(mOnCellsChangeListener);
+		game.getCells().addOnChangeListener(CellCollection.CHANGE_TYPE_VALUE, mOnCellsChangeListener);
 	}
 	
 	@Override
@@ -191,7 +191,7 @@ public class IMNumpad extends InputMethod {
 	private OnChangeListener mOnCellsChangeListener = new OnChangeListener() {
 		
 		@Override
-		public void onChange() {
+		public void onChange(int changeType, Cell cell) {
 			if (mActive) {
 				update();
 			}

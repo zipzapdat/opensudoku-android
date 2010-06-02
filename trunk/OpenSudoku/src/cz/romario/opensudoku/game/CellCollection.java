@@ -64,9 +64,13 @@ public class CellCollection {
 	
 	private boolean mOnChangeEnabled = true;
 
-	// TODO: nejak rozlisit value vs note change
-	private final List<OnChangeListener> mChangeListeners = new ArrayList<OnChangeListener>();
-	private final List<OnSelectionChangeListener> mOnSelectedChangeListeners = new ArrayList<OnSelectionChangeListener>();
+	public static final int CHANGE_TYPE_VALUE = 0x1;
+	public static final int CHANGE_TYPE_NOTE = 0x10;
+	public static final int CHANGE_TYPE_SELECTION = 0x100;
+	public static final int CHANGE_TYPE_EDITABLE = 0x1000;
+	public static final int CHANGE_TYPE_ALL = 0x1111;
+	
+	private final List<RegisteredOnChangeListener> mChangeListeners = new ArrayList<RegisteredOnChangeListener>();
 	
 	/**
 	 * Creates empty sudoku.
@@ -157,7 +161,7 @@ public class CellCollection {
 	
 	public void setSelectedCell(Cell cell) {
 		mSelectedCell = cell;
-		onSelectionChange(mSelectedCell);
+		onChange(CHANGE_TYPE_SELECTION, cell);
 	}
 	
 	public void selectCell(int rowIndex, int colIndex) {
@@ -174,7 +178,8 @@ public class CellCollection {
 			}
 		}
 		mOnChangeEnabled = true;
-		onChange();
+		// TODO: validace pujde pryc
+		//onChange();
 	}
 	
 	// TODO: pryc s timhle
@@ -211,7 +216,8 @@ public class CellCollection {
 		}
 		
 		mOnChangeEnabled = true;
-		onChange();
+		// TODO: validace pujde pryc
+		//onChange();
 
 		return valid;
 	}
@@ -335,7 +341,7 @@ public class CellCollection {
 	
 	/**
 	 * Creates instance from given string (string which has been 
-	 * created by {@link #serialize(StringBuilder)} or {@link #serialize()} method).
+	 * created by {@link #serialize(StringBuilder)} or {@linkSelection #serialize()} method).
 	 * earlier.
 	 * 
 	 * @param note
@@ -435,15 +441,24 @@ public class CellCollection {
 		}
 	}
 	
-	public void addOnChangeListener(OnChangeListener listener) {
+	/**
+	 * Adds listener, which will be notified when something changes.
+	 * 
+	 * @param changeTypeMask Which types of changes you are interested in.
+	 * @param listener
+	 */
+	public void addOnChangeListener(int changeTypeMask, OnChangeListener listener) {
 		if (listener == null) {
 			throw new IllegalArgumentException("The listener is null.");
 		}
+		
+		RegisteredOnChangeListener rListener = new RegisteredOnChangeListener(changeTypeMask, listener);
+		
 		synchronized (mChangeListeners) {
-			if (mChangeListeners.contains(listener)) {
+			if (mChangeListeners.contains(rListener)) {
 				throw new IllegalStateException("Listener " + listener + "is already registered.");
 			}
-			mChangeListeners.add(listener);
+			mChangeListeners.add(rListener);
 		}
 	}
 	
@@ -451,35 +466,14 @@ public class CellCollection {
 		if (listener == null) {
 			throw new IllegalArgumentException("The listener is null.");
 		}
+		
+		RegisteredOnChangeListener rListener = new RegisteredOnChangeListener(listener);
+		
 		synchronized (mChangeListeners) {
-			if (!mChangeListeners.contains(listener)) {
+			if (!mChangeListeners.contains(rListener)) {
 				throw new IllegalStateException("Listener " + listener + " was not registered.");
 			}
-			mChangeListeners.remove(listener);
-		}
-	}
-
-	public void addOnSelectionChangeListener(OnSelectionChangeListener listener) {
-		if (listener == null) {
-			throw new IllegalArgumentException("The listener is null.");
-		}
-		synchronized (mOnSelectedChangeListeners) {
-			if (mOnSelectedChangeListeners.contains(listener)) {
-				throw new IllegalStateException("Listener " + listener + "is already registered.");
-			}
-			mOnSelectedChangeListeners.add(listener);
-		}
-	}
-	
-	public void removeOnSelectionChangeListener(OnSelectionChangeListener listener) {
-		if (listener == null) {
-			throw new IllegalArgumentException("The listener is null.");
-		}
-		synchronized (mOnSelectedChangeListeners) {
-			if (!mOnSelectedChangeListeners.contains(listener)) {
-				throw new IllegalStateException("Listener " + listener + " was not registered.");
-			}
-			mOnSelectedChangeListeners.remove(listener);
+			mChangeListeners.remove(rListener);
 		}
 	}
 	
@@ -508,11 +502,11 @@ public class CellCollection {
 	/** 
 	 * Notify all registered listeners that something has changed.
 	 */
-	protected void onChange() {
+	protected void onChange(int changeType, Cell cell) {
 		if (mOnChangeEnabled) {
 			synchronized (mChangeListeners) {
-				for (OnChangeListener l : mChangeListeners) {
-					l.onChange();
+				for (RegisteredOnChangeListener l : mChangeListeners) {
+					l.onChange(changeType, cell);
 				}
 			}
 		}
@@ -520,28 +514,51 @@ public class CellCollection {
 	
 	public interface OnChangeListener {
 		/**
-		 * Called when anything in the collection changes (cell's value, note, etc.)
+		 * Called when something in cell's collection changes.
+		 * 
+		 * @param changeType Type of change (see CHANGE_TYPE_* constants).
+		 * @param cell Cell affected by change.
 		 */
-		void onChange();
+		void onChange(int changeType, Cell cell);
 	}
 	
-	protected void onSelectionChange(Cell newSelection) {
-		if (mOnChangeEnabled) { // TODO: doresit povolovani / zakazovani eventu
-			synchronized (mOnSelectedChangeListeners) {
-				for (OnSelectionChangeListener l : mOnSelectedChangeListeners) {
-					l.onSelectionChange(newSelection);
-				}
+	private static class RegisteredOnChangeListener {
+		private int changeTypeMask;
+		private OnChangeListener listener;
+		
+		public RegisteredOnChangeListener(OnChangeListener listener) {
+			this.listener = listener;
+		}
+		
+		public RegisteredOnChangeListener(int changeTypeMask, OnChangeListener listener) {
+			this.changeTypeMask = changeTypeMask;
+			this.listener = listener;
+		}
+		
+		public void onChange(int changeType, Cell cell) {
+			if ((changeType & changeTypeMask) != 0) {
+				listener.onChange(changeType, cell);
 			}
 		}
-	}	
-	
-	public interface OnSelectionChangeListener {
 		
-		/**
-		 * Called when selected cell is changed.
-		 * 
-		 * @param newSelection
-		 */
-		void onSelectionChange(Cell newSelection);
+		// TODO: staci tohle?
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof RegisteredOnChangeListener) {
+				RegisteredOnChangeListener other = (RegisteredOnChangeListener)o;
+				return listener == other.listener;
+			}
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return listener.hashCode();
+		}
+	}
+	
+	// for unit tests only
+	int getListenerCount() {
+		return mChangeListeners.size();
 	}
 }

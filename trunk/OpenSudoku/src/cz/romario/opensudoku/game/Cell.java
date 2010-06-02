@@ -150,7 +150,7 @@ public class Cell {
 			throw new IllegalArgumentException("Value must be between 0-9.");
 		}
 		mValue = value;
-		onChange();
+		onChange(CellCollection.CHANGE_TYPE_VALUE);
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class Cell {
 	 */
 	public void setNote(CellNote note) {
 		mNote = note;
-		onChange();
+		onChange(CellCollection.CHANGE_TYPE_NOTE);
 	}
 	
 	/**
@@ -196,7 +196,7 @@ public class Cell {
 	 */
 	public void setEditable(Boolean editable) {
 		mEditable = editable;
-		onChange();
+		onChange(CellCollection.CHANGE_TYPE_EDITABLE);
 	}
 	
 	/**
@@ -206,7 +206,8 @@ public class Cell {
 	 */
 	public void setValid(Boolean valid) {
 		mValid = valid;
-		onChange();
+		// TODO: valid pujde pryc
+		//onChange();
 	}
 
 	/**
@@ -281,10 +282,10 @@ public class Cell {
 	/**
 	 * Notify CellCollection that something has changed.
 	 */
-	private void onChange() {
+	private void onChange(int changeType) {
 		synchronized (mCellCollectionLock) {
 			if (mCellCollection != null) {
-				mCellCollection.onChange();
+				mCellCollection.onChange(changeType, this);
 			}
 		}
 	}
