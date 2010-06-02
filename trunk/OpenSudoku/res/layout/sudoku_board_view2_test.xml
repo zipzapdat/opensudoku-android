@@ -2,7 +2,8 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
+  android:layout_height="fill_parent"
+  android:background="#888888">
 	<cz.romario.opensudoku.gui.SudokuBoardView2
 		android:id="@+id/sudoku_board"
 	    android:layout_width="fill_parent"

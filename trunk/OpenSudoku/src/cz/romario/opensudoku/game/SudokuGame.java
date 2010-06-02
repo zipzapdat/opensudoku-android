@@ -147,13 +147,6 @@ public class SudokuGame {
 	 * @param value
 	 */
 	public void setCellValue(Cell cell, int value) {
-		if (cell == null) {
-			throw new IllegalArgumentException("Cell cannot be null.");
-		}
-		if (value < 0 || value > 9) {
-			throw new IllegalArgumentException("Value must be between 0-9.");
-		}
-		
 		if (cell.isEditable()) {
 			executeCommand(new SetCellValueCommand(cell, value));
 			
@@ -175,13 +168,6 @@ public class SudokuGame {
 	 * @param note
 	 */
 	public void setCellNote(Cell cell, CellNote note) {
-		if (cell == null) {
-			throw new IllegalArgumentException("Cell cannot be null.");
-		}
-		if (note == null) {
-			throw new IllegalArgumentException("Note cannot be null.");
-		}
-
 		if (cell.isEditable()) {
 			executeCommand(new EditCellNoteCommand(cell, note));
 		}
