@@ -131,6 +131,7 @@ public class SudokuPlayActivity extends Activity{
         if (savedInstanceState != null) {
         	// activity has been running before, restore its state
         	mGameTimer.restoreState(savedInstanceState);
+        	mSudokuGame.getCommandInvoker().restoreState(savedInstanceState);
         }
         
         if (mSudokuGame.getState() == SudokuGame.GAME_STATE_NOT_STARTED) {
@@ -248,8 +249,9 @@ public class SudokuPlayActivity extends Activity{
     	super.onSaveInstanceState(outState);
 		
     	mGameTimer.stop();
-    	//mSudokuGame.saveState(outState);
     	mGameTimer.saveState(outState);
+    	
+    	mSudokuGame.getCommandInvoker().saveState(outState);
     }
     
 	@Override

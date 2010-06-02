@@ -20,13 +20,19 @@
 
 package cz.romario.opensudoku.game.command;
 
+import android.os.Bundle;
 import cz.romario.opensudoku.game.Cell;
+import cz.romario.opensudoku.game.SudokuGame;
 
 public class SetCellValueCommand implements Command {
 
 	private Cell mCell;
 	private int mValue;
 	private int mOldValue;
+	
+	SetCellValueCommand() {
+		
+	}
 	
 	public SetCellValueCommand(Cell cell, int value) {
 		mCell = cell;
@@ -43,6 +49,24 @@ public class SetCellValueCommand implements Command {
 	public void undo() {
 		mCell.setValue(mOldValue);
 		mCell.select();
+	}
+
+	@Override
+	public void restoreState(Bundle state, SudokuGame game) {
+		int rowIndex = state.getInt("rowIndex");
+		int colIndex = state.getInt("colIndex");
+		mCell = game.getCells().getCell(rowIndex, colIndex);
+	
+		mValue = state.getInt("value");
+		mOldValue = state.getInt("oldValue");
+	}
+
+	@Override
+	public void saveState(Bundle outState) {
+		outState.putInt("rowIndex", mCell.getRowIndex());
+		outState.putInt("colIndex", mCell.getColumnIndex());
+		outState.putInt("value", mValue);
+		outState.putInt("oldValue", mOldValue);
 	}
 
 }

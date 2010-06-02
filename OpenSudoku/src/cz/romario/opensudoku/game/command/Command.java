@@ -20,6 +20,9 @@
 
 package cz.romario.opensudoku.game.command;
 
+import cz.romario.opensudoku.game.SudokuGame;
+import android.os.Bundle;
+
 /**
  * Generic interface for command in application.
  * 
@@ -35,4 +38,7 @@ public interface Command {
 	 * Undo this command.
 	 */
 	void undo();
+	
+	void restoreState(Bundle state, SudokuGame game);
+	void saveState(Bundle outState);
 }
