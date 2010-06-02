@@ -41,32 +41,29 @@ public class CommandInvoker {
 	private static final int COMMAND_FILL_IN_NOTES = 3;
 	private static final int COMMAND_CLEAR_ALL_NOTES = 4;
 	
-	// TODO:
 	public void saveState(Bundle outState) {
 		
 		outState.putInt("commands.size", mUndoStack.size());
 		
-		int index = 0;
-		for (Command c : mUndoStack) {
-			
+		for (int i = 0; i < mUndoStack.size(); i++) {
+			Command command = mUndoStack.get(i);
 			int commandClass = 0;
-			if (c instanceof SetCellValueCommand)
+			if (command instanceof SetCellValueCommand)
 				commandClass = COMMAND_SET_CELL_VALUE;
-			else if (c instanceof EditCellNoteCommand)
+			else if (command instanceof EditCellNoteCommand)
 				commandClass = COMMAND_EDIT_CELL_NOTE;
-			else if (c instanceof FillInNotesCommand)
+			else if (command instanceof FillInNotesCommand)
 				commandClass = COMMAND_FILL_IN_NOTES;
-			else if (c instanceof ClearAllNotesCommand)
+			else if (command instanceof ClearAllNotesCommand)
 				commandClass = COMMAND_CLEAR_ALL_NOTES;
 			else
-				throw new IllegalStateException(String.format("Unknown command class '%s'.", c.getClass().getName()));
+				throw new IllegalStateException(String.format("Unknown command class '%s'.", command.getClass().getName()));
 			
-			// TODO: performance testy pro stovky polozek, slo by zoptimalizovat pouzitim writeArray metod
-			outState.putInt("commands." + index + ".class", commandClass);
+			outState.putInt("commands." + i + ".class", commandClass);
 			Bundle commandState = new Bundle();
-			outState.putBundle("commands." + index + ".state", commandState);
+			command.saveState(commandState);
+			outState.putBundle("commands." + i + ".state", commandState);
 			
-			index++;
 		}
 		
 	}
@@ -97,6 +94,8 @@ public class CommandInvoker {
 			
 			Bundle commandState = state.getBundle("commands." + i + ".state");
 			command.restoreState(commandState, mGame);
+			
+			mUndoStack.add(command);
 		}
 	}
 }
