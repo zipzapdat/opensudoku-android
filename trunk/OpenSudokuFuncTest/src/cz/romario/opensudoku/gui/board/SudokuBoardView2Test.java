@@ -1,5 +1,7 @@
-package cz.romario.opensudoku.gui;
+package cz.romario.opensudoku.gui.board;
 
+import cz.romario.opensudoku.gui.board.SudokuBoardView2;
+import cz.romario.opensudoku.gui.board.SudokuBoardView2TestActivity;
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View.MeasureSpec;

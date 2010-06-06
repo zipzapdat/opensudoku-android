@@ -61,7 +61,7 @@
         <activity android:name=".gui.GameSettingsActivity"
                   android:label="@string/game_settings">
         </activity>
-        <activity android:name=".gui.SudokuBoardView2TestActivity"
+        <activity android:name=".gui.board.SudokuBoardView2TestActivity"
                   android:label="SudokuBoardView2TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
