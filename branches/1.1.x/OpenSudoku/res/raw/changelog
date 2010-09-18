@@ -5,6 +5,11 @@
 </style>
 </head>
 <body>
+<b>1.1.2</b>
+<ul>
+<li>Manual import of puzzles from SD card - just press Menu and select Import (thanks to dracul for this).</li>
+<li>OpenSudoku is now installed on SD card by default.</li>
+</ul>
 <b>1.1.1</b>
 <ul>
 <li>Android 2.2 - move application to SD card support.</li>

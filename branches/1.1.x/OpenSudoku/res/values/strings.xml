@@ -24,6 +24,8 @@
 	<string name="edit_note">Edit note</string>
 	
 	<string name="add_folder">Add folder</string>
+	<string name="import_file">Import</string>
+	<string name="import_file_title">Import file %s</string>
 	<string name="about">About</string>
 	<string name="rename_folder">Rename folder</string>
 	<string name="delete_folder">Delete folder</string>

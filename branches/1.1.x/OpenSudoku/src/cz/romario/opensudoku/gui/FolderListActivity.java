@@ -65,6 +65,7 @@ public class FolderListActivity extends ListActivity {
     public static final int MENU_ITEM_ABOUT = Menu.FIRST + 3;
     public static final int MENU_ITEM_EXPORT = Menu.FIRST + 4;
     public static final int MENU_ITEM_EXPORT_ALL = Menu.FIRST + 5;
+    public static final int MENU_ITEM_IMPORT = Menu.FIRST + 6;
 	
 	private static final int DIALOG_ABOUT = 0;
     private static final int DIALOG_ADD_FOLDER = 1;
@@ -158,12 +159,16 @@ public class FolderListActivity extends ListActivity {
 		menu.add(0, MENU_ITEM_ADD, 0, R.string.add_folder)
                 .setShortcut('3', 'a')
                 .setIcon(android.R.drawable.ic_menu_add);
+		menu.add(0, MENU_ITEM_IMPORT, 0, R.string.import_file)
+        .setShortcut('8', 'i')
+        .setIcon(android.R.drawable.ic_menu_upload);
         menu.add(0, MENU_ITEM_EXPORT_ALL, 1, R.string.export_all_folders)
         .setShortcut('7', 'e')
         .setIcon(android.R.drawable.ic_menu_share);
         menu.add(0, MENU_ITEM_ABOUT, 2, R.string.about)
         .setShortcut('1', 'h')
         .setIcon(android.R.drawable.ic_menu_info_details);
+        
 
         // Generate any additional actions that can be performed on the
         // overall list.  In a normal install, there are no additional
@@ -325,12 +330,19 @@ public class FolderListActivity extends ListActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent intent;
 		switch (item.getItemId()) {
         case MENU_ITEM_ADD:
         	showDialog(DIALOG_ADD_FOLDER);
             return true;
+        case MENU_ITEM_IMPORT:
+        	intent = new Intent();
+        	intent.setClass(this, FileListActivity.class);
+        	intent.putExtra(FileListActivity.EXTRA_FOLDER_NAME, "/sdcard");
+        	startActivity(intent);
+        	return true;
         case MENU_ITEM_EXPORT_ALL:
-        	Intent intent = new Intent();
+        	intent = new Intent();
         	intent.setClass(this, SudokuExportActivity.class);
         	intent.putExtra(SudokuExportActivity.EXTRA_FOLDER_ID, SudokuExportActivity.ALL_FOLDERS);
         	startActivity(intent);
