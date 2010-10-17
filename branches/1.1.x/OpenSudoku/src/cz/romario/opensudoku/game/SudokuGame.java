@@ -30,6 +30,7 @@ import cz.romario.opensudoku.game.command.Command;
 import cz.romario.opensudoku.game.command.EditCellNoteCommand;
 import cz.romario.opensudoku.game.command.FillInNotesCommand;
 import cz.romario.opensudoku.game.command.SetCellValueCommand;
+import cz.romario.opensudoku.game.command.CommandStack;
 
 public class SudokuGame implements Parcelable {
 	
@@ -46,8 +47,7 @@ public class SudokuGame implements Parcelable {
 	private CellCollection mCells;
 	
 	private OnPuzzleSolvedListener mOnPuzzleSolvedListener;
-	// very basic implementation of undo
-	private Stack<Command> mUndoStack = new Stack<Command>();
+	private CommandStack mCommandStack;
 	// Time when current activity has become active. 
 	private long mActiveFromTime = -1; 
 
@@ -127,6 +127,7 @@ public class SudokuGame implements Parcelable {
 	public void setCells(CellCollection cells) {
 		mCells = cells;
 		validate();
+		mCommandStack = new CommandStack(mCells);
 	}
 	
 	public CellCollection getCells() {
@@ -188,25 +189,18 @@ public class SudokuGame implements Parcelable {
 	}
 	
 	private void executeCommand(Command c) {
-		c.execute();
-		mUndoStack.push(c);
+		mCommandStack.execute(c);
 	}
 	
 	/** 
 	 * Undo last command.
 	 */
 	public void undo() {
-		// TODO: undo stack should be saved to activity's saved state
-		// TODO: redo
-		if (!mUndoStack.empty()) {
-			Command c = mUndoStack.pop();
-			c.undo();
-			validate();
-		}
+		mCommandStack.undo();
 	}
 	
 	public boolean hasSomethingToUndo() {
-		return mUndoStack.size() != 0;
+		return mCommandStack.hasSomethingToUndo();
 	}
 	
 	/**
@@ -295,6 +289,7 @@ public class SudokuGame implements Parcelable {
 		mLastPlayed = in.readLong();
 		
 		mCells = (CellCollection) in.readParcelable(CellCollection.class.getClassLoader());
+		mCommandStack = new CommandStack(mCells);
 	}
 	
 	public static final Parcelable.Creator<SudokuGame> CREATOR = new Parcelable.Creator<SudokuGame>() {
