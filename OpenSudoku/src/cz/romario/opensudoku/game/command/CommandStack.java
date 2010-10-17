@@ -16,7 +16,15 @@ public class CommandStack {
 	public CommandStack(CellCollection cells) {
 		mCells = cells;
 	}
+
+	public void saveState(Bundle outState) {
+		
+	}
 	
+    public void restoreState(Bundle inState) {
+    	
+    }
+
 	public boolean empty() {
 		return mCommandStack.empty();
 	}
@@ -38,14 +46,6 @@ public class CommandStack {
 		return mCommandStack.size() != 0;
 	}
 	
-	void saveState(Bundle outState) {
-		
-	}
-	
-    void restoreState(Bundle inState) {
-    	
-    }
-    
     private void validateCells() {
     	mCells.validate();
     }

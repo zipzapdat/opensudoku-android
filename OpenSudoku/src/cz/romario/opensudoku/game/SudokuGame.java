@@ -22,6 +22,7 @@ package cz.romario.opensudoku.game;
 
 import java.util.Stack;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -32,7 +33,7 @@ import cz.romario.opensudoku.game.command.FillInNotesCommand;
 import cz.romario.opensudoku.game.command.SetCellValueCommand;
 import cz.romario.opensudoku.game.command.CommandStack;
 
-public class SudokuGame implements Parcelable {
+public class SudokuGame {
 	
 	public static final int GAME_STATE_PLAYING = 0;
 	public static final int GAME_STATE_NOT_STARTED = 1;
@@ -67,13 +68,35 @@ public class SudokuGame implements Parcelable {
 		mState = GAME_STATE_NOT_STARTED;
 	}
 	
+	public void saveState(Bundle outState) {
+		outState.putLong("id", mId);
+		outState.putString("note", mNote);
+		outState.putLong("created", mCreated);
+		outState.putInt("state", mState);
+		outState.putLong("time", mTime);
+		outState.putLong("lastPlayed", mLastPlayed);
+		outState.putParcelable("cells", mCells);
+	}
+	
+    public void restoreState(Bundle inState) {
+    	mId = inState.getLong("id");
+    	mNote = inState.getString("note");
+    	mCreated = inState.getLong("created");
+    	mState = inState.getInt("state");
+    	mTime = inState.getLong("time");
+    	mLastPlayed = inState.getLong("lastPlayed");
+    	mCells = inState.getParcelable("cells");
+    	
+    	mCommandStack = new CommandStack(mCells);
+    }
+
+	
 	public void setOnPuzzleSolvedListener(OnPuzzleSolvedListener l) {
 		mOnPuzzleSolvedListener = l;
 	}
 	
 	public void setNote(String note) {
 		mNote = note;
-		
 	}
 
 	public String getNote() {
@@ -277,45 +300,6 @@ public class SudokuGame implements Parcelable {
 	
 	public void validate() {
 		mCells.validate();
-	}
-	
-	// constructor for Parcelable
-	private SudokuGame(Parcel in) {
-		mId = in.readLong();
-		mNote = in.readString();
-		mCreated = in.readLong();
-		mState = in.readInt();
-		mTime = in.readLong();
-		mLastPlayed = in.readLong();
-		
-		mCells = (CellCollection) in.readParcelable(CellCollection.class.getClassLoader());
-		mCommandStack = new CommandStack(mCells);
-	}
-	
-	public static final Parcelable.Creator<SudokuGame> CREATOR = new Parcelable.Creator<SudokuGame>() {
-		public SudokuGame createFromParcel(Parcel in) {
-		    return new SudokuGame(in);
-		}
-		
-		public SudokuGame[] newArray(int size) {
-		    return new SudokuGame[size];
-		}
-	};
-	
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeLong(mId);
-		dest.writeString(mNote);
-		dest.writeLong(mCreated);
-		dest.writeInt(mState);
-		dest.writeLong(mTime);
-		dest.writeLong(mLastPlayed);
-		dest.writeParcelable(mCells, flags);
 	}
 
 	public interface OnPuzzleSolvedListener
