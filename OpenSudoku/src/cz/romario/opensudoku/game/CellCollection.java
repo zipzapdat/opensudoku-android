@@ -36,7 +36,7 @@ import android.os.Parcelable;
  * @author romario
  *
  */
-public class CellCollection  implements Parcelable {
+public class CellCollection {
 	
 	public static final int SUDOKU_SIZE = 9;
 	
@@ -293,47 +293,6 @@ public class CellCollection  implements Parcelable {
 		}
 	}
 
-	// TODO: remove parcelable and use my serialization?
-	
-	/**
-	 * Contructor because of Parcelable support.
-	 * 
-	 * @param in
-	 */
-	private CellCollection(Parcel in) {
-		
-		mCells = new Cell[SUDOKU_SIZE][SUDOKU_SIZE];
-		for (int row=0; row<SUDOKU_SIZE; row++) {
-			Parcelable[] rowData = (Parcelable[])in.readParcelableArray(Cell.class.getClassLoader());
-			for (int col=0; col < rowData.length; col++) {
-				mCells[row][col] = (Cell)rowData[col];
-			}
-		}
-		initCollection();
-	}
-	
-	public static final Parcelable.Creator<CellCollection> CREATOR = new Parcelable.Creator<CellCollection>() {
-		public CellCollection createFromParcel(Parcel in) {
-		    return new CellCollection(in);
-		}
-		
-		public CellCollection[] newArray(int size) {
-		    return new CellCollection[size];
-		}
-	};
-	
-	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		for (Cell[] cols : mCells) {
-			dest.writeParcelableArray(cols, flags);
-		}
-	}
-	
 	/**
 	 * Creates instance from given <code>StringTokenizer</code>.
 	 * 

@@ -20,18 +20,14 @@
 
 package cz.romario.opensudoku.game;
 
-import java.util.Stack;
-
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.os.SystemClock;
 import cz.romario.opensudoku.game.command.ClearAllNotesCommand;
 import cz.romario.opensudoku.game.command.Command;
+import cz.romario.opensudoku.game.command.CommandStack;
 import cz.romario.opensudoku.game.command.EditCellNoteCommand;
 import cz.romario.opensudoku.game.command.FillInNotesCommand;
 import cz.romario.opensudoku.game.command.SetCellValueCommand;
-import cz.romario.opensudoku.game.command.CommandStack;
 
 public class SudokuGame {
 	
@@ -75,7 +71,7 @@ public class SudokuGame {
 		outState.putInt("state", mState);
 		outState.putLong("time", mTime);
 		outState.putLong("lastPlayed", mLastPlayed);
-		outState.putParcelable("cells", mCells);
+		outState.putString("cells", mCells.serialize());
 	}
 	
     public void restoreState(Bundle inState) {
@@ -85,7 +81,8 @@ public class SudokuGame {
     	mState = inState.getInt("state");
     	mTime = inState.getLong("time");
     	mLastPlayed = inState.getLong("lastPlayed");
-    	mCells = inState.getParcelable("cells");
+    	mCells = CellCollection.deserialize(inState.getString("cells"));
+    	validate();
     	
     	mCommandStack = new CommandStack(mCells);
     }
