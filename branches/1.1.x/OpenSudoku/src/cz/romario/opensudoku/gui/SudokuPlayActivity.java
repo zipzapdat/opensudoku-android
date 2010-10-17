@@ -131,7 +131,8 @@ public class SudokuPlayActivity extends Activity{
         	mSudokuGame = mDatabase.getSudoku(mSudokuGameID);
         } else {
         	// activity has been running before, restore its state
-        	mSudokuGame = (SudokuGame)savedInstanceState.getParcelable("sudoku_game");
+        	mSudokuGame = new SudokuGame();
+        	mSudokuGame.restoreState(savedInstanceState);
         	mGameTimer.restoreState(savedInstanceState);
         }
         
@@ -250,7 +251,7 @@ public class SudokuPlayActivity extends Activity{
     	super.onSaveInstanceState(outState);
 		
     	mGameTimer.stop();
-    	outState.putParcelable("sudoku_game", mSudokuGame);
+    	mSudokuGame.saveState(outState);
     	mGameTimer.saveState(outState);
     }
     

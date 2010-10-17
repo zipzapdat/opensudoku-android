@@ -131,7 +131,8 @@ public class SudokuEditActivity extends Activity {
         }
         
         if (savedInstanceState != null) {
-        	mGame = (SudokuGame)savedInstanceState.getParcelable("game");
+        	mGame = new SudokuGame();
+        	mGame.restoreState(savedInstanceState);
         } else {
         	if (mSudokuID != 0) {
         		// existing sudoku, read it from database
@@ -194,7 +195,7 @@ public class SudokuEditActivity extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
-		outState.putParcelable("game", mGame);
+		mGame.saveState(outState);
 	}
 	
 	@Override
