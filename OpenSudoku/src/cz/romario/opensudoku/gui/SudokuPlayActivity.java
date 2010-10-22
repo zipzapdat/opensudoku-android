@@ -227,10 +227,6 @@ public class SudokuPlayActivity extends Activity{
     protected void onPause() {
     	super.onPause();
 		
-    	if (mSudokuGame.getState() == SudokuGame.GAME_STATE_PLAYING) {
-			mSudokuGame.pause();
-		}
-    	
     	// we will save game to the database as we might not be able to get back
 		mDatabase.updateSudoku(mSudokuGame);
 		
@@ -251,6 +247,11 @@ public class SudokuPlayActivity extends Activity{
     	super.onSaveInstanceState(outState);
 		
     	mGameTimer.stop();
+    	
+    	if (mSudokuGame.getState() == SudokuGame.GAME_STATE_PLAYING) {
+			mSudokuGame.pause();
+		}
+
     	mSudokuGame.saveState(outState);
     	mGameTimer.saveState(outState);
     }

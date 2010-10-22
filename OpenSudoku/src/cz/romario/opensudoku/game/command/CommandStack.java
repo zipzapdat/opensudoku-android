@@ -7,7 +7,7 @@ import cz.romario.opensudoku.game.CellCollection;
 import android.os.Bundle;
 
 public class CommandStack {
-	private Stack<Command> mCommandStack = new Stack<Command>();
+	private Stack<AbstractCommand> mCommandStack = new Stack<AbstractCommand>();
 	
 	// TODO: I need cells collection, because I have to call validate on it after some
 	//	commands. CellCollection should be able to validate itself on change.
@@ -18,25 +18,38 @@ public class CommandStack {
 	}
 
 	public void saveState(Bundle outState) {
-		
+		outState.putInt("cmdStack.size", mCommandStack.size());
+		for (int i = 0; i < mCommandStack.size(); i++) {
+			AbstractCommand command = mCommandStack.get(i);
+			Bundle commandState = new Bundle();
+			commandState.putString("commandClass", command.getCommandClass());
+			command.saveState(commandState);
+			outState.putBundle("cmdStack." + i, commandState);
+		}
 	}
 	
     public void restoreState(Bundle inState) {
-    	
+		int stackSize = inState.getInt("cmdStack.size");
+		for (int i = 0; i < stackSize; i++) {
+			Bundle commandState = inState.getBundle("cmdStack." + i);
+			AbstractCommand command = AbstractCommand.newInstance(commandState.getString("commandClass"));
+			command.restoreState(commandState);
+			push(command);
+		}
     }
 
 	public boolean empty() {
 		return mCommandStack.empty();
 	}
 	
-	public void execute(Command command) {
+	public void execute(AbstractCommand command) {
+		push(command);
 		command.execute();
-		mCommandStack.push(command);
 	}
 	
 	public void undo() {
 		if (!mCommandStack.empty()) {
-			Command c = mCommandStack.pop();
+			AbstractCommand c = pop();
 			c.undo();
 			validateCells();
 		}
@@ -46,7 +59,18 @@ public class CommandStack {
 		return mCommandStack.size() != 0;
 	}
 	
-    private void validateCells() {
+    private void push(AbstractCommand command) {
+		if (command instanceof AbstractCellCommand) {
+			((AbstractCellCommand)command).setCells(mCells);
+		}
+		mCommandStack.push(command);
+    }
+    
+    private AbstractCommand pop() {
+    	return mCommandStack.pop();
+    }
+	
+	private void validateCells() {
     	mCells.validate();
     }
 

@@ -23,7 +23,7 @@ package cz.romario.opensudoku.game;
 import android.os.Bundle;
 import android.os.SystemClock;
 import cz.romario.opensudoku.game.command.ClearAllNotesCommand;
-import cz.romario.opensudoku.game.command.Command;
+import cz.romario.opensudoku.game.command.AbstractCommand;
 import cz.romario.opensudoku.game.command.CommandStack;
 import cz.romario.opensudoku.game.command.EditCellNoteCommand;
 import cz.romario.opensudoku.game.command.FillInNotesCommand;
@@ -72,6 +72,8 @@ public class SudokuGame {
 		outState.putLong("time", mTime);
 		outState.putLong("lastPlayed", mLastPlayed);
 		outState.putString("cells", mCells.serialize());
+		
+		mCommandStack.saveState(outState);
 	}
 	
     public void restoreState(Bundle inState) {
@@ -82,9 +84,11 @@ public class SudokuGame {
     	mTime = inState.getLong("time");
     	mLastPlayed = inState.getLong("lastPlayed");
     	mCells = CellCollection.deserialize(inState.getString("cells"));
-    	validate();
     	
     	mCommandStack = new CommandStack(mCells);
+    	mCommandStack.restoreState(inState);
+
+    	validate();
     }
 
 	
@@ -208,7 +212,7 @@ public class SudokuGame {
 		}
 	}
 	
-	private void executeCommand(Command c) {
+	private void executeCommand(AbstractCommand c) {
 		mCommandStack.execute(c);
 	}
 	
@@ -285,14 +289,14 @@ public class SudokuGame {
 	}
 	
 	public void clearAllNotes() {
-		executeCommand(new ClearAllNotesCommand(mCells));
+		executeCommand(new ClearAllNotesCommand());
 	}
 	
 	/**
 	 * Fills in possible values which can be entered in each cell.
 	 */
 	public void fillInNotes() {
-		executeCommand(new FillInNotesCommand(mCells));
+		executeCommand(new FillInNotesCommand());
 	}
 	
 	public void validate() {
