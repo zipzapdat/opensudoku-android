@@ -42,6 +42,8 @@ public class SetCellValueCommand extends AbstractCellCommand {
 
 	@Override
 	void saveState(Bundle outState) {
+		super.saveState(outState);
+		
 		outState.putInt("cellRow", mCellRow);
 		outState.putInt("cellColumn", mCellColumn);
 		outState.putInt("value", mValue);
@@ -50,6 +52,8 @@ public class SetCellValueCommand extends AbstractCellCommand {
 
 	@Override
 	void restoreState(Bundle inState) {
+		super.restoreState(inState);
+		
 		mCellRow = inState.getInt("cellRow");
 		mCellColumn = inState.getInt("cellColumn");
 		mValue = inState.getInt("value");

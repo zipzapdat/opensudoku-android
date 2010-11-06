@@ -55,6 +55,30 @@ public class CommandStack {
 		}
 	}
 	
+	public void setCheckpoint() {
+		if (!mCommandStack.empty()) {
+			AbstractCommand c = mCommandStack.peek();
+			c.setCheckpoint(true);
+		}
+	}
+	
+	public void rollbackToCheckpoint() {
+		/*
+		 * I originally planned to just call undo but this way it doesn't need to 
+		 * validateCells() until the run is complete
+		 */
+		AbstractCommand c;
+		while (!mCommandStack.empty()) {
+			c = mCommandStack.pop();
+			c.undo();
+			if (mCommandStack.peek().isCheckpoint()) {
+				break;
+			}
+		} 
+		validateCells();
+	}
+	
+	
 	public boolean hasSomethingToUndo() {
 		return mCommandStack.size() != 0;
 	}

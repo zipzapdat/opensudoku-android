@@ -43,6 +43,8 @@ public class EditCellNoteCommand extends AbstractCellCommand {
 	
 	@Override
 	void saveState(Bundle outState) {
+		super.saveState(outState);
+		
 		outState.putInt("cellRow", mCellRow);
 		outState.putInt("cellColumn", mCellColumn);
 		outState.putString("note", mNote.serialize());
@@ -51,6 +53,8 @@ public class EditCellNoteCommand extends AbstractCellCommand {
 
 	@Override
 	void restoreState(Bundle inState) {
+		super.restoreState(inState);
+		
 		mCellRow = inState.getInt("cellRow");
 		mCellColumn = inState.getInt("cellColumn");
 		mNote = CellNote.deserialize(inState.getString("note"));

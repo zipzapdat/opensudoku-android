@@ -20,33 +20,37 @@ public class FillInNotesCommand extends AbstractCellCommand {
 
     @Override
     void saveState(Bundle outState) {
-            int[] rows = new int[mOldNotes.size()];
-            int[] cols = new int[mOldNotes.size()];
-            String[] notes = new String[mOldNotes.size()];
-            
-            int i = 0;
-            for (NoteEntry ne : mOldNotes) {
-                    rows[i] = ne.rowIndex;
-                    cols[i] = ne.colIndex;
-                    notes[i] = ne.note.serialize();
-                    i++;
-            }
-            
-            outState.putIntArray("rows", rows);
-            outState.putIntArray("cols", cols);
-            outState.putStringArray("notes", notes);
+        super.saveState(outState);    
+    	
+    	int[] rows = new int[mOldNotes.size()];
+        int[] cols = new int[mOldNotes.size()];
+        String[] notes = new String[mOldNotes.size()];
+        
+        int i = 0;
+        for (NoteEntry ne : mOldNotes) {
+                rows[i] = ne.rowIndex;
+                cols[i] = ne.colIndex;
+                notes[i] = ne.note.serialize();
+                i++;
+        }
+        
+        outState.putIntArray("rows", rows);
+        outState.putIntArray("cols", cols);
+        outState.putStringArray("notes", notes);
     }
 
     @Override
     void restoreState(Bundle inState) {
-            int[] rows = inState.getIntArray("rows");
-            int[] cols = inState.getIntArray("cols");
-            String[] notes = inState.getStringArray("notes");
-            
-            for (int i = 0; i < rows.length; i++) {
-                    mOldNotes.add(new NoteEntry(rows[i], cols[i], CellNote
-                                    .deserialize(notes[i])));
-            }
+    	super.restoreState(inState);
+    	
+        int[] rows = inState.getIntArray("rows");
+        int[] cols = inState.getIntArray("cols");
+        String[] notes = inState.getStringArray("notes");
+        
+        for (int i = 0; i < rows.length; i++) {
+                mOldNotes.add(new NoteEntry(rows[i], cols[i], CellNote
+                                .deserialize(notes[i])));
+        }
     }
 
 	@Override

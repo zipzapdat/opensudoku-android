@@ -12,7 +12,6 @@ public abstract class AbstractCellCommand extends AbstractCommand {
 
 	private CellCollection mCells;
 
-	// TODO: nebude to pomale?
 	protected CellCollection getCells() {
 		return mCells;
 	}

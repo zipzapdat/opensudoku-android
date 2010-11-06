@@ -44,6 +44,24 @@ public abstract class AbstractCommand {
 		}
 	}
 	
+	private boolean mIsCheckpoint;
+
+	void saveState(Bundle outState) {
+		outState.putBoolean("isCheckpoint", mIsCheckpoint);
+	}
+	
+	void restoreState(Bundle inState) {
+		mIsCheckpoint = inState.getBoolean("isCheckpoint");
+	}
+	
+	public boolean isCheckpoint() {
+		return mIsCheckpoint;
+	}
+	
+	public void setCheckpoint(boolean isCheckpoint) {
+		mIsCheckpoint = isCheckpoint;
+	}
+
 	public String getCommandClass() {
 		return getClass().getSimpleName();
 	}
@@ -57,7 +75,4 @@ public abstract class AbstractCommand {
 	 */
 	abstract void undo();
 	
-	abstract void saveState(Bundle outState);
-	
-	abstract void restoreState(Bundle inState);
 }

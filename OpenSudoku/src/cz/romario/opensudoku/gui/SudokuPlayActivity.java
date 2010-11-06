@@ -62,6 +62,12 @@ public class SudokuPlayActivity extends Activity{
 	public static final int MENU_ITEM_HELP = Menu.FIRST + 4; 
 	public static final int MENU_ITEM_SETTINGS = Menu.FIRST + 5;
 	
+	// MJA - "Set Undo Flag" Menu ID
+	public static final int MENU_ITEM_SET_CHECKPOINT = Menu.FIRST + 6;
+	
+	// MJA - "Go Last Undo Flag" Menu ID
+	public static final int MENU_ITEM_UNDO_TO_CHECKPOINT = Menu.FIRST + 7;
+
 	private static final int DIALOG_RESTART = 1;
 	private static final int DIALOG_WELL_DONE = 2;
 	private static final int DIALOG_CLEAR_NOTES = 3;
@@ -263,20 +269,19 @@ public class SudokuPlayActivity extends Activity{
         menu.add(0, MENU_ITEM_UNDO, 0, R.string.undo)
         .setShortcut('1', 'u')
         .setIcon(android.R.drawable.ic_menu_revert);
-		
-        menu.add(0, MENU_ITEM_CLEAR_ALL_NOTES, 0, R.string.clear_all_notes)
-        .setShortcut('3', 'a')
-        .setIcon(android.R.drawable.ic_menu_delete);
-        
-        if (mFillInNotesEnabled) {
-          menu.add(0, MENU_ITEM_FILL_IN_NOTES, 0, R.string.fill_in_notes)
-          .setIcon(android.R.drawable.ic_menu_edit);
-        }
-
         
         menu.add(0, MENU_ITEM_RESTART, 1, R.string.restart)
         .setShortcut('7', 'r')
         .setIcon(android.R.drawable.ic_menu_rotate);
+
+        menu.add(0, MENU_ITEM_CLEAR_ALL_NOTES, 0, R.string.clear_all_notes)
+        .setShortcut('3', 'a')
+        .setIcon(android.R.drawable.ic_menu_delete);
+
+        if (mFillInNotesEnabled) {
+          menu.add(0, MENU_ITEM_FILL_IN_NOTES, 0, R.string.fill_in_notes)
+          .setIcon(android.R.drawable.ic_menu_edit);
+        }
 
         menu.add(0, MENU_ITEM_HELP, 1, R.string.help)
         .setShortcut('0', 'h')
@@ -285,6 +290,9 @@ public class SudokuPlayActivity extends Activity{
         menu.add(0, MENU_ITEM_SETTINGS, 1, R.string.settings)
         .setShortcut('9', 's')
         .setIcon(android.R.drawable.ic_menu_preferences);
+
+		menu.add(0, MENU_ITEM_SET_CHECKPOINT, 2, R.string.set_checkpoint);
+		menu.add(0, MENU_ITEM_UNDO_TO_CHECKPOINT, 2, R.string.undo_to_checkpoint);
 
         // Generate any additional actions that can be performed on the
         // overall list.  In a normal install, there are no additional
@@ -342,6 +350,16 @@ public class SudokuPlayActivity extends Activity{
         case MENU_ITEM_HELP:
         	mHintsQueue.showHint(R.string.help, R.string.help_text);
         	return true;
+        // MJA - Set Undo Flag
+        case MENU_ITEM_SET_CHECKPOINT:
+        	mSudokuGame.setUndoFlag();
+        	return true;
+        	
+        // MJA - Rollback to last undo flag
+        case MENU_ITEM_UNDO_TO_CHECKPOINT:
+        	mSudokuGame.rollbackToLastUndoFlag();
+        	return true;
+        	
         }
         return super.onOptionsItemSelected(item);
 	}
