@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "cz.romario.opensudoku"
-        minSdkVersion 3
-        targetSdkVersion 4
+        minSdkVersion 8
+        targetSdkVersion 8
 
         testApplicationId "cz.romario.opensudoku.test"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -19,4 +19,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+}
+
+dependencies {
+    compile project(':zipzapsdk')
 }
